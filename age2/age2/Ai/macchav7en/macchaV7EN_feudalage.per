@@ -1,0 +1,268 @@
+;********************************************************************
+; AI maccha Ver 7.00  feudalage.per
+;********************************************************************
+;{strategic-number---------------------------------------------------
+(defrule
+   (goal CONTROL_TOWNSIZE NO)
+=>
+  (set-strategic-number sn-minimum-town-size 14)
+  (set-strategic-number sn-maximum-town-size 16)
+)
+;}-------------------------------------------------------------------
+;{building-----------------------------------------------------------
+;*tower
+(defrule 
+   (current-age == feudal-age)
+   (building-type-count watch-tower-line < 12)
+   (can-build watch-tower-line)
+=>
+   (chat-local-to-self "build watch-tower-line")
+   (set-strategic-number sn-minimum-town-size 4)
+   (set-strategic-number sn-maximum-town-size 7)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (build watch-tower-line)
+)
+(defrule 
+   (town-under-attack)
+   (building-type-count watch-tower-line < 12)
+   (unit-type-count 54 > 0)
+   (can-build watch-tower-line)
+=>
+   (chat-local-to-self "Case:1 build watch-tower-line")
+   (set-strategic-number sn-minimum-town-size 4)
+   (set-strategic-number sn-maximum-town-size 7)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (build watch-tower-line)
+)
+(defrule 
+   (players-current-age any-enemy < castle-age)
+   (town-under-attack)
+   (building-type-count watch-tower-line < 12)
+   (or
+      (unit-type-count 229 > 0)
+      (unit-type-count 221 > 0)
+   )
+   (can-build watch-tower-line)
+=>
+   (chat-local-to-self "Case:2 build watch-tower-line")
+   (set-strategic-number sn-minimum-town-size 4)
+   (set-strategic-number sn-maximum-town-size 7)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (build watch-tower-line)
+)
+(defrule 
+   (players-current-age any-enemy < castle-age)
+   (building-type-count-total outpost == 0)
+   (building-type-count watch-tower-line < 4)
+   (can-build watch-tower-line)
+=>
+   (chat-local-to-self "Case:3 build watch-tower-line")
+   (set-strategic-number sn-minimum-town-size 4)
+   (set-strategic-number sn-maximum-town-size 7)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (build watch-tower-line)
+)
+(defrule 
+   (building-type-count archery-range < 1)
+   (can-build archery-range)
+=>
+   (chat-local-to-self "build archery-range")
+   (set-strategic-number sn-minimum-town-size 10)
+   (set-strategic-number sn-maximum-town-size 14)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (build archery-range)
+)
+(defrule 
+   (building-type-count stable < 1)
+   (can-build stable)
+=>
+   (chat-local-to-self "build stable")
+   (set-strategic-number sn-minimum-town-size 10)
+   (set-strategic-number sn-maximum-town-size 14)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (build stable)
+)
+(defrule  
+   (current-age == feudal-age)
+   (housing-headroom < 4) 
+   (can-build house) 
+=>
+   (build house) 
+)
+(defrule  
+   (goal EVOLUTION 2)
+   (can-build lumber-camp)
+=>
+   (chat-local-to-self "build lumber-camp <compulsion>")
+   (set-strategic-number sn-camp-max-distance 18)
+   (build lumber-camp)
+   (disable-self)
+)
+(defrule
+   (or
+      (goal EVOLUTION 2)
+      (current-age >= castle-age)
+   )
+   (building-type-count blacksmith == 0)
+   (can-build blacksmith)
+=>
+   (chat-local-to-self "build blacksmith")
+   (build blacksmith)
+)
+(defrule
+   (game-time > 1400)
+   (wood-amount > 300)
+   (building-type-count market == 0)
+   (can-build market)
+=>
+   (chat-local-to-self "build market (vs feudal-rush)")
+   (build market)
+)
+(defrule
+   (game-time > 1400)
+   (wood-amount > 300)
+   (building-type-count blacksmith == 0)
+   (can-build blacksmith)
+=>
+   (chat-local-to-self "build blacksmith (vs feudal-rush)")
+   (build blacksmith)
+)
+;*farm
+(defrule  
+   (current-age == feudal-age)
+   (or
+      (building-type-count-total stable >= 1)
+      (and
+          (building-type-count-total blacksmith >= 1)
+          (building-type-count-total archery-range >= 1)
+      )
+   )
+   (can-build farm)
+=>
+   (build farm)
+)
+;}-------------------------------------------------------------------
+;{upgarde------------------------------------------------------------
+(defrule 
+   (can-research ri-wheel-barrow)
+=>
+   (chat-local-to-self "research ri-wheel-barrow")
+   (research ri-wheel-barrow)
+)
+(defrule 
+   (can-research ri-double-bit-axe)
+=>
+   (chat-local-to-self "research ri-double-bit-axe")
+   (research ri-double-bit-axe)
+)
+(defrule 
+   (can-research ri-gold-mining)
+=>
+   (chat-local-to-self "research ri-gold-mining")
+   (research ri-gold-mining)
+)
+(defrule 
+   (research-completed ri-gold-mining)
+   (can-research ri-horse-collar)
+=>
+   (chat-local-to-self "research ri-horse-collar")
+   (research ri-horse-collar)
+)
+(defrule 
+   (can-research ri-stone-mining)
+=>
+   (chat-local-to-self "research ri-stone-mining")
+   (research ri-stone-mining)
+)
+(defrule 
+   (can-research castle-age) 
+=>
+   (chat-local-to-self "research castle-age") 
+   (research castle-age)
+   (set-strategic-number sn-food-gatherer-percentage 45)
+   (set-strategic-number sn-gold-gatherer-percentage 10)
+   (set-strategic-number sn-stone-gatherer-percentage 10)
+   (set-strategic-number sn-wood-gatherer-percentage 35)
+   (chat-local-to-self "villager adjustment in feudal-age 45/10/10/35")
+   (set-goal EVOLUTION 2)
+)
+;}-------------------------------------------------------------------
+;{train villager-----------------------------------------------------
+(defrule  
+   (current-age ==  feudal-age)
+   (or
+      (gold-amount < 200)
+      (food-amount > 850)
+   )
+   (unit-type-count villager < pop-50)
+   (unit-type-count villager < 35)
+   (can-train villager) 
+=>
+   (chat-local-to-self "train villager in feudal-age")
+   (train villager) 
+)
+;}-------------------------------------------------------------------
+;{vs feudal-rush-----------------------------------------------------
+(defrule
+   (or(unit-type-count 54 > 0)(current-age == castle-age))
+=>
+   (chat-local-to-self "find enemy rush!!")
+   (set-goal ENEMY_RUSH YES)
+   (disable-self)
+)
+(defrule 
+   (resource-found wood)
+   (or
+      (unit-type-count 228 > 0)
+      (unit-type-count 219 > 0)
+   )
+   (town-under-attack)
+   (can-build lumber-camp)
+=>
+   (chat-local-to-self "build lumber-camp (vs feudal-rush)")
+   (set-strategic-number sn-camp-max-distance 18)
+   (build lumber-camp)
+   (disable-self)
+)
+(defrule 
+   (resource-found gold)
+   (or
+      (unit-type-count 229 > 0)
+      (unit-type-count 221 > 0)
+   )
+   (town-under-attack)
+   (building-type-count mining-camp < 4)
+   (can-build mining-camp)
+=>
+   (chat-local-to-self "build mining-camp (vs feudal-rush)")
+   (set-strategic-number sn-camp-max-distance 30)
+   (build mining-camp)
+)
+(defrule
+   (current-age == feudal-age)
+   (town-under-attack)
+   (unit-type-count 54 > 0)
+=>
+   (set-goal MAX_SPEARMAN 3)
+   (set-goal MAX_SKIRMISHER 3)
+   (set-goal MAX_MILITIAMAN 3)
+   (chat-local-to-self "The defense force is organized. (vs feudal-rush)")
+   (disable-self)
+)
+(defrule
+   (current-age == feudal-age)
+   (goal MAX_SKIRMISHER 3)
+   (unit-type-count 54 > 0)
+   (players-unit-type-count any-enemy archer-line > pop-13)
+=>
+   (set-goal MAX_SKIRMISHER 5)
+   (chat-local-to-self "The organization of the skirmisher is increased. ")
+   (disable-self)
+)
+;}-------------------------------------------------------------------

@@ -1,0 +1,1738 @@
+(load "rmresign")
+
+; BingAI
+; version 5.4
+; by Bingmann, rcrosby@ieee.org
+; Bingmann's Age of Kings AI Scripting Kitchen Party
+; http://aok.xhounds.com
+
+
+; Since this script makes mostly eagle warriors, it will only work properly
+; with Aztecs and Mayans.
+; This script works both by itself and with a partner.
+
+; This script was inspired by Tori-san, a script by Coteti.
+; That was the first script that I saw that demonstrated the
+; power of the early Castle eagle rush.
+
+
+; constants that should be defined by the game
+(defconst unpacked-trebuchet 42)
+(defconst male-forager 120)
+(defconst male-hunter 122)
+(defconst female-hunter 216)
+(defconst relic 285)
+(defconst monk-with-relic 286)
+(defconst female-forager 354)
+(defconst ri-herbal-medicine 441)
+(defconst ri-perfusion 457)
+
+
+; our goals
+(defconst is-zero-goal 1)
+(defconst current-age-goal 2)
+
+
+; our timers
+(defconst attack-timer 1)
+(defconst grow-town-timer 2)
+
+
+; intervals for timers
+(defconst attack-timer-interval 15)
+(defconst grow-town-interval 60)
+
+
+; constants for current strategy
+(defconst get-to-castle-strategy 1)
+(defconst slave-strategy 2)
+(defconst attack-now-strategy 3)
+
+
+; dropsite distances - allow the dropsites to get farther from
+; the town while staying closer to our town than the enemy town.
+; I've given up on this one.	It's better to keep the villagers
+; inside the wall and close to home.
+#load-if-defined TINY-MAP
+(defconst first-dropsite-distance 25)
+(defconst second-dropsite-distance 40)
+(defconst third-dropsite-distance 60)
+(defconst fourth-dropsite-distance 80)
+(defconst buffer-dropsite-distance 50)
+(defconst second-mill-distance 35)
+#else
+#load-if-defined SMALL-MAP
+(defconst first-dropsite-distance 25)
+(defconst second-dropsite-distance 50)
+(defconst third-dropsite-distance 75)
+(defconst fourth-dropsite-distance 100)
+(defconst buffer-dropsite-distance 50)
+(defconst second-mill-distance 35)
+#else
+(defconst first-dropsite-distance 25)
+(defconst second-dropsite-distance 50)
+(defconst third-dropsite-distance 100)
+(defconst fourth-dropsite-distance 200)
+(defconst buffer-dropsite-distance 50)
+(defconst second-mill-distance 35)
+#end-if
+#end-if
+
+; limit the number of camps so the AI doesn't build them continuously
+; when the resources run out
+(defconst max-lumber-camps 16)
+(defconst max-mining-camps 16)
+
+
+; maximum distances before building new gathering site
+(defconst max-food-placement-distance 8)
+(defconst max-wood-placement-distance 8)
+(defconst max-gold-placement-distance 4)
+(defconst max-stone-placement-distance 4)
+(defconst max-food-dropsite-distance 10)
+(defconst max-wood-dropsite-distance 10)
+(defconst max-gold-dropsite-distance 10)
+(defconst max-stone-dropsite-distance 10)
+(defconst max-hunt-dropsite-distance 10)
+(defconst emergency-wood-gather-distance -1)
+(defconst idle-farm-gather-distance 20)
+
+
+; min-extra-housing = build houses until housing-headroom is at least this much
+(defconst min-extra-housing 5) ; must be >= 1 or might not be able to train units
+
+
+; Values for population percentages
+(defconst zero-percent-pop 0)
+#load-if-defined POPULATION-CAP-25
+(defconst two-percent-pop 1)
+(defconst five-percent-pop 2)
+(defconst ten-percent-pop 3)
+(defconst twenty-percent-pop 5)
+(defconst thirty-percent-pop 8)
+(defconst forty-percent-pop 10)
+(defconst fifty-percent-pop 13)
+(defconst sixty-percent-pop 15)
+#end-if
+#load-if-defined POPULATION-CAP-50
+(defconst two-percent-pop 1)
+(defconst five-percent-pop 3)
+(defconst ten-percent-pop 5)
+(defconst twenty-percent-pop 10)
+(defconst thirty-percent-pop 15)
+(defconst forty-percent-pop 20)
+(defconst fifty-percent-pop 25)
+(defconst sixty-percent-pop 30)
+#end-if
+#load-if-defined POPULATION-CAP-75
+(defconst two-percent-pop 2)
+(defconst five-percent-pop 4)
+(defconst ten-percent-pop 8)
+(defconst twenty-percent-pop 15)
+(defconst thirty-percent-pop 23)
+(defconst forty-percent-pop 30)
+(defconst fifty-percent-pop 38)
+(defconst sixty-percent-pop 45)
+#end-if
+#load-if-defined POPULATION-CAP-100
+(defconst two-percent-pop 3)
+(defconst five-percent-pop 5)
+(defconst ten-percent-pop 10)
+(defconst twenty-percent-pop 20)
+(defconst thirty-percent-pop 30)
+(defconst forty-percent-pop 40)
+(defconst fifty-percent-pop 50)
+(defconst sixty-percent-pop 60)
+#end-if
+#load-if-defined POPULATION-CAP-125
+(defconst two-percent-pop 3)
+(defconst five-percent-pop 6)
+(defconst ten-percent-pop 13)
+(defconst twenty-percent-pop 25)
+(defconst thirty-percent-pop 38)
+(defconst forty-percent-pop 50)
+(defconst fifty-percent-pop 63)
+(defconst sixty-percent-pop 75)
+#end-if
+#load-if-defined POPULATION-CAP-150
+(defconst two-percent-pop 4)
+(defconst five-percent-pop 8)
+(defconst ten-percent-pop 15)
+(defconst twenty-percent-pop 30)
+(defconst thirty-percent-pop 45)
+(defconst forty-percent-pop 60)
+(defconst fifty-percent-pop 75)
+(defconst sixty-percent-pop 90)
+#end-if
+#load-if-defined POPULATION-CAP-175
+(defconst two-percent-pop 4)
+(defconst five-percent-pop 9)
+(defconst ten-percent-pop 18)
+(defconst twenty-percent-pop 35)
+(defconst thirty-percent-pop 52)
+(defconst forty-percent-pop 70)
+(defconst fifty-percent-pop 88)
+(defconst sixty-percent-pop 105)
+#end-if
+#load-if-defined POPULATION-CAP-200
+(defconst two-percent-pop 5)
+(defconst five-percent-pop 10)
+(defconst ten-percent-pop 20)
+(defconst twenty-percent-pop 40)
+(defconst thirty-percent-pop 60)
+(defconst forty-percent-pop 80)
+(defconst fifty-percent-pop 100)
+(defconst sixty-percent-pop 120)
+#end-if
+
+
+; civilian numbers
+#load-if-defined POPULATION-CAP-25
+(defconst max-town-centers 2)
+(defconst max-barracks 2)
+(defconst max-siege-workshops 1)
+(defconst max-villagers-before-castle-age 15)
+(defconst slave-max-trade-carts 5)
+(defconst slave-max-villagers 20)
+(defconst solo-max-villagers 15)
+(defconst min-farms 2)
+(defconst max-farms 6)
+#end-if
+#load-if-defined POPULATION-CAP-50
+(defconst max-town-centers 3)
+(defconst max-barracks 3)
+(defconst max-siege-workshops 1)
+(defconst max-villagers-before-castle-age 27)
+(defconst slave-max-trade-carts 10)
+(defconst slave-max-villagers 40)
+(defconst solo-max-villagers 30)
+(defconst min-farms 4)
+(defconst max-farms 12)
+#end-if
+#load-if-defined POPULATION-CAP-75
+(defconst max-town-centers 4)
+(defconst max-barracks 4)
+(defconst max-siege-workshops 2)
+(defconst max-villagers-before-castle-age 27)
+(defconst slave-max-trade-carts 15)
+(defconst slave-max-villagers 60)
+(defconst solo-max-villagers 45)
+(defconst min-farms 6)
+(defconst max-farms 18)
+#end-if
+#load-if-defined POPULATION-CAP-100
+(defconst max-town-centers 6)
+(defconst max-barracks 5)
+(defconst max-siege-workshops 2)
+(defconst max-villagers-before-castle-age 27)
+(defconst slave-max-trade-carts 20)
+(defconst slave-max-villagers 80)
+(defconst solo-max-villagers 60)
+(defconst min-farms 8)
+(defconst max-farms 24)
+#end-if
+#load-if-defined POPULATION-CAP-125
+(defconst max-town-centers 7)
+(defconst max-barracks 7)
+(defconst max-siege-workshops 3)
+(defconst max-villagers-before-castle-age 27)
+(defconst slave-max-trade-carts 25)
+(defconst slave-max-villagers 100)
+(defconst solo-max-villagers 75)
+(defconst min-farms 10)
+(defconst max-farms 30)
+#end-if
+#load-if-defined POPULATION-CAP-150
+(defconst max-town-centers 7)
+(defconst max-barracks 8)
+(defconst max-siege-workshops 3)
+(defconst max-villagers-before-castle-age 27)
+(defconst slave-max-trade-carts 50)
+(defconst slave-max-villagers 100)
+(defconst solo-max-villagers 90)
+(defconst min-farms 12)
+(defconst max-farms 36)
+#end-if
+#load-if-defined POPULATION-CAP-175
+(defconst max-town-centers 7)
+(defconst max-barracks 9)
+(defconst max-siege-workshops 4)
+(defconst max-villagers-before-castle-age 27)
+(defconst slave-max-trade-carts 75)
+(defconst slave-max-villagers 100)
+(defconst solo-max-villagers 100)
+(defconst min-farms 14)
+(defconst max-farms 42)
+#end-if
+#load-if-defined POPULATION-CAP-200
+(defconst max-town-centers 7)
+(defconst max-barracks 10)
+(defconst max-siege-workshops 4)
+(defconst max-villagers-before-castle-age 27)
+(defconst slave-max-trade-carts 100)
+(defconst slave-max-villagers 100)
+(defconst solo-max-villagers 100)
+(defconst min-farms 16)
+(defconst max-farms 48)
+#end-if
+
+
+; Initialize stuff
+(defrule
+	(true)
+=>
+	(set-doctrine get-to-castle-strategy)
+	(set-goal current-age-goal dark-age)
+	(set-goal is-zero-goal 0)
+	(disable-timer attack-timer)
+	(enable-timer attack-timer attack-timer-interval)
+	(disable-timer grow-town-timer)
+	(disable-self)
+)
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-percent-civilian-explorers 0)
+	(set-strategic-number sn-percent-civilian-builders 0)
+	(set-strategic-number sn-percent-civilian-gatherers 100)
+	(set-strategic-number sn-cap-civilian-explorers 255)
+	(set-strategic-number sn-cap-civilian-builders 255)
+	(set-strategic-number sn-cap-civilian-gatherers 255)
+	(set-strategic-number sn-total-number-explorers 255)
+	(set-strategic-number sn-minimum-civilian-explorers 0)
+	(disable-self)
+)
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 100)
+	(set-strategic-number sn-gold-gatherer-percentage 0)
+	(set-strategic-number sn-stone-gatherer-percentage 0)
+	(set-strategic-number sn-wood-gatherer-percentage 0)
+	(set-strategic-number sn-number-enemy-objects-required 0)
+	(set-strategic-number sn-retask-gather-amount 1)
+	(set-strategic-number sn-max-retask-gather-amount 1)
+	(set-strategic-number sn-initial-exploration-required 0)
+	(set-strategic-number sn-use-by-type-max-gathering 1)
+	(set-strategic-number sn-percent-half-exploration 100)
+	(set-strategic-number sn-minimum-boar-hunt-group-size 8)
+	(disable-self)
+)
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-minimum-town-size 10)
+	(set-strategic-number sn-camp-max-distance first-dropsite-distance)
+	(set-strategic-number sn-mill-max-distance first-dropsite-distance)
+	(set-strategic-number sn-minimum-water-body-size-for-dock 300)
+	(set-strategic-number sn-max-build-plan-gatherer-percentage 0)
+	(set-strategic-number sn-food-dropsite-distance max-food-placement-distance)
+	(set-strategic-number sn-wood-dropsite-distance max-wood-placement-distance)
+	(set-strategic-number sn-stone-dropsite-distance max-stone-placement-distance)
+	(set-strategic-number sn-gold-dropsite-distance max-gold-placement-distance)
+	(set-strategic-number sn-minimum-dropsite-buffer buffer-dropsite-distance)
+	(set-strategic-number sn-random-placement-factor 100)
+	(disable-self)
+)
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-coop-share-information 1)
+	(set-strategic-number sn-coop-share-attacking 1)
+	(set-strategic-number sn-coop-share-attacking-interval 120)
+	(set-strategic-number sn-percentage-explore-exterminators 0)
+	(set-strategic-number sn-maximum-wood-drop-distance max-wood-dropsite-distance)
+	(set-strategic-number sn-maximum-food-drop-distance max-food-dropsite-distance)
+	(set-strategic-number sn-maximum-hunt-drop-distance max-hunt-dropsite-distance)
+	(set-strategic-number sn-maximum-gold-drop-distance max-gold-dropsite-distance)
+	(set-strategic-number sn-maximum-stone-drop-distance max-stone-dropsite-distance)
+	(set-strategic-number sn-maximum-fish-boat-drop-distance -1)
+	(disable-self)
+)
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-task-ungrouped-soldiers 0)
+	(set-strategic-number sn-percent-enemy-sighted-response 100)
+	(set-strategic-number sn-enemy-sighted-response-distance 50)
+	(set-strategic-number sn-sentry-distance 0)
+	(set-strategic-number sn-sentry-distance-variation 2)
+	(set-strategic-number sn-garrison-rams 0)
+	(disable-self)
+)
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-number-explore-groups 1)
+	(set-strategic-number sn-minimum-explore-group-size 1)
+	(set-strategic-number sn-maximum-explore-group-size 1)
+	(disable-self)
+)
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-relic-return-distance 10)
+	(set-strategic-number sn-minimum-peace-like-level 85)
+	(set-strategic-number sn-percent-exploration-required 100)
+	(set-strategic-number sn-zero-priority-distance 50)
+	(set-strategic-number sn-scaling-frequency 10)
+	(set-strategic-number sn-build-frequency 1)
+	(set-strategic-number sn-save-scenario-information 0)
+	(disable-self)
+)
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-number-build-attempts-before-skip 25)
+	(set-strategic-number sn-max-skips-per-attempt 10)
+	(set-strategic-number sn-minimum-amount-for-trading 100)
+	(set-strategic-number sn-hits-before-alliance-change 3)
+	(set-strategic-number sn-attack-diplomacy-impact 10)
+	(set-strategic-number sn-easiest-reaction-percentage 100)
+	(set-strategic-number sn-easier-reaction-percentage 100)
+	(set-strategic-number sn-track-player-history 0)
+	(disable-self)
+)
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-allow-civilian-defense 0)
+	(set-strategic-number sn-do-not-scale-for-difficulty-level 1)
+	(set-strategic-number sn-gather-defense-units 0)
+	(set-strategic-number sn-group-form-distance 5)
+	(set-strategic-number sn-ignore-attack-group-under-attack 0)
+	(set-strategic-number sn-consecutive-idle-unit-limit 0)
+	(disable-self)
+)
+
+
+; Figure out our current strategy
+(defrule
+	(doctrine get-to-castle-strategy)
+	(player-number 1)
+	(goal current-age-goal castle-age)
+=>
+	(set-doctrine attack-now-strategy)
+)
+(defrule
+	(doctrine get-to-castle-strategy)
+	(stance-toward 1 ally)
+	(goal current-age-goal castle-age)
+=>
+	(set-doctrine slave-strategy)
+)
+(defrule
+	(doctrine get-to-castle-strategy)
+	(player-number 2)
+	(goal current-age-goal castle-age)
+=>
+	(set-doctrine attack-now-strategy)
+)
+(defrule
+	(doctrine get-to-castle-strategy)
+	(stance-toward 2 ally)
+	(goal current-age-goal castle-age)
+=>
+	(set-doctrine slave-strategy)
+)
+(defrule
+	(doctrine get-to-castle-strategy)
+	(player-number 3)
+	(goal current-age-goal castle-age)
+=>
+	(set-doctrine attack-now-strategy)
+)
+(defrule
+	(doctrine get-to-castle-strategy)
+	(stance-toward 3 ally)
+	(goal current-age-goal castle-age)
+=>
+	(set-doctrine slave-strategy)
+)
+(defrule
+	(doctrine get-to-castle-strategy)
+	(player-number 4)
+	(goal current-age-goal castle-age)
+=>
+	(set-doctrine attack-now-strategy)
+)
+(defrule
+	(doctrine get-to-castle-strategy)
+	(stance-toward 4 ally)
+	(goal current-age-goal castle-age)
+=>
+	(set-doctrine slave-strategy)
+)
+(defrule
+	(doctrine get-to-castle-strategy)
+	(player-number 5)
+	(goal current-age-goal castle-age)
+=>
+	(set-doctrine attack-now-strategy)
+)
+(defrule
+	(doctrine get-to-castle-strategy)
+	(stance-toward 5 ally)
+	(goal current-age-goal castle-age)
+=>
+	(set-doctrine slave-strategy)
+)
+(defrule
+	(doctrine get-to-castle-strategy)
+	(player-number 6)
+	(goal current-age-goal castle-age)
+=>
+	(set-doctrine attack-now-strategy)
+)
+(defrule
+	(doctrine get-to-castle-strategy)
+	(stance-toward 6 ally)
+	(goal current-age-goal castle-age)
+=>
+	(set-doctrine slave-strategy)
+)
+(defrule
+	(doctrine get-to-castle-strategy)
+	(player-number 7)
+	(goal current-age-goal castle-age)
+=>
+	(set-doctrine attack-now-strategy)
+)
+(defrule
+	(doctrine get-to-castle-strategy)
+	(stance-toward 7 ally)
+	(goal current-age-goal castle-age)
+=>
+	(set-doctrine slave-strategy)
+)
+(defrule
+	(doctrine get-to-castle-strategy)
+	(player-number 8)
+	(goal current-age-goal castle-age)
+=>
+	(set-doctrine attack-now-strategy)
+)
+
+
+; Set escrow for slave
+(defrule
+	(doctrine slave-strategy)
+=>
+	(set-escrow-percentage food 50)
+	(set-escrow-percentage wood 50)
+	(set-escrow-percentage gold 50)
+	(set-escrow-percentage stone 50)
+	(disable-self)
+)
+(defrule
+	(not (doctrine slave-strategy))
+=>
+	(set-escrow-percentage food 0)
+	(set-escrow-percentage wood 0)
+	(set-escrow-percentage gold 0)
+	(set-escrow-percentage stone 0)
+	(release-escrow food)
+	(release-escrow wood)
+	(release-escrow gold)
+	(release-escrow stone)
+)
+
+
+; build houses
+(defrule
+	(housing-headroom < min-extra-housing)
+	(can-build house)
+=>
+	(build house)
+)
+
+
+; build town centers
+(defrule
+	(building-type-count-total town-center < max-town-centers)
+	(can-build-with-escrow town-center)
+=>
+	(release-escrow wood)
+	(release-escrow stone)
+	(build town-center)
+)
+
+
+; build castles
+(defrule
+	(can-build-with-escrow castle)
+=>
+	(release-escrow stone)
+	(build castle)
+)
+
+
+; build mill
+(defrule
+	(or (resource-found food)
+	(or (and (sheep-and-forage-too-far)
+	(game-time > 120))
+	(game-time > 300)))
+	(building-type-count-total mill < 1)
+	(can-build mill)
+=>
+	(build mill)
+)
+
+
+; build lumber camps
+(defrule
+	(building-type-count-total mill > 0)
+	(building-type-count-total lumber-camp < 1)
+	(can-build lumber-camp)
+=>
+	(set-strategic-number sn-camp-max-distance 15)
+	(build lumber-camp)
+)
+(defrule
+	(building-type-count-total mill > 0)
+	(or (dropsite-min-distance wood >= max-wood-dropsite-distance)
+	(doctrine slave-strategy))
+	(building-type-count-total lumber-camp < 4)
+	(can-build lumber-camp)
+=>
+	(set-strategic-number sn-camp-max-distance first-dropsite-distance)
+	(build lumber-camp)
+)
+(defrule
+	(building-type-count-total mill > 0)
+	(or (dropsite-min-distance wood >= max-wood-dropsite-distance)
+	(and (game-time > 1800)
+	(doctrine slave-strategy)))
+	(building-type-count-total lumber-camp >= 4)
+	(building-type-count-total lumber-camp < 8)
+	(can-build lumber-camp)
+=>
+	(set-strategic-number sn-camp-max-distance second-dropsite-distance)
+	(build lumber-camp)
+)
+(defrule
+	(building-type-count-total mill > 0)
+	(or (dropsite-min-distance wood >= max-wood-dropsite-distance)
+	(and (game-time > 2700)
+	(doctrine slave-strategy)))
+	(building-type-count-total lumber-camp >= 8)
+	(building-type-count-total lumber-camp < 12)
+	(can-build lumber-camp)
+=>
+	(set-strategic-number sn-camp-max-distance third-dropsite-distance)
+	(build lumber-camp)
+)
+(defrule
+	(building-type-count-total mill > 0)
+	(or (dropsite-min-distance wood >= max-wood-dropsite-distance)
+	(and (game-time > 3600)
+	(doctrine slave-strategy)))
+	(building-type-count-total lumber-camp >= 12)
+	(building-type-count-total lumber-camp < max-lumber-camps)
+	(can-build lumber-camp)
+=>
+	(set-strategic-number sn-camp-max-distance fourth-dropsite-distance)
+	(build lumber-camp)
+)
+
+
+; build mining camps
+(defrule
+	(building-type-count-total lumber-camp > 0)
+	(building-type-count-total farm >= min-farms)
+	(building-type-count-total mining-camp < 1)
+	(can-build mining-camp)
+=>
+	(set-strategic-number sn-camp-max-distance first-dropsite-distance)
+	(build mining-camp)
+)
+(defrule
+	(or (or (dropsite-min-distance gold >= max-gold-dropsite-distance)
+	(dropsite-min-distance stone >= max-stone-dropsite-distance))
+	(doctrine slave-strategy))
+	(building-type-count-total lumber-camp > 0)
+	(building-type-count-total farm >= min-farms)
+	(building-type-count-total mining-camp < 4)
+	(can-build mining-camp)
+=>
+	(set-strategic-number sn-camp-max-distance first-dropsite-distance)
+	(build mining-camp)
+)
+(defrule
+	(or (or (dropsite-min-distance gold >= max-gold-dropsite-distance)
+	(dropsite-min-distance stone >= max-stone-dropsite-distance))
+	(and (game-time > 1800)
+	(doctrine slave-strategy)))
+	(building-type-count-total lumber-camp > 0)
+	(building-type-count-total farm >= min-farms)
+	(building-type-count-total mining-camp >= 4)
+	(building-type-count-total mining-camp < 8)
+	(can-build mining-camp)
+=>
+	(set-strategic-number sn-camp-max-distance second-dropsite-distance)
+	(build mining-camp)
+)
+(defrule
+	(or (or (dropsite-min-distance gold >= max-gold-dropsite-distance)
+	(dropsite-min-distance stone >= max-stone-dropsite-distance))
+	(and (game-time > 2700)
+	(doctrine slave-strategy)))
+	(building-type-count-total lumber-camp > 0)
+	(building-type-count-total farm >= min-farms)
+	(building-type-count-total mining-camp >= 8)
+	(building-type-count-total mining-camp < 12)
+	(can-build mining-camp)
+=>
+	(set-strategic-number sn-camp-max-distance third-dropsite-distance)
+	(build mining-camp)
+)
+(defrule
+	(or (or (dropsite-min-distance gold >= max-gold-dropsite-distance)
+	(dropsite-min-distance stone >= max-stone-dropsite-distance))
+	(and (game-time > 3600)
+	(doctrine slave-strategy)))
+	(building-type-count-total lumber-camp > 0)
+	(building-type-count-total farm >= min-farms)
+	(building-type-count-total mining-camp >= 12)
+	(building-type-count-total mining-camp < max-mining-camps)
+	(can-build mining-camp)
+=>
+	(set-strategic-number sn-camp-max-distance fourth-dropsite-distance)
+	(build mining-camp)
+)
+
+
+; build farms
+(defrule
+	(building-type-count-total lumber-camp > 0)
+	(building-type-count-total farm < min-farms)
+	(can-build farm)
+=>
+	(build farm)
+)
+(defrule
+	(doctrine get-to-castle-strategy)
+	(or (goal current-age-goal dark-age)
+	(and (goal current-age-goal feudal-age)
+	(and (building-type-count-total blacksmith > 0)
+	(building-type-count-total market > 0))))
+	(idle-farm-count < 1)
+	(building-type-count-total lumber-camp > 0)
+	(can-build farm)
+=>
+	(build farm)
+)
+(defrule
+	(doctrine get-to-castle-strategy)
+	(or (goal current-age-goal dark-age)
+	(and (goal current-age-goal feudal-age)
+	(and (building-type-count-total blacksmith > 0)
+	(building-type-count-total market > 0))))
+	(building-type-count-total farm < min-farms)
+	(building-type-count-total lumber-camp > 0)
+	(building-type-count-total mining-camp > 0)
+	(can-build farm)
+=>
+	(build farm)
+)
+(defrule
+	(doctrine slave-strategy)
+	(idle-farm-count < 1)
+	(building-type-count-total lumber-camp > 0)
+	(can-build farm)
+=>
+	(build farm)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(building-type-count-total barracks > 1)
+	(building-type-count-total monastery > 0)
+	(building-type-count-total siege-workshop > 0)
+	(or (unit-type-count-total battering-ram-line >= two-percent-pop)
+	(wood-amount >= 220))
+	(idle-farm-count < 1)
+	(building-type-count-total lumber-camp > 0)
+	(can-build farm)
+=>
+	(build farm)
+)
+
+
+; build blacksmith
+(defrule
+	(building-type-count-total blacksmith < 1)
+	(can-build blacksmith)
+=>
+	(build blacksmith)
+)
+
+
+; build market
+(defrule
+	(building-type-count-total market < 1)
+	(can-build market)
+=>
+	(build market)
+)
+
+
+; build barracks
+(defrule
+	(doctrine attack-now-strategy)
+	(building-type-count-total barracks < 2)
+	(can-build barracks)
+=>
+	(build barracks)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(building-type-count-total siege-workshop > 0)
+	(building-type-count-total monastery > 0)
+	(building-type-count-total barracks < max-barracks)
+	(or (unit-type-count-total battering-ram-line >= two-percent-pop)
+	(wood-amount >= 335))
+	(can-build barracks)
+=>
+	(build barracks)
+)
+
+
+; build siege workshops
+(defrule
+	(doctrine attack-now-strategy)
+	(building-type-count-total siege-workshop < 1)
+	(can-build siege-workshop)
+=>
+	(build siege-workshop)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(building-type-count-total siege-workshop < max-siege-workshops)
+	(building-type-count-total monastery > 0)
+	(building-type-count-total barracks > 1)
+	(or (unit-type-count-total battering-ram-line >= two-percent-pop)
+	(wood-amount >= 360))
+	(can-build siege-workshop)
+=>
+	(build siege-workshop)
+)
+
+
+; build a monastery
+(defrule
+	(doctrine attack-now-strategy)
+	(building-type-count-total barracks > 0)
+	(building-type-count-total siege-workshop > 0)
+	(building-type-count-total monastery < 1)
+	(can-build monastery)
+=>
+	(build monastery)
+)
+
+
+; build a university
+(defrule
+	(doctrine attack-now-strategy)
+	(building-type-count-total barracks > 1)
+	(building-type-count-total siege-workshop > 0)
+	(building-type-count-total monastery > 0)
+	(building-type-count-total university < 1)
+	(or (unit-type-count-total battering-ram-line >= two-percent-pop)
+	(wood-amount >= 360))
+	(can-build university)
+=>
+	(build university)
+)
+
+
+; Age research
+(defrule
+	(can-research feudal-age)
+=>
+	(research feudal-age)
+	(set-goal current-age-goal feudal-age)
+	(set-strategic-number sn-maximum-town-size 16)
+	(disable-timer grow-town-timer)
+	(enable-timer grow-town-timer 240)
+)
+(defrule
+	(can-research castle-age)
+=>
+	(research castle-age)
+	(set-goal current-age-goal castle-age)
+	(set-strategic-number sn-maximum-town-size 18)
+	(disable-timer grow-town-timer)
+	(enable-timer grow-town-timer 270)
+)
+(defrule
+	(not (doctrine slave-strategy))
+	(can-research imperial-age)
+=>
+	(research imperial-age)
+	(set-goal current-age-goal imperial-age)
+	(set-strategic-number sn-maximum-town-size 20)
+	(disable-timer grow-town-timer)
+	(enable-timer grow-town-timer 300)
+)
+
+
+; research loom during a break in villager production
+(defrule
+	(not (can-train villager))
+	(can-research ri-loom)
+=>
+	(research ri-loom)
+)
+
+
+; research slave techs
+(defrule
+	(doctrine slave-strategy)
+	(can-research-with-escrow ri-coinage)
+=>
+	(release-escrow food)
+	(release-escrow gold)
+	(research ri-coinage)
+	(chat-to-allies "research coinage")
+)
+(defrule
+	(doctrine slave-strategy)
+	(can-research-with-escrow ri-banking)
+=>
+	(release-escrow food)
+	(release-escrow gold)
+	(research ri-banking)
+	(chat-to-allies "research banking")
+)
+(defrule
+	(doctrine slave-strategy)
+	(can-research-with-escrow ri-cartography)
+=>
+	(release-escrow food)
+	(release-escrow gold)
+	(research ri-cartography)
+	(chat-to-allies "research cartography")
+)
+(defrule
+	(doctrine slave-strategy)
+	(can-research-with-escrow ri-caravan)
+=>
+	(release-escrow food)
+	(release-escrow gold)
+	(research ri-caravan)
+	(chat-to-allies "research caravan")
+)
+(defrule
+	(doctrine slave-strategy)
+	(research-completed ri-banking)
+	(can-research-with-escrow ri-horse-collar)
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-horse-collar)
+	(chat-to-allies "research horse collar")
+)
+(defrule
+	(doctrine slave-strategy)
+	(research-completed ri-banking)
+	(can-research-with-escrow ri-heavy-plow)
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-heavy-plow)
+	(chat-to-allies "research heavy plow")
+)
+(defrule
+	(doctrine slave-strategy)
+	(research-completed ri-banking)
+	(can-research-with-escrow ri-crop-rotation)
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-crop-rotation)
+	(chat-to-allies "research crop rotation")
+)
+(defrule
+	(doctrine slave-strategy)
+	(research-completed ri-banking)
+	(can-research-with-escrow ri-gold-mining)
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-gold-mining)
+	(chat-to-allies "research gold mining")
+)
+(defrule
+	(doctrine slave-strategy)
+	(research-completed ri-banking)
+	(can-research-with-escrow ri-double-bit-axe)
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-double-bit-axe)
+	(chat-to-allies "research double-bit axe")
+)
+(defrule
+	(doctrine slave-strategy)
+	(research-completed ri-banking)
+	(can-research-with-escrow ri-wheel-barrow)
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-wheel-barrow)
+	(chat-to-allies "research wheelbarrow")
+)
+(defrule
+	(doctrine slave-strategy)
+	(research-completed ri-banking)
+	(can-research-with-escrow ri-stone-mining)
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-stone-mining)
+	(chat-to-allies "research stone mining")
+)
+(defrule
+	(doctrine slave-strategy)
+	(research-completed ri-banking)
+	(can-research-with-escrow ri-gold-shaft-mining)
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-gold-shaft-mining)
+	(chat-to-allies "research gold shaft mining")
+)
+(defrule
+	(doctrine slave-strategy)
+	(research-completed ri-banking)
+	(can-research-with-escrow ri-bow-saw)
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-bow-saw)
+	(chat-to-allies "research bow saw")
+)
+(defrule
+	(doctrine slave-strategy)
+	(research-completed ri-banking)
+	(can-research-with-escrow ri-hand-cart)
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-hand-cart)
+	(chat-to-allies "research hand cart")
+)
+(defrule
+	(doctrine slave-strategy)
+	(research-completed ri-banking)
+	(can-research-with-escrow ri-stone-shaft-mining)
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-stone-shaft-mining)
+	(chat-to-allies "research stone shaft mining")
+)
+(defrule
+	(doctrine slave-strategy)
+	(research-completed ri-banking)
+	(can-research-with-escrow ri-two-man-saw)
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-two-man-saw)
+	(chat-to-allies "research two-man saw")
+)
+
+
+; research attack techs
+(defrule
+	(doctrine attack-now-strategy)
+	(can-research my-unique-research)
+=>
+	(research my-unique-research)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(can-research ri-elite-eagle-warrior)
+=>
+	(research ri-elite-eagle-warrior)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(can-research ri-pikeman)
+=>
+	(research ri-pikeman)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(can-research ri-capped-ram)
+=>
+	(research ri-capped-ram)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(can-research ri-halberdier)
+=>
+	(research ri-halberdier)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(can-research ri-scale-mail)
+=>
+	(research ri-scale-mail)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(can-research ri-chain-mail)
+=>
+	(research ri-chain-mail)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(can-research ri-plate-mail)
+=>
+	(research ri-plate-mail)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(can-research ri-forging)
+=>
+	(research ri-forging)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(can-research ri-iron-casting)
+=>
+	(research ri-iron-casting)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(can-research ri-blast-furnace)
+=>
+	(research ri-blast-furnace)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(research-completed ri-chain-mail)
+	(research-completed ri-iron-casting)
+	(can-research ri-squires)
+=>
+	(research ri-squires)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(research-completed ri-chain-mail)
+	(research-completed ri-iron-casting)
+	(can-research ri-tracking)
+=>
+	(research ri-tracking)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(can-research ri-siege-engineers)
+=>
+	(research ri-siege-engineers)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(can-research ri-murder-holes)
+=>
+	(research ri-murder-holes)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(can-research ri-guilds)
+=>
+	(research ri-guilds)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(can-research ri-horse-collar)
+=>
+	(research ri-horse-collar)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(building-type-count-total barracks > 1)
+	(building-type-count-total siege-workshop > 0)
+	(building-type-count-total monastery > 0)
+	(unit-type-count-total battering-ram >= two-percent-pop)
+	(can-research ri-heavy-plow)
+=>
+	(research ri-heavy-plow)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(building-type-count-total barracks > 1)
+	(building-type-count-total siege-workshop > 0)
+	(building-type-count-total monastery > 0)
+	(unit-type-count-total battering-ram >= two-percent-pop)
+	(can-research ri-crop-rotation)
+=>
+	(research ri-crop-rotation)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(can-research ri-double-bit-axe)
+=>
+	(research ri-double-bit-axe)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(building-type-count-total barracks > 1)
+	(building-type-count-total siege-workshop > 0)
+	(building-type-count-total monastery > 0)
+	(unit-type-count-total battering-ram >= two-percent-pop)
+	(can-research ri-gold-mining)
+=>
+	(research ri-gold-mining)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(building-type-count-total barracks > 1)
+	(building-type-count-total siege-workshop > 0)
+	(building-type-count-total monastery > 0)
+	(unit-type-count-total battering-ram >= two-percent-pop)
+	(can-research ri-wheel-barrow)
+=>
+	(research ri-wheel-barrow)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(building-type-count-total barracks > 1)
+	(building-type-count-total siege-workshop > 0)
+	(building-type-count-total monastery > 0)
+	(unit-type-count-total battering-ram >= two-percent-pop)
+	(can-research ri-gold-shaft-mining)
+=>
+	(research ri-gold-shaft-mining)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(building-type-count-total barracks > 1)
+	(building-type-count-total siege-workshop > 0)
+	(building-type-count-total monastery > 0)
+	(unit-type-count-total battering-ram >= two-percent-pop)
+	(can-research ri-bow-saw)
+=>
+	(research ri-bow-saw)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(building-type-count-total barracks > 1)
+	(building-type-count-total siege-workshop > 0)
+	(building-type-count-total monastery > 0)
+	(unit-type-count-total battering-ram >= two-percent-pop)
+	(can-research ri-hand-cart)
+=>
+	(research ri-hand-cart)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(building-type-count-total barracks > 1)
+	(building-type-count-total siege-workshop > 0)
+	(building-type-count-total monastery > 0)
+	(unit-type-count-total battering-ram >= two-percent-pop)
+	(can-research ri-two-man-saw)
+=>
+	(research ri-two-man-saw)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(building-type-count-total barracks > 1)
+	(building-type-count-total siege-workshop > 0)
+	(building-type-count-total monastery > 0)
+	(unit-type-count-total battering-ram >= two-percent-pop)
+	(can-research ri-stone-mining)
+=>
+	(research ri-stone-mining)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(building-type-count-total barracks > 1)
+	(building-type-count-total siege-workshop > 0)
+	(building-type-count-total monastery > 0)
+	(unit-type-count-total battering-ram >= two-percent-pop)
+	(can-research ri-stone-shaft-mining)
+=>
+	(research ri-stone-shaft-mining)
+)
+
+
+; Train a monk to gather relics
+(defrule
+	(doctrine attack-now-strategy)
+	(cc-players-unit-type-count 0 relic > 0)
+	(unit-type-count-total monk < 1)
+	(unit-type-count-total monk-with-relic < 1)
+	(can-train monk)
+=>
+	(train monk)
+)
+
+
+; Train battering rams
+(defrule
+	(doctrine attack-now-strategy)
+	(or (and (unit-type-count-total battering-ram-line < ten-percent-pop)
+	(and (building-type-count-total barracks >= max-barracks)
+	(military-population >= twenty-percent-pop)))
+	(unit-type-count-total battering-ram-line < two-percent-pop))
+	(building-type-count-total barracks >= 2)
+	(building-type-count-total monastery > 0)
+	(can-train battering-ram-line)
+=>
+	(train battering-ram-line)
+)
+
+
+; Train eagles
+(defrule
+	(doctrine attack-now-strategy)
+	(or (and (player-in-game any-ally)
+	(unit-type-count-total eagle-warrior-line < forty-percent-pop))
+	(unit-type-count-total eagle-warrior-line < twenty-percent-pop))
+	(can-train eagle-warrior-line)
+=>
+	(train eagle-warrior-line)
+)
+
+
+; Train spears
+(defrule
+	(doctrine attack-now-strategy)
+	(unit-type-count-total spearman-line < ten-percent-pop)
+	(or (not (unit-available battering-ram-line))
+	(or (unit-type-count-total battering-ram-line >= two-percent-pop)
+	(wood-amount >= 185)))
+	(can-train spearman-line)
+=>
+	(train spearman-line)
+)
+
+
+; Train villagers
+(defrule
+	(doctrine get-to-castle-strategy)
+	(unit-type-count-total villager < max-villagers-before-castle-age)
+	(can-train villager)
+=>
+	(train villager)
+)
+(defrule
+	(doctrine slave-strategy)
+	(unit-type-count-total villager < slave-max-villagers)
+	(can-train villager)
+=>
+	(train villager)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(or (unit-type-count-total villager < forty-percent-pop)
+	(and (not (player-in-game any-ally))
+	(unit-type-count-total villager < solo-max-villagers)))
+	(can-train villager)
+=>
+	(train villager)
+)
+
+
+; Train trade carts
+(defrule
+	(doctrine slave-strategy)
+	(research-completed ri-banking)
+	(research-completed ri-cartography)
+	(escrow-amount wood >= 100)
+	(escrow-amount gold >= 50)
+	(can-train-with-escrow trade-cart)
+=>
+	(release-escrow wood)
+	(release-escrow gold)
+	(train trade-cart)
+)
+
+
+; Decide to attack
+(defrule
+	(enemy-captured-relics)
+=>
+	(set-strategic-number sn-special-attack-type1 1)
+)
+(defrule
+	(not (enemy-captured-relics))
+=>
+	(set-strategic-number sn-special-attack-type1 0)
+)
+(defrule
+	(players-building-type-count any-enemy wonder > 0)
+=>
+	(set-strategic-number sn-special-attack-type3 1)
+)
+(defrule
+	(players-building-type-count any-enemy wonder < 1)
+=>
+	(set-strategic-number sn-special-attack-type3 0)
+)
+(defrule
+	(timer-triggered attack-timer)
+	(military-population >= twenty-percent-pop)
+	(unit-type-count-total battering-ram-line >= two-percent-pop)
+=>
+	(set-strategic-number sn-percent-attack-soldiers 100)
+	(attack-now)
+	(disable-timer attack-timer)
+	(enable-timer attack-timer attack-timer-interval)
+)
+
+
+; Tribute resources
+(defrule
+	(doctrine slave-strategy)
+	(research-completed ri-banking)
+	(food-amount >= 200)
+=>
+	(tribute-to-player any-ally food 100)
+)
+(defrule
+	(doctrine slave-strategy)
+	(research-completed ri-banking)
+	(wood-amount >= 200)
+=>
+	(tribute-to-player any-ally wood 100)
+)
+(defrule
+	(doctrine slave-strategy)
+	(research-completed ri-banking)
+	(gold-amount >= 200)
+=>
+	(tribute-to-player any-ally gold 100)
+)
+(defrule
+	(doctrine slave-strategy)
+	(research-completed ri-banking)
+	(stone-amount >= 200)
+=>
+	(tribute-to-player any-ally stone 100)
+)
+
+
+; Turn off escrow when no longer needed
+(defconst escrow-is-done 40)
+(defrule
+	(true)
+=>
+	(set-goal escrow-is-done 1)
+)
+(defrule
+	(or (research-available ri-coinage)
+	(or (research-available ri-banking)
+	(or (research-available ri-cartography)
+	(or (research-available ri-caravan)
+	(or (research-available ri-wheel-barrow)
+	(research-available ri-hand-cart))))))
+=>
+	(set-goal escrow-is-done 0)
+)
+(defrule
+	(or (research-available ri-gold-mining)
+	(or (research-available ri-gold-shaft-mining)
+	(or (research-available ri-stone-mining)
+	(or (research-available ri-stone-shaft-mining)
+	(or (research-available ri-double-bit-axe)
+	(or (research-available ri-bow-saw)
+	(research-available ri-two-man-saw)))))))
+=>
+	(set-goal escrow-is-done 0)
+)
+(defrule
+	(doctrine slave-strategy)
+	(goal escrow-is-done 1)
+=>
+	(release-escrow food)
+	(set-escrow-percentage food 0)
+)
+(defrule
+	(true)
+=>
+	(set-goal escrow-is-done 1)
+)
+(defrule
+	(or (unit-type-count-total trade-cart < slave-max-trade-carts)
+	(or (research-available ri-wheel-barrow)
+	(research-available ri-hand-cart)))
+=>
+	(set-goal escrow-is-done 0)
+)
+(defrule
+	(or (research-available ri-gold-mining)
+	(or (research-available ri-gold-shaft-mining)
+	(or (research-available ri-stone-mining)
+	(or (research-available ri-stone-shaft-mining)
+	(or (research-available ri-double-bit-axe)
+	(or (research-available ri-bow-saw)
+	(research-available ri-two-man-saw)))))))
+=>
+	(set-goal escrow-is-done 0)
+)
+(defrule
+	(doctrine slave-strategy)
+	(goal escrow-is-done 1)
+=>
+	(release-escrow wood)
+	(set-escrow-percentage wood 0)
+)
+(defrule
+	(true)
+=>
+	(set-goal escrow-is-done 1)
+)
+(defrule
+	(or (research-available ri-coinage)
+	(or (research-available ri-banking)
+	(or (research-available ri-cartography)
+	(or (research-available ri-caravan)
+	(unit-type-count-total trade-cart < slave-max-trade-carts)))))
+=>
+	(set-goal escrow-is-done 0)
+)
+(defrule
+	(doctrine slave-strategy)
+	(goal escrow-is-done 1)
+=>
+	(release-escrow gold)
+	(set-escrow-percentage gold 0)
+)
+
+
+; Grow the town size
+(defrule
+	(timer-triggered grow-town-timer)
+	(strategic-number sn-maximum-town-size == 16)
+=>
+	(set-strategic-number sn-maximum-town-size 18)
+	(disable-timer grow-town-timer)
+	(enable-timer grow-town-timer grow-town-interval)
+)
+(defrule
+	(timer-triggered grow-town-timer)
+	(strategic-number sn-maximum-town-size == 18)
+=>
+	(set-strategic-number sn-maximum-town-size 20)
+	(disable-timer grow-town-timer)
+	(enable-timer grow-town-timer grow-town-interval)
+)
+(defrule
+	(timer-triggered grow-town-timer)
+	(strategic-number sn-maximum-town-size == 20)
+=>
+	(set-strategic-number sn-maximum-town-size 22)
+	(disable-timer grow-town-timer)
+	(enable-timer grow-town-timer grow-town-interval)
+)
+(defrule
+	(timer-triggered grow-town-timer)
+	(strategic-number sn-maximum-town-size == 22)
+=>
+	(set-strategic-number sn-maximum-town-size 24)
+	(disable-timer grow-town-timer)
+	(enable-timer grow-town-timer grow-town-interval)
+)
+(defrule
+	(timer-triggered grow-town-timer)
+	(strategic-number sn-maximum-town-size == 24)
+=>
+	(set-strategic-number sn-maximum-town-size 26)
+	(disable-timer grow-town-timer)
+	(enable-timer grow-town-timer grow-town-interval)
+)
+(defrule
+	(timer-triggered grow-town-timer)
+	(strategic-number sn-maximum-town-size == 26)
+=>
+	(set-strategic-number sn-maximum-town-size 28)
+	(disable-timer grow-town-timer)
+	(enable-timer grow-town-timer grow-town-interval)
+)
+(defrule
+	(timer-triggered grow-town-timer)
+	(strategic-number sn-maximum-town-size == 28)
+=>
+	(set-strategic-number sn-maximum-town-size 30)
+	(disable-timer grow-town-timer)
+	(enable-timer grow-town-timer grow-town-interval)
+)
+
+
+; Decide if there's a wood emergency
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-maximum-wood-drop-distance max-wood-dropsite-distance)
+)
+(defrule
+	(or (wood-amount < 100)
+	(building-type-count lumber-camp >= max-lumber-camps))
+	(dropsite-min-distance wood >= max-wood-dropsite-distance)
+=>
+	(set-strategic-number sn-maximum-wood-drop-distance emergency-wood-gather-distance)
+)
+
+
+; Decide if exploration is needed immediately.
+(defconst need-to-explore-now 40)
+(defrule
+	(true)
+=>
+	(set-goal need-to-explore-now 0)
+)
+#load-if-defined SCANDANAVIA-MAP
+(defrule
+	(sheep-and-forage-too-far)
+	(game-time < 120)
+=>
+	(set-goal need-to-explore-now 100)
+)
+#else
+(defrule
+	(not (resource-found food))
+	(game-time < 120)
+=>
+	(set-goal need-to-explore-now 100)
+)
+#end-if
+(defrule
+	(goal current-age-goal dark-age)
+	(building-type-count-total farm >= min-farms)
+	(building-type-count-total mining-camp < 1)
+	(wood-amount >= 100)
+=>
+	(set-goal need-to-explore-now 100)
+)
+(defrule
+	(goal need-to-explore-now 100)
+=>
+	(set-strategic-number sn-percent-civilian-gatherers 0)
+	(set-strategic-number sn-percent-civilian-explorers 100)
+	(set-strategic-number sn-minimum-civilian-explorers 255)
+)
+(defrule
+	(goal need-to-explore-now 50)
+=>
+	(set-strategic-number sn-percent-civilian-gatherers 50)
+	(set-strategic-number sn-percent-civilian-explorers 50)
+	(set-strategic-number sn-minimum-civilian-explorers 255)
+)
+(defrule
+	(goal need-to-explore-now 10)
+=>
+	(set-strategic-number sn-percent-civilian-gatherers 90)
+	(set-strategic-number sn-percent-civilian-explorers 10)
+	(set-strategic-number sn-minimum-civilian-explorers 255)
+)
+(defrule
+	(goal need-to-explore-now 5)
+=>
+	(set-strategic-number sn-percent-civilian-gatherers 95)
+	(set-strategic-number sn-percent-civilian-explorers 5)
+	(set-strategic-number sn-minimum-civilian-explorers 255)
+)
+(defrule
+	(goal need-to-explore-now 0)
+=>
+	(set-strategic-number sn-percent-civilian-explorers 0)
+	(set-strategic-number sn-percent-civilian-gatherers 100)
+	(set-strategic-number sn-minimum-civilian-explorers 0)
+)
+
+
+; Buy stuff when it can be put to a better use
+(defrule
+	(doctrine attack-now-strategy)
+	(commodity-buying-price food < 200)
+	(gold-amount > 400)
+	(food-amount < 100)
+=>
+	(buy-commodity food)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(commodity-buying-price wood < 200)
+	(gold-amount > 400)
+	(wood-amount < 100)
+=>
+	(buy-commodity wood)
+)
+
+
+; Sell stuff when it's coming out of our ears
+(defrule
+	(doctrine attack-now-strategy)
+	(food-amount > 2000)
+=>
+	(sell-commodity food)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(wood-amount > 2000)
+=>
+	(sell-commodity wood)
+)
+
+
+; Set gathering percentages
+(defrule
+	(goal current-age-goal dark-age)
+	(unit-type-count-total villager < 10)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 100)
+	(set-strategic-number sn-wood-gatherer-percentage 0)
+	(set-strategic-number sn-gold-gatherer-percentage 0)
+	(set-strategic-number sn-stone-gatherer-percentage 0)
+)
+(defrule
+	(goal current-age-goal dark-age)
+	(unit-type-count-total villager >= 10)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 60)
+	(set-strategic-number sn-wood-gatherer-percentage 40)
+	(set-strategic-number sn-gold-gatherer-percentage 0)
+	(set-strategic-number sn-stone-gatherer-percentage 0)
+)
+(defrule
+	(goal current-age-goal feudal-age)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 50)
+	(set-strategic-number sn-wood-gatherer-percentage 40)
+	(set-strategic-number sn-gold-gatherer-percentage 10)
+	(set-strategic-number sn-stone-gatherer-percentage 0)
+)
+(defrule
+	(doctrine slave-strategy)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 40)
+	(set-strategic-number sn-wood-gatherer-percentage 25)
+	(set-strategic-number sn-gold-gatherer-percentage 20)
+	(set-strategic-number sn-stone-gatherer-percentage 15)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(or (current-age == feudal-age)
+	(current-age-time < 600))
+=>
+	(set-strategic-number sn-food-gatherer-percentage 40)
+	(set-strategic-number sn-wood-gatherer-percentage 40)
+	(set-strategic-number sn-gold-gatherer-percentage 20)
+	(set-strategic-number sn-stone-gatherer-percentage 0)
+)
+(defrule
+	(doctrine attack-now-strategy)
+	(or (and (current-age == castle-age)
+	(current-age-time >= 600))
+	(current-age == imperial-age))
+=>
+	(set-strategic-number sn-food-gatherer-percentage 35)
+	(set-strategic-number sn-wood-gatherer-percentage 35)
+	(set-strategic-number sn-gold-gatherer-percentage 20)
+	(set-strategic-number sn-stone-gatherer-percentage 10)
+)

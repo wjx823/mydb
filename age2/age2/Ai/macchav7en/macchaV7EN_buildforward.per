@@ -1,0 +1,106 @@
+;{********************************************************************
+; AI maccha Ver 7.00  buildforward.per
+;}********************************************************************
+;{build-forward-------------------------------------------------------
+;*common
+(defrule
+   (population > pop-95)
+   (goal PROJECT_W 0)
+   (building-type-count siege-workshop < 2)
+   (can-build siege-workshop)
+=>
+   (chat-local-to-self "###build-forward siege-workshop###")
+   (build-forward siege-workshop)
+)
+(defrule
+   (population > pop-95)
+   (goal PROJECT_W 0)
+   (can-build bombard-tower)
+=>
+   (chat-local-to-self "###build-forward bombard-tower###")
+   (build-forward bombard-tower)
+)
+(defrule
+   (population > pop-95)
+   (goal PROJECT_W 0)
+   (not(research-completed ri-bombard-tower))
+   (can-build watch-tower-line)
+=>
+   (chat-local-to-self "###build-forward watch-tower-line###")
+   (build-forward watch-tower-line)
+)
+(defrule
+   (population > pop-95)
+   (goal PROJECT_W 0)
+   (can-build outpost)
+=>
+   (chat-local-to-self "###build-forward outpost###")
+   (build-forward outpost)
+)
+(defrule
+   (current-age == imperial-age)
+   (population > pop-95)
+   (goal PROJECT_W 0)
+   (can-build house)
+=>
+   (chat-local-to-self "###build-forward house###")
+   (build-forward house)
+)
+(defrule
+   (unit-type-count 42 > 0)
+   (goal PROJECT_W 0)
+   (can-build town-center)
+=>
+   (chat-local-to-self "###build-forward town-center###")
+   (build-forward town-center)
+   (disable-self)
+)
+(defrule
+   (goal FORWARD_BUILDING 1)
+   (population > pop-95)
+   (goal PROJECT_W 0)
+   (building-type-count barracks < 12)
+   (can-build barracks)
+=>
+   (chat-local-to-self "###build-forward barracks###")
+   (build-forward barracks)
+)
+(defrule
+   (or
+      (goal FORWARD_BUILDING 2)
+      (goal ATTACK_MODE RUSH_HORSE)
+   )
+   (goal PROJECT_W 0)
+   (population > pop-95)
+   (building-type-count stable < 10)
+   (can-build stable)
+=>
+   (chat-local-to-self "###build-forward stable###")
+   (build-forward stable)
+)
+;{build-forward2-----------------------------------------------------
+(defrule
+   (or
+      (player-in-game any-ally)
+         (and
+             (current-age == castle-age)
+             (players-current-age every-enemy == imperial-age)
+          )
+       )
+   (population > pop-90)
+   (goal PROJECT_W 0)
+   (can-build siege-workshop)
+=>
+   (chat-local-to-self "###build-forward siege-workshop###")
+   (build-forward siege-workshop)
+)
+(defrule
+   (military-population > pop-16)
+   (players-military-population any-enemy <= pop-8)
+   (players-building-type-count any-enemy castle < 3)
+   (can-build siege-workshop)
+=>
+   (chat-local-to-self "###build-forward siege-workshop###")
+   (build-forward siege-workshop)
+)
+;}-------------------------------------------------------------------

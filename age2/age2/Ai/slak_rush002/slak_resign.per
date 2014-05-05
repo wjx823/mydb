@@ -1,0 +1,103 @@
+; --------------------------------------------------------------------------
+; File: Slak_Test1.per
+; Author: SlakTheEldar
+; Date: 2000-10-25
+;
+; Available under BSD-like license; see accompanying Copying.txt file
+;
+; --------------------------------------------------------------------------
+
+(defrule
+  (difficulty >= easy)
+  (game-time > 300)
+  (soldier-count < five-percent-pop)
+  (unit-type-count villager < five-percent-pop)
+  =>
+  (set-goal main-or-response-unit RESIGN)
+  (disable-self)
+)
+
+(defrule
+  (difficulty == moderate)
+  (game-time > 300)
+  (building-type-count wonder < 1)
+  (soldier-count < five-percent-pop)
+  (unit-type-count villager < five-percent-pop)
+  (not (can-train villager) )
+  =>
+  (set-goal main-or-response-unit RESIGN)
+  (disable-self)
+)
+
+(defrule
+  (difficulty <= moderate)
+  (game-time > 300)
+  (building-type-count wonder < 1)
+  (soldier-count == 0)
+  (unit-type-count cannon-galleon-line == 0)
+  (unit-type-count villager == 0)
+  (not (can-train villager) )
+  =>
+  (set-goal main-or-response-unit RESIGN)
+  (disable-self)
+)
+
+(defrule
+  (goal main-or-response-unit RESIGN)
+  (stance-toward any-human ally)
+  (difficulty <= moderate)
+  =>
+  (release-escrow wood)
+  (release-escrow food)
+  (release-escrow gold)
+  (release-escrow stone)
+  (tribute-to-player this-any-human wood 10000)
+  (tribute-to-player this-any-human food 10000)
+  (tribute-to-player this-any-human gold 10000)
+  (tribute-to-player this-any-human stone 10000)
+  (disable-self)
+)
+
+(defrule
+  (goal main-or-response-unit RESIGN)
+  (players-population any-ally > 10)
+  (difficulty <= moderate)
+  =>
+  (release-escrow wood)
+  (release-escrow food)
+  (release-escrow gold)
+  (release-escrow stone)
+  (tribute-to-player this-any-ally wood 10000)
+  (tribute-to-player this-any-ally food 10000)
+  (tribute-to-player this-any-ally gold 10000)
+  (tribute-to-player this-any-ally stone 10000)
+  (disable-self)
+)
+
+;*****************************
+;delete all units
+(defrule
+  (goal main-or-response-unit RESIGN)
+  (difficulty <= moderate)
+  =>
+  (delete-building watch-tower)
+  (delete-building guard-tower)
+  (delete-building keep)
+  (delete-building bombard-tower)
+  (delete-building castle)
+)
+
+;*****************************
+;** All random taunts moved to aiexpert.txt 
+(defrule
+  (goal main-or-response-unit RESIGN)
+  =>
+  (chat-to-all-using-range 22300  22)
+  (chat-to-all-using-id 22322)
+  ; "No wonder thou wert victorious! I shalt abdicate."
+  (resign)
+  (disable-self)
+)
+
+
+

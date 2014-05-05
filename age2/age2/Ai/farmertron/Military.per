@@ -1,0 +1,291 @@
+;concentrate on monastaries or not (i think this works)
+;go for monastaries
+(defrule
+	(enemy-captured-relics)
+=>
+	(set-strategic-number sn-special-attack-type1 1)
+)
+;stop attacking monastaries
+(defrule
+	(not (enemy-captured-relics))
+=>
+	(set-strategic-number sn-special-attack-type1 0)
+)
+
+; Military (champ flood)
+;research conscription asap
+(defrule
+	(can-research ri-conscription)
+=>
+	(chat-to-all "research conscription")
+	(research ri-conscription)
+)
+
+; build barracks
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(or
+	(or
+		(goal GOAL-START-THE-IMPERIAL-ARMY 1)
+		(wood-amount > 300)
+	)
+	(and (goal GOAL-MOBILISE-DEFENCE 1) (building-type-count-total barracks <= 3))
+	)
+	(building-type-count-total barracks <= 10)
+	(can-build barracks)
+=>
+;	(chat-to-all "build barracks")
+	(build barracks)
+)
+;prioritise this over building trebuchets
+(defrule
+	(unit-type-count-total militiaman-line >= 15)
+	(civ-selected aztec)
+	(can-research my-unique-research)
+=>
+	(chat-to-all "research garland wars")
+	(research my-unique-research)
+)
+;build trebuchet
+(defrule
+	;packed trebuchet
+	(unit-type-count-total trebuchet < 4)
+	;unpacked trebuchet
+	(unit-type-count-total 42 < 4)
+	(unit-type-count-total militiaman-line >= 15)
+	(can-train trebuchet)
+=>
+	(train trebuchet)
+	(chat-to-all "train trebuchet")
+)
+
+;research champion
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(or (goal GOAL-MOBILISE-DEFENCE 1)
+		(goal GOAL-START-THE-IMPERIAL-ARMY 1))
+	(can-research ri-man-at-arms)
+=>
+	(chat-to-all "research man-at-arms")
+	(research ri-man-at-arms)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(or (goal GOAL-MOBILISE-DEFENCE 1)
+		(goal GOAL-START-THE-IMPERIAL-ARMY 1))
+	(can-research ri-long-swordsman)
+=>
+	(chat-to-all "research long-swordsman")
+	(research ri-long-swordsman)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(or (goal GOAL-MOBILISE-DEFENCE 1)
+		(goal GOAL-START-THE-IMPERIAL-ARMY 1))
+	(can-research ri-two-handed-swordsman)
+=>
+	(chat-to-all "research two-handed-swordsman")
+	(research ri-two-handed-swordsman)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+		(or (goal GOAL-MOBILISE-DEFENCE 1)
+		(goal GOAL-START-THE-IMPERIAL-ARMY 1))
+	(can-research ri-champion)
+=>
+	(chat-to-all "research champion")
+	(research ri-champion)
+)
+
+; research smithy upgrades
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(or (goal GOAL-MOBILISE-DEFENCE 1)
+		(goal GOAL-START-THE-IMPERIAL-ARMY 1))
+	(can-research ri-scale-mail)
+=>
+	(chat-to-all "research chain-mail")
+	(research ri-scale-mail)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(or (goal GOAL-MOBILISE-DEFENCE 1)
+		(goal GOAL-START-THE-IMPERIAL-ARMY 1))
+	(can-research ri-forging)
+=>
+	(chat-to-all "research forging")
+	(research ri-forging)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(or (goal GOAL-MOBILISE-DEFENCE 1)
+		(goal GOAL-START-THE-IMPERIAL-ARMY 1))
+	(can-research ri-chain-mail)
+=>
+	(chat-to-all "research chain-mail")
+	(research ri-chain-mail)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(or (goal GOAL-MOBILISE-DEFENCE 1)
+		(goal GOAL-START-THE-IMPERIAL-ARMY 1))
+	(can-research ri-iron-casting)
+=>
+	(chat-to-all "research iron-casting")
+	(research ri-iron-casting)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(or (goal GOAL-MOBILISE-DEFENCE 1)
+		(goal GOAL-START-THE-IMPERIAL-ARMY 1))
+	(can-research ri-plate-mail)
+=>
+	(chat-to-all "research plate-mail")
+	(research ri-plate-mail)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(or (goal GOAL-MOBILISE-DEFENCE 1)
+		(goal GOAL-START-THE-IMPERIAL-ARMY 1))
+	(can-research ri-blast-furnace)
+=>
+	(chat-to-all "research blast-furnace")
+	(research ri-blast-furnace)
+)
+
+;build champ flood not-hun
+#load-if-not-defined HUN-CIV
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(or (goal GOAL-MOBILISE-DEFENCE 1)
+		(goal GOAL-START-THE-IMPERIAL-ARMY 1))
+	(or (goal GOAL-MOBILISE-DEFENCE 1)
+		(research-completed ri-champion))
+	(can-train militiaman-line)
+	(unit-type-count-total militiaman-line < 70)
+=>
+;	(chat-to-all "training champion")
+	(train militiaman-line)
+)
+#end-if
+;build two-handed swordsmen flood (this is crap)
+#load-if-defined HUN-CIV
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(or (goal GOAL-MOBILISE-DEFENCE 1)
+		(goal GOAL-START-THE-IMPERIAL-ARMY 1))
+	(or (goal GOAL-MOBILISE-DEFENCE 1)
+		(research-completed ri-long-swordsman)
+	)
+	(can-train militiaman-line)
+	(unit-type-count-total militiaman-line < 70)
+=>
+;	(chat-to-all "training champion")
+	(train militiaman-line)
+)
+#end-if
+
+;ATTACK!ATTACK!ATTACK!
+(defrule
+	(unit-type-count-total militiaman-line >= 15)
+	(research-completed ri-two-handed-swordsman)
+	(goal GOAL-START-THE-IMPERIAL-ARMY 1)
+=>
+;	(taunt 14)
+	(chat-to-all "ATTACK!!!")
+	(attack-now)
+	(enable-timer TIMER-ATTACK 45)
+	(set-strategic-number sn-number-defend-groups 0)
+	(set-strategic-number sn-percent-attack-soldiers 100)
+	(disable-self)
+)
+(defrule
+	(timer-triggered TIMER-ATTACK)
+=>
+;	(taunt 23)
+	(chat-to-all "KEEP ATTACKING!!!")
+	(attack-now)
+	(disable-timer TIMER-ATTACK)
+	(enable-timer TIMER-ATTACK 45)
+	(set-strategic-number sn-number-defend-groups 0)
+	(set-strategic-number sn-percent-attack-soldiers 100)
+)
+	
+; other research
+(defrule
+	(unit-type-count-total militiaman-line >= 15)
+	(can-research ri-bracer)
+=>
+	(chat-to-all "research bracer")
+	(research ri-bracer)
+)
+(defrule
+	(unit-type-count-total militiaman-line >= 15)
+	;don't research this until at least one castle is built, or if it seems that
+	;the computer has given up on a castle
+	(or
+		(building-type-count-total castle > 0)
+		(stone-amount > 800)
+	)
+	(can-research ri-murder-holes)
+=>
+	(chat-to-all "research murder holes")
+	(research ri-murder-holes)
+)
+(defrule
+	(unit-type-count-total militiaman-line >= 15)
+	(civ-selected japanese)
+	(can-research my-unique-research)
+=>
+	(chat-to-all "research katapuro")
+	(research my-unique-research)
+)
+(defrule
+	(unit-type-count-total militiaman-line >= 15)
+	(civ-selected gothic)
+	(can-research 457)
+=>
+	(chat-to-all "research perfusion")
+	(research 457)
+)
+(defrule
+	(unit-type-count-total militiaman-line >= 15)
+	(can-research ri-siege-engineers)
+=>
+	(chat-to-all "research siege engineers")
+	(research ri-siege-engineers)
+)
+(defrule
+	(unit-type-count-total militiaman-line >= 15)
+	(can-research ri-squires)
+=>
+	(chat-to-all "research squires")
+	(research ri-squires)
+)
+(defrule
+	(unit-type-count-total militiaman-line >= 15)
+	(current-age == imperial-age)
+	(can-research ri-ballistics)
+=>
+	(chat-to-all "research ballistics")
+	(research ri-ballistics)
+)
+(defrule
+	(unit-type-count-total militiaman-line >= 15)
+	(civ-selected spanish)
+	(can-research my-unique-research)
+=>
+	(chat-to-all "research supremecy")
+	(research my-unique-research)
+)
+;train monks during flood
+(defrule
+	(goal GOAL-START-THE-IMPERIAL-ARMY 1)
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(unit-type-count-total militiaman-line >= 15)
+	(can-train monk)
+	(unit-type-count-total monk <= 5)
+=>
+	(train monk)
+;	(chat-to-all "train monk")
+)

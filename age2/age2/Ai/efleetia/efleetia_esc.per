@@ -1,0 +1,276 @@
+(defrule ; ’¬‚Ì’†S‚ð‰ó‚³‚ê‚½‚ç‚È‚ñ‚Æ‚µ‚Ä‚Å‚àÄ“xì‚è‚È‚¨‚»‚¤‚Æ‚·‚é
+ (building-type-count-total town-center == 0)
+=>
+ (set-strategic-number sn-food-gatherer-percentage   0)
+ (set-strategic-number sn-gold-gatherer-percentage   0)
+ (set-strategic-number sn-stone-gatherer-percentage 30)
+ (set-strategic-number sn-wood-gatherer-percentage  70)
+)
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (goal RUSH 1)
+=>
+ (set-escrow-percentage food  5)
+ (set-escrow-percentage wood  5)
+ (set-escrow-percentage stone 5)
+)
+
+; H—¿’™‘ 
+
+(defrule
+ (building-type-count town-center > 0)
+ (goal SINKA 1)
+ (goal YUMI 1)
+=>
+ (set-strategic-number sn-food-gatherer-percentage  45)
+ (set-strategic-number sn-gold-gatherer-percentage  15)
+ (set-strategic-number sn-stone-gatherer-percentage  0)
+ (set-strategic-number sn-wood-gatherer-percentage  40)
+)
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (goal SINKA 1)
+ (not(goal YUMI 1))
+ (goal HOHEI 1)
+=>
+ (set-strategic-number sn-food-gatherer-percentage  60)
+ (set-strategic-number sn-gold-gatherer-percentage   5)
+ (set-strategic-number sn-stone-gatherer-percentage  0)
+ (set-strategic-number sn-wood-gatherer-percentage  35)
+)
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (goal SINKA 1)
+ (not(goal YUMI 1))
+ (not(goal HOHEI 1))
+ (goal YARI 1)
+=>
+ (set-strategic-number sn-food-gatherer-percentage  45)
+ (set-strategic-number sn-gold-gatherer-percentage   5)
+ (set-strategic-number sn-stone-gatherer-percentage  5)
+ (set-strategic-number sn-wood-gatherer-percentage  45)
+)
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (goal SINKA 1)
+ (not(goal YUMI 1))
+ (not(goal HOHEI 1))
+ (not(goal YARI 1))
+=>
+ (set-strategic-number sn-food-gatherer-percentage  45)
+ (set-strategic-number sn-gold-gatherer-percentage  10)
+ (set-strategic-number sn-stone-gatherer-percentage  5)
+ (set-strategic-number sn-wood-gatherer-percentage  40)
+)
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (goal SINKA 1)
+ (food-amount < 800)
+ (goal RUSH 0)
+=>
+ (set-escrow-percentage food 50)
+)
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (goal SINKA 1)
+ (food-amount > 800)
+ (goal RUSH 0)
+=>
+ (set-escrow-percentage food 0)
+)
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (goal SINKA 2)
+ (goal KISHI 1)
+=>
+ (set-strategic-number sn-food-gatherer-percentage  40)
+ (set-strategic-number sn-gold-gatherer-percentage  20)
+ (set-strategic-number sn-stone-gatherer-percentage 10)
+ (set-strategic-number sn-wood-gatherer-percentage  30)
+)
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (goal SINKA 2)
+ (not(goal KISHI 1))
+ (goal YUMI-KIHEI 1)
+=>
+ (set-strategic-number sn-food-gatherer-percentage  35)
+ (set-strategic-number sn-gold-gatherer-percentage  20)
+ (set-strategic-number sn-stone-gatherer-percentage 10)
+ (set-strategic-number sn-wood-gatherer-percentage  35)
+)
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (goal SINKA 2)
+ (not(goal KISHI 1))
+ (not(goal YUMI-KIHEI 1))
+=>
+ (set-strategic-number sn-food-gatherer-percentage  45)
+ (set-strategic-number sn-gold-gatherer-percentage  15)
+ (set-strategic-number sn-stone-gatherer-percentage 10)
+ (set-strategic-number sn-wood-gatherer-percentage  30)
+)
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (goal SINKA 2)
+ (food-amount < 1000)
+ (goal RUSH 0)
+=>
+ (set-escrow-percentage food 50)
+)
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (goal SINKA 2)
+ (food-amount > 1000)
+ (goal RUSH 0)
+=>
+ (set-escrow-percentage food 0)
+)
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (goal SINKA 3)
+ (goal RUSH 0)
+=>
+ (set-escrow-percentage food 20)
+ (set-strategic-number sn-food-gatherer-percentage  35)
+ (set-strategic-number sn-gold-gatherer-percentage  35)
+ (set-strategic-number sn-stone-gatherer-percentage 10)
+ (set-strategic-number sn-wood-gatherer-percentage  20)
+)
+
+; ‹à’™‘ 
+(defrule
+ (goal SINKA 1)
+ (escrow-amount gold < 200)
+ (goal RUSH 0)
+=>
+ (set-escrow-percentage gold R-GOLD)
+)
+
+(defrule
+ (goal SINKA 1)
+ (escrow-amount gold >= 200)
+ (goal RUSH 0)
+=>
+ (set-escrow-percentage gold 0)
+)
+
+(defrule
+ (goal SINKA 2)
+ (escrow-amount gold < 800)
+ (goal RUSH 0)
+=>
+ (set-escrow-percentage gold 30)
+)
+
+(defrule
+ (goal SINKA 2)
+ (escrow-amount gold > 800)
+ (goal RUSH 0)
+=>
+ (set-escrow-percentage gold 0)
+)
+
+(defrule
+ (goal SINKA 3)
+ (goal RUSH 0)
+=>
+ (set-escrow-percentage gold 10)
+)
+
+; –ØÞ’™‘ 
+(defrule
+ (goal SINKA 1)
+ (goal RUSH 0)
+=>
+ (set-escrow-percentage wood R-WOOD)
+)
+
+(defrule
+ (goal SINKA 2)
+ (goal RUSH 0)
+=>
+ (set-escrow-percentage wood 10)
+)
+
+(defrule
+ (goal SINKA 3)
+ (goal RUSH 0)
+=>
+ (set-escrow-percentage wood 10)
+)
+
+; Î’™‘ 
+(defrule
+ (goal SINKA 1)
+ (goal RUSH 0)
+=>
+ (set-escrow-percentage stone 80)
+)
+
+(defrule
+ (goal SINKA 2)
+ (building-type-count-total castle == 0)
+ (goal RUSH 0)
+=>
+ (set-escrow-percentage stone 80)
+)
+
+(defrule
+ (goal SINKA 2)
+ (building-type-count-total castle > 0)
+ (research-completed ri-murder-holes)
+ (research-completed ri-bombard-tower)
+ (research-completed guard-tower)
+ (research-completed ri-keep)
+ (goal RUSH 0)
+=>
+ (set-escrow-percentage stone 0)
+)
+
+(defrule
+ (goal SINKA 2)
+ (or
+  (or (research-completed ri-murder-holes) (research-completed ri-bombard-tower) )
+  (or (research-completed guard-tower) (research-completed ri-keep) )
+ )
+ (goal RUSH 0)
+=>
+ (set-escrow-percentage stone 50)
+)
+
+(defrule
+ (goal SINKA 3)
+ (building-type-count-total castle > 0)
+ (research-completed ri-murder-holes)
+ (research-completed ri-bombard-tower)
+ (research-completed guard-tower)
+ (research-completed ri-keep)
+ (goal RUSH 0)
+=>
+ (set-escrow-percentage stone 0)
+)
+
+(defrule
+ (goal SINKA 3)
+ (or
+  (or (research-completed ri-murder-holes) (research-completed ri-bombard-tower) )
+  (or (research-completed guard-tower) (research-completed ri-keep) )
+ )
+ (goal RUSH 0)
+=>
+ (set-escrow-percentage stone 80)
+)
+

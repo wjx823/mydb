@@ -1,0 +1,93 @@
+;taunt
+(defrule
+ (current-age == dark-age)
+=>
+ (set-goal AGE 0)
+)
+
+(defrule
+ (current-age == feudal-age)
+=>
+ (set-goal AGE 1)
+)
+
+(defrule
+ (current-age == castle-age)
+=>
+ (set-goal AGE 2)
+)
+
+(defrule
+ (current-age == imperial-age)
+=>
+ (set-goal AGE 3)
+)
+
+(defrule
+ (taunt-detected any-ally 42)
+ (goal AGE 0)
+=>
+ (chat-to-allies "50)[Dark Age]")
+ (acknowledge-taunt this-any-ally 42)
+)
+
+(defrule
+ (taunt-detected any-ally 42)
+ (goal AGE 0)
+=>
+ (chat-to-allies "50)[[Dark Age]]")
+ (acknowledge-taunt this-any-ally 42)
+)
+
+(defrule
+ (taunt-detected any-ally 42)
+ (goal AGE 1)
+=>
+ (chat-to-allies "51)[[Feudal Age]]")
+ (acknowledge-taunt this-any-ally 42)
+)
+
+(defrule
+ (taunt-detected any-ally 42)
+ (goal AGE 2)
+=>
+ (chat-to-allies "52)[[Castle Age]]")
+ (acknowledge-taunt this-any-ally 42)
+)
+
+(defrule
+ (taunt-detected any-ally 42)
+ (goal AGE 3)
+=>
+ (chat-to-allies "53)[[Imperial Age]]")
+ (acknowledge-taunt this-any-ally 42)
+)
+
+;taunt
+(defrule
+ (taunt-detected any-ally 3)
+=>
+ (tribute-to-player every-ally food 300)
+ (acknowledge-taunt this-any-ally 3)
+)
+
+(defrule
+ (taunt-detected any-ally 4)
+=>
+ (tribute-to-player every-ally wood 300)
+ (acknowledge-taunt this-any-ally 4)
+)
+
+(defrule
+ (taunt-detected any-ally 5)
+=>
+ (tribute-to-player every-ally gold 120)
+ (acknowledge-taunt this-any-ally 5)
+)
+
+(defrule
+ (taunt-detected any-ally 6)
+=>
+ (tribute-to-player every-ally stone 30)
+ (acknowledge-taunt this-any-ally 6)
+)

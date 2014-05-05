@@ -1,0 +1,400 @@
+;//////////////////////////////////////////////////////////////////////////////
+;//              Phoenix Knight (Building Script)
+;//////////////////////////////////////////////////////////////////////////////
+; /_/_/_/_/_/ Town Center /_/_/_/_/_/ 
+(defrule
+ (goal READY_BUILD YES)
+ (building-type-count-total town-center < 2 )
+ (can-build town-center)
+=>
+ (set-strategic-number sn-minimum-town-size 18)
+ (set-strategic-number sn-maximum-town-size 20)
+ (build town-center)
+ (chat-local-to-self "Build : Town Center")
+ (set-goal TOWN-SIZE YES)
+ (enable-timer BUILD_TIME 10)
+ (set-goal READY_BUILD NO)
+)
+
+; /_/_/_/_/_/ Tower-Line /_/_/_/_/_/ 
+(defrule
+ (goal TOWER_LINE YES)
+ (goal READY_BUILD YES)
+ (not(research-completed ri-bombard-tower))
+ (can-build watch-tower-line)
+ (building-type-count-total watch-tower-line < 4)
+=>
+ (set-strategic-number sn-minimum-town-size 1)
+ (set-strategic-number sn-maximum-town-size 7)
+ (build watch-tower-line)
+ (chat-local-to-self "Build : Tower-Line")
+ (set-goal TOWN-SIZE YES)
+ (enable-timer BUILD_TIME 10)
+ (set-goal READY_BUILD NO)
+)
+
+; /_/_/_/_/_/ house /_/_/_/_/_/ 
+(defrule
+ (housing-headroom < 3)
+ (current-age <= feudal-age)
+ (can-build house)
+=>
+ (build house)
+ (chat-local-to-self "Build : house")
+)
+(defrule
+ (goal READY_BUILD YES)
+ (housing-headroom < 5)
+ (current-age >= castle-age)
+ (can-build house)
+=>
+ (build house)
+ (chat-local-to-self "Build : house")
+)
+
+; /_/_/_/_/_/ Mill /_/_/_/_/_/ 
+(defrule
+ (or
+  (resource-found food)
+  (unit-type-count-total villager >= 10)
+ )
+ (building-type-count-total mill == 0)
+ (can-build mill)
+=>
+ (build mill)
+ (chat-local-to-self "Build : Mill")
+ (set-strategic-number sn-minimum-civilian-explorers 0 )
+ (set-strategic-number sn-cap-civilian-explorers 0 )
+ (disable-self)
+)
+
+; /_/_/_/_/_/ Mill /_/_/_/_/_/ 
+(defrule
+ (current-age == imperial-age)
+ (building-type-count-total mill <= 1)
+ (timer-triggered IM_LATE_TIMER)
+ (can-build mill)
+=>
+ (build mill)
+ (chat-local-to-self "Build : Mill")
+)
+
+; /_/_/_/_/_/ lumber-camp /_/_/_/_/_/ 
+(defrule
+ (resource-found wood)
+ (or
+   (dropsite-min-distance wood > 5)
+   (building-type-count-total lumber-camp == 0)
+ )
+ (can-build lumber-camp)
+ (unit-type-count-total villager >= 12)
+=>
+ (chat-local-to-self "Build : lumber-camp")
+ (build lumber-camp)
+)
+
+(defrule
+ (resource-found wood)
+ (unit-type-count-total villager >= 60)
+ (dropsite-min-distance wood > 3)
+ (can-build lumber-camp)
+=>
+ (chat-local-to-self "Build : lumber-camp")
+ (build lumber-camp)
+)
+
+; /_/_/_/_/_/ farm /_/_/_/_/_/ 
+(defrule
+ (or
+  (unit-type-count-total villager >= 13)
+  (building-type-count-total lumber-camp >= 1)
+ )
+ (current-age < castle-age)
+ (building-type-count-total farm <= 14)
+ (building-type-count-total lumber-camp >= 1)
+ (idle-farm-count <= 3)
+ (can-build farm)
+=>
+ (build farm)
+)
+
+(defrule
+ (current-age >= castle-age)
+ (idle-farm-count <= 3)
+ (can-build farm)
+=>
+ (build farm)
+)
+
+;
+(defrule
+ (current-age == imperial-age)
+ (building-type-count-total farm <= 10)
+ (can-build farm)
+=>
+ (build farm)
+)
+
+; /_/_/_/_/_/ Mining Camp /_/_/_/_/_/ 
+(defrule
+ (unit-type-count-total villager >= 26)
+ (resource-found gold)
+ (can-build mining-camp)
+=>
+ (build mining-camp)
+ (chat-local-to-self "Build : (1st)Mining Camp")
+ (disable-self)
+)
+; /_/_/_/_/_/ Mining Camp /_/_/_/_/_/ 
+(defrule
+ (can-build mining-camp)
+ (resource-found stone)
+ (unit-type-count-total villager >= 28)
+ (building-type-count-total mining-camp < 2)
+=>
+ (build mining-camp)
+ (chat-local-to-self "Build : (2nd)Mining Camp")
+ (disable-self)
+)
+
+; /_/_/_/_/_/ Mining Camp /_/_/_/_/_/ 
+(defrule
+ (current-age >= castle-age)
+ (resource-found gold)
+ (dropsite-min-distance gold > 5)
+ (current-age == imperial-age)
+ (can-build mining-camp)
+=>
+ (build mining-camp)
+ (chat-local-to-self "Build : Mining Camp")
+)
+
+(defrule
+ (current-age >= castle-age)
+ (resource-found stone)
+ (dropsite-min-distance stone > 5)
+ (can-build mining-camp)
+=>
+ (build mining-camp)
+ (chat-local-to-self "Build : Mining Camp")
+)
+
+; /_/_/_/_/_/ BlackSmith /_/_/_/_/_/ 
+(defrule
+ (goal READY_BUILD YES)
+ (current-age >= feudal-age )
+ (can-build blacksmith)
+ (building-type-count-total blacksmith == 0 )
+=>
+ (build blacksmith)
+ (chat-local-to-self "Build : blacksmith")
+ (enable-timer BUILD_TIME 5)
+ (set-goal READY_BUILD NO)
+)
+
+; /_/_/_/_/_/ Market /_/_/_/_/_/ 
+(defrule
+ (goal READY_BUILD YES)
+ (current-age >= feudal-age )
+ (building-type-count-total market == 0 )
+ (can-build market)
+=>
+ (set-strategic-number sn-minimum-town-size 16)
+ (set-strategic-number sn-maximum-town-size 18)
+ (build market)
+ (set-goal TOWN-SIZE YES)
+ (chat-local-to-self "Build : market")
+ (enable-timer BUILD_TIME 10)
+ (set-goal READY_BUILD NO)
+)
+
+; /_/_/_/_/_/ (1st)Barracks /_/_/_/_/_/ 
+(defrule
+ (goal READY_BUILD YES)
+ (building-type-count-total barracks == 0 )
+ (goal EVOLUTION 3)
+ (building-type-count-total mill >= 1)
+ (building-type-count-total lumber-camp >= 1)
+ (can-build barracks)
+=>
+ (set-goal TOWN-SIZE YES)
+ (set-strategic-number sn-minimum-town-size 15)
+ (set-strategic-number sn-maximum-town-size 20)
+ (build barracks)
+ (chat-local-to-self "Build : Barracks")
+ (enable-timer BUILD_TIME 10)
+ (set-goal READY_BUILD NO)
+)
+
+; /_/_/_/_/_/ Barracks /_/_/_/_/_/ 
+(defrule
+ (goal READY_BUILD YES)
+ (building-type-count-total university != 0)
+ (building-type-count-total barracks <= 1 )
+ (current-age >= castle-age)
+ (building-type-count-total monastery >= 2)
+ (building-type-count-total mill >= 1)
+ (building-type-count-total lumber-camp >= 1)
+ (can-build barracks)
+=>
+ (set-goal TOWN-SIZE YES)
+ (set-strategic-number sn-minimum-town-size 15)
+ (set-strategic-number sn-maximum-town-size 22)
+ (build barracks)
+ (chat-local-to-self "Build : Barracks")
+ (enable-timer BUILD_TIME 10)
+ (set-goal READY_BUILD NO)
+)
+
+; /_/_/_/_/_/ Archery-Range /_/_/_/_/_/ 
+(defrule
+ (goal READY_BUILD YES)
+ (building-type-count-total archery-range < 1)
+ (building-type-count castle != 0)
+ (can-build archery-range)
+=>
+ (set-strategic-number sn-minimum-town-size 18)
+ (set-strategic-number sn-maximum-town-size 22)
+ (build archery-range)
+ (chat-local-to-self "Build : Archery-Range")
+ (enable-timer BUILD_TIME 10)
+ (set-goal READY_BUILD NO)
+)
+
+; /_/_/_/_/_/ Siege-Workshop /_/_/_/_/_/ 
+(defrule
+ (goal UnderAttack NO)
+ (goal READY_BUILD YES)
+ (building-type-count-total monastery >= 1 )
+ (building-type-count-total siege-workshop == 0 )
+ (can-build siege-workshop)
+=>
+ (set-strategic-number sn-minimum-town-size 10)
+ (set-strategic-number sn-maximum-town-size 14)
+ (build siege-workshop)
+ (set-goal TOWN-SIZE YES)
+ (chat-local-to-self "Build : Siege-Workshop")
+ (enable-timer BUILD_TIME 10)
+ (set-goal READY_BUILD NO)
+)
+
+; /_/_/_/_/_/ Monastery /_/_/_/_/_/ 
+(defrule
+; (goal UnderAttack NO)
+ (goal READY_BUILD YES)
+ (building-type-count-total monastery < 2 )
+ (can-build monastery)
+=>
+ (set-strategic-number sn-minimum-town-size 10)
+ (set-strategic-number sn-maximum-town-size 12)
+ (build monastery)
+ (set-goal TOWN-SIZE YES)
+ (chat-local-to-self "Build : Monastery")
+ (enable-timer BUILD_TIME 10)
+ (set-goal READY_BUILD NO)
+)
+
+; /_/_/_/_/_/ University /_/_/_/_/_/ 
+(defrule
+ (goal READY_BUILD YES)
+ (building-type-count-total monastery >= 1)
+ (building-type-count-total university == 0)
+ (can-build university)
+=>
+ (set-strategic-number sn-minimum-town-size 18)
+ (set-strategic-number sn-maximum-town-size 22)
+ (build university)
+ (set-goal TOWN-SIZE YES)
+ (chat-local-to-self "Build : University")
+ (enable-timer BUILD_TIME 10)
+ (set-goal READY_BUILD NO)
+)
+
+; /_/_/_/_/_/ Town Center /_/_/_/_/_/ 
+(defrule
+ (building-type-count-total town-center < 1 )
+ (can-build town-center)
+=>
+ (build town-center)
+ (chat-local-to-self "Build : Town Center")
+)
+
+; /_/_/_/_/_/ Town Center /_/_/_/_/_/ 
+(defrule
+ (goal READY_BUILD YES)
+ (building-type-count-total town-center < 2 )
+ (can-build town-center)
+=>
+ (set-strategic-number sn-minimum-town-size 18)
+ (set-strategic-number sn-maximum-town-size 20)
+ (build town-center)
+ (chat-local-to-self "Build : Town Center")
+ (set-goal TOWN-SIZE YES)
+ (enable-timer BUILD_TIME 10)
+ (set-goal READY_BUILD NO)
+)
+
+; /_/_/_/_/_/ Town Center /_/_/_/_/_/ 
+(defrule
+ (goal READY_BUILD YES)
+ (current-age == imperial-age)
+ (building-type-count-total town-center == 2)
+ (can-build town-center)
+=>
+ (set-strategic-number sn-minimum-town-size 16)
+ (set-strategic-number sn-maximum-town-size 18)
+ (build town-center)
+ (chat-local-to-self "Build : Town Center(3rd?)")
+ (set-goal TOWN-SIZE YES)
+ (enable-timer BUILD_TIME 10)
+ (set-goal READY_BUILD NO)
+)
+
+; /_/_/_/_/_/ Castle /_/_/_/_/_/ 
+(defrule
+ (goal READY_BUILD YES)
+ (building-type-count-total castle == 0 )
+ (can-build castle)
+=>
+ (set-strategic-number sn-minimum-town-size 20)
+ (set-strategic-number sn-maximum-town-size 24)
+ (build castle)
+ (set-goal TOWN-SIZE YES)
+ (chat-local-to-self "Build : (1st)Castle")
+ (enable-timer BUILD_TIME 10)
+ (set-goal READY_BUILD NO)
+)
+
+; /_/_/_/_/_/ Castle /_/_/_/_/_/ 
+(defrule
+ (goal READY_BUILD YES)
+ (building-type-count castle >= 1 )
+ (building-type-count-total castle < 4 )
+ (stone-amount > 700)
+ (can-build castle)
+=>
+ (set-strategic-number sn-minimum-town-size 12)
+ (set-strategic-number sn-maximum-town-size 20)
+ (build castle)
+ (set-goal TOWN-SIZE YES)
+ (chat-local-to-self "Build : Castle")
+ (enable-timer BUILD_TIME 10)
+ (set-goal READY_BUILD NO)
+)
+
+; /_/_/_/_/_/ bombard-tower /_/_/_/_/_/ 
+(defrule
+ (goal READY_BUILD YES)
+ (research-completed ri-bombard-tower)
+ (can-build ri-bombard-tower)
+ (building-type-count-total ri-bombard-tower < 10)
+=>
+ (set-strategic-number sn-minimum-town-size 20)
+ (set-strategic-number sn-maximum-town-size 50)
+ (build ri-bombard-tower)
+ (chat-local-to-self "Build : bombard-tower")
+ (set-goal TOWN-SIZE YES)
+ (enable-timer BUILD_TIME 10)
+ (set-goal READY_BUILD NO)
+)
+

@@ -1,0 +1,317 @@
+(load "rmresign")
+
+;{*******************************************************************
+; AI maccha Ver 7.01
+;                                 Author:       Hideki Matsuoka
+;                                 E-mail:hmatsuoka@mtc.biglobe.ne.jp
+;}*******************************************************************
+;{Introduce----------------------------------------------------------
+(defrule
+   (not(taunt-detected any-ally 177))
+   (game-time > 10)
+=>
+   (chat-to-all "177 AI maccha Version 7.01EN for BINGMANN CUP")
+   (disable-self)
+)
+(defrule
+   (taunt-detected any-ally 177)
+   (game-time > 10)
+=>
+   (chat-to-all "find another maccha playmode is 2vs2 or over.")
+   (disable-self)
+)
+;}-------------------------------------------------------------------
+;{Initialization-----------------------------------------------------
+(load "macchaV7EN\macchaV7EN_setting")
+;}-------------------------------------------------------------------
+;{Dark-age-----------------------------------------------------------
+(load "macchaV7EN\macchaV7EN_darkage")
+;}-------------------------------------------------------------------
+;{Feudal-age---------------------------------------------------------
+(load "macchaV7EN\macchaV7EN_feudalage")
+;}-------------------------------------------------------------------
+;{Castle-age---------------------------------------------------------
+(load "macchaV7EN\macchaV7EN_castleage")
+;}-------------------------------------------------------------------
+;{Imprerial-age------------------------------------------------------
+(load "macchaV7EN\macchaV7EN_imperialage")
+;}-------------------------------------------------------------------
+;{etc.---------------------------------------------------------------
+(load "macchaV7EN\macchaV7EN_buildforward")
+(load "macchaV7EN\macchaV7EN_building")
+(load "macchaV7EN\macchaV7EN_upgrade2")
+(load "macchaV7EN\macchaV7EN_army")
+(load "macchaV7EN\macchaV7EN_PC6001mk2SR")
+(load "macchaV7EN\macchaV7EN_market")
+;}-------------------------------------------------------------------
+;{GOTHIC-CIV---------------------------------------------------------
+#load-if-defined GOTHIC-CIV
+(load "macchaV7EN\civ\macchaV7EN_gothic")
+#end-if
+;}-------------------------------------------------------------------
+;{FRANKISH-CIV-------------------------------------------------------
+#load-if-defined FRANKISH-CIV
+(load "macchaV7EN\civ\macchaV7EN_frankish")
+#end-if
+;}-------------------------------------------------------------------
+;{PERSIAN-CIV--------------------------------------------------------
+#load-if-defined PERSIAN-CIV
+(load "macchaV7EN\civ\macchaV7EN_frankish")
+#end-if
+;}-------------------------------------------------------------------
+;{SARACEN-CIV--------------------------------------------------------
+#load-if-defined SARACEN-CIV
+(load "macchaV7EN\civ\macchaV7EN_saracen")
+#end-if
+;}-------------------------------------------------------------------
+;{BYZANTINE-CIV------------------------------------------------------
+#load-if-defined BYZANTINE-CIV
+(load "macchaV7EN\civ\macchaV7EN_byzantine")
+#end-if
+;}-------------------------------------------------------------------
+;{BRITON-CIV---------------------------------------------------------
+#load-if-defined BRITON-CIV
+(load "macchaV7EN\civ\macchaV7EN_briton")
+#end-if
+;}-------------------------------------------------------------------
+;{CHINESE-CIV--------------------------------------------------------
+#load-if-defined CHINESE-CIV
+(load "macchaV7EN\civ\macchaV7EN_chinese")
+#end-if
+;}-------------------------------------------------------------------
+;{MONGOL-CIV---------------------------------------------------------
+#load-if-defined MONGOL-CIV
+(load "macchaV7EN\civ\macchaV7EN_mongol")
+#end-if
+;}-------------------------------------------------------------------
+;{HUN-CIV------------------------------------------------------------
+#load-if-defined HUN-CIV
+(load "macchaV7EN\civ\macchaV7EN_hun")
+#end-if
+;}-------------------------------------------------------------------
+;{SPANISH-CIV--------------------------------------------------------
+#load-if-defined SPANISH-CIV
+(load "macchaV7EN\civ\macchaV7EN_spanish")
+#end-if
+;}-------------------------------------------------------------------
+;{TURKISH-CIV--------------------------------------------------------
+#load-if-defined TURKISH-CIV
+(load "macchaV7EN\civ\macchaV7EN_turkish")
+#end-if
+;}-------------------------------------------------------------------
+;{TEUTONIC-CIV-------------------------------------------------------
+#load-if-defined TEUTONIC-CIV
+(load "macchaV7EN\civ\macchaV7EN_teutonic")
+#end-if
+;}-------------------------------------------------------------------
+;{KOREAN-CIV---------------------------------------------------------
+#load-if-defined KOREAN-CIV
+(load "macchaV7EN\civ\macchaV7EN_korean")
+#end-if
+;}-------------------------------------------------------------------
+;{MAYAN-CIV----------------------------------------------------------
+#load-if-defined MAYAN-CIV
+(load "macchaV7EN\civ\macchaV7EN_mayan")
+#end-if
+;}-------------------------------------------------------------------
+;{AZTEC-CIV----------------------------------------------------------
+#load-if-defined AZTEC-CIV
+(load "macchaV7EN\civ\macchaV7EN_aztec")
+#end-if
+;}-------------------------------------------------------------------
+;{JAPANESE-CIV-------------------------------------------------------
+#load-if-defined JAPANESE-CIV
+(load "macchaV7EN\civ\macchaV7EN_japanese")
+#end-if
+;}-------------------------------------------------------------------
+;{VIKING-CIV---------------------------------------------------------
+#load-if-defined VIKING-CIV
+(load "macchaV7EN\civ\macchaV7EN_japanese")
+#end-if
+;}-------------------------------------------------------------------
+;{CELTIC-CIV---------------------------------------------------------
+#load-if-defined CELTIC-CIV
+(load "macchaV7EN\civ\macchaV7EN_japanese")
+#end-if
+;}-------------------------------------------------------------------
+;{Map----------------------------------------------------------------
+#load-if-defined SCANDANAVIA-MAP
+(defrule
+   (unit-type-count villager >= 5)
+   (can-build mill)
+=>
+   (chat-local-to-self "build mill s.t.SCANDANAVIA-MAP")
+   (build mill)
+   (disable-self)
+)
+#end-if
+#load-if-defined YUCATAN-MAP
+(defrule
+   (resource-found food)
+   (building-type-count mill < 2)
+   (can-build mill)
+=>
+   (chat-local-to-self "build mill s.t.YUCATAN-MAP")
+   (build mill)
+)
+#end-if
+#load-if-defined BLACK-FOREST-MAP
+(defrule 
+   (true)
+=>
+   (enable-wall-placement 2) 
+   (chat-local-to-self "The use of the wall is permitted.  s.t.BLACK-FOREST-MAP")
+   (disable-self)
+)
+(defrule 
+   (building-type-count castle > 0)
+   (can-build-wall 2 stone-wall-line)
+=>
+   (build-wall 2 stone-wall-line)
+)
+(defrule 
+   (can-build-gate 2)
+=>
+   (build-gate 2)
+   (chat-local-to-self "build gate s.t.BLACK-FOREST-MAP")
+)
+#end-if
+;}-------------------------------------------------------------------
+;{Common routine-----------------------------------------------------
+;*Construction control
+(defrule 
+   (timer-triggered TIMER_CONTROL)
+=>
+   (chat-local-to-self "The construction control is released.")
+   (disable-timer TIMER_CONTROL)
+   (set-goal CONTROL_TOWNSIZE NO)
+)
+;*Change target
+(defrule
+   (current-age >= castle-age)
+   (population > pop-90)
+   (players-unit-type-count any-enemy villager <= 4)
+=>
+   (chat-local-to-self "*Suppression completion. The attack target is changed.*")
+   (chat-to-enemies "20")
+   (set-strategic-number sn-attack-winning-player 1)
+   (set-strategic-number sn-attack-winning-player-factor 80)
+   (disable-self)
+)
+;Give&Take system
+(defrule
+   (or
+      (current-age >= castle-age)
+      (town-under-attack)
+   )
+   (food-amount < 50)
+=>
+   (chat-to-allies "113")
+)
+(defrule
+   (current-age == feudal-age)
+   (game-time > 1200)
+   (food-amount < 800)
+=>
+   (chat-to-allies "113")
+)
+(defrule
+   (or
+      (current-age >= castle-age)
+      (town-under-attack)
+   )
+   (wood-amount < 50)
+=>
+   (chat-to-allies "114")
+)
+(defrule
+   (or
+      (current-age >= castle-age)
+      (town-under-attack)
+   )
+   (gold-amount < 50)
+=>
+   (chat-to-allies "115")
+)
+(defrule
+   (town-under-attack)
+   (stone-amount < 50)
+=>
+   (chat-to-allies "116")
+)
+(defrule
+   (taunt-detected any-ally 113)
+   (food-amount > 500)
+ =>
+   (chat-to-allies "OK!,I send you food")
+   (tribute-to-player this-any-ally food 100)
+   (acknowledge-taunt this-any-ally 113)
+)
+(defrule
+   (taunt-detected any-ally 113)
+   (food-amount <= 500)
+ =>
+   (acknowledge-taunt this-any-ally 113)
+)
+(defrule
+   (taunt-detected any-ally 114)
+   (wood-amount > 500)
+ =>
+   (chat-to-allies "OK!,I send you wood")
+   (tribute-to-player this-any-ally wood 100)
+   (acknowledge-taunt this-any-ally 114)
+)
+(defrule
+   (taunt-detected any-ally 114)
+   (wood-amount <= 500)
+ =>
+   (acknowledge-taunt this-any-ally 114)
+)
+(defrule
+   (taunt-detected any-ally 115)
+   (gold-amount > 500)
+ =>
+   (chat-to-allies "OK!,I send you gold")
+   (tribute-to-player this-any-ally gold 100)
+   (acknowledge-taunt this-any-ally 115)
+)
+(defrule
+   (taunt-detected any-ally 115)
+   (gold-amount <= 500)
+ =>
+   (acknowledge-taunt this-any-ally 115)
+)
+(defrule
+   (taunt-detected any-ally 116)
+   (stone-amount > 300)
+ =>
+   (chat-to-allies "OK!,I send you stone")
+   (tribute-to-player this-any-ally stone 100)
+   (acknowledge-taunt this-any-ally 116)
+)
+(defrule
+   (taunt-detected any-ally 116)
+   (stone-amount <= 300)
+ =>
+   (acknowledge-taunt this-any-ally 116)
+)
+;}-------------------------------------------------------------------
+;{FOR BINGMAN-CUP----------------------------------------------------
+(defrule
+    (current-age == castle-age)
+=>
+    (set-goal ATTACK_MODE NORMAL)
+)
+(defrule
+   (goal EVOLUTION 2)
+   (can-build barracks)
+=>
+   (build barracks)
+   (disable-self)
+)
+(defrule
+   (can-research ri-man-at-arms)
+=>
+   (research ri-man-at-arms)
+)
+;}-------------------------------------------------------------------

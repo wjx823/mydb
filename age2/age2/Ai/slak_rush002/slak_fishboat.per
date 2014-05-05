@@ -1,0 +1,272 @@
+; --------------------------------------------------------------------------
+; File: Slak_fishboat.per
+; Author: SlakTheEldar
+; Date: 2000-10-25
+;
+; Available under BSD-like license; see accompanying Copying.txt file
+;
+; --------------------------------------------------------------------------
+
+(defrule
+  (true)
+  =>
+  (set-strategic-number sn-number-boat-explore-groups 0)
+  (set-strategic-number sn-dock-defend-priority 1)
+  (disable-self)
+)
+
+(defrule
+  (unit-type-count galley-line > 0)
+  =>
+  (set-strategic-number sn-number-boat-explore-groups 1)
+  (disable-self)
+)
+
+;make docks
+(defrule
+  (current-age >= build-dock-age)
+  (goal boat-strategy MANYBOATS)
+  (building-type-count-total dock == 0)
+  (building-type-count-total lumber-camp > 0)
+  (building-type-count-total mining-camp > 0)
+  (dropsite-min-distance stone < 7)
+  (can-build dock)
+  =>
+  (build dock)
+  (chat-local-to-self "build dock #1")
+)
+
+(defrule
+  (current-age >= build-dock-age)
+  (not (goal boat-strategy MANYBOATS))
+  (wood-amount > 300)
+  (building-type-count-total dock == 0)
+  (building-type-count-total lumber-camp > 0)
+  (building-type-count-total mining-camp > 0)
+  (dropsite-min-distance stone < 7)
+  (can-build dock)
+  =>
+  (build dock)
+  (chat-local-to-self "build dock #1")
+)
+
+(defrule
+  (current-age >= build-dock-age)
+  (building-type-count-total dock == 1)
+  (goal boat-strategy MANYBOATS)
+  (building-type-count-total lumber-camp > 0)
+  (building-type-count-total barracks > 0)
+  (can-build dock)
+  =>
+  (build dock)
+  (chat-local-to-self "MANYBOATS build dock #2")
+)
+
+(defrule
+  (current-age >= build-dock-age)
+  (building-type-count-total dock == 1)
+  (goal boat-strategy SOMEBOATS)
+  (building-type-count-total lumber-camp > 0)
+  (building-type-count-total archery-range > 0)
+  (wood-amount > 300)
+  (can-build dock)
+  =>
+  (build dock)
+  (chat-local-to-self "SOMEBOATS build dock #2")
+)
+
+(defrule
+  (current-age >= build-dock-age)
+  (current-age >= feudal-age)
+  (goal boat-strategy MANYBOATS)
+  (wood-amount > 300)
+  (building-type-count-total dock < my-max-docks)
+  (can-build dock)
+  =>
+  (build dock)
+  (chat-local-to-self "build dock feudal MANYBOATS")
+)
+
+(defrule
+  (current-age >= build-dock-age)
+  (goal boat-strategy MANYBOATS)
+  (current-age >= castle-age)
+  (wood-amount > 500)
+  (building-type-count-total dock < my-max-docks)
+  (can-build dock)
+  =>
+  (build dock)
+  (chat-local-to-self "build dock castle or later lots of wood")
+)
+
+(defrule
+  (current-age >= build-dock-age)
+  (goal boat-strategy MANYBOATS)
+  (current-age == imperial-age)
+  (wood-amount > 500)
+  (building-type-count-total dock < my-max-docks)
+  (can-build dock)
+  =>
+  (build dock)
+  (chat-local-to-self "build dock imperial lots of wood")
+)
+
+;build fishing ships in dark age
+#load-if-not-defined DEATH-MATCH
+
+(defrule
+  (current-age == dark-age)
+  (building-type-count-total lumber-camp > 0)
+  (civilian-population < villager-dark)
+  (can-train fishing-ship)
+  =>
+  (train fishing-ship)
+  (chat-local-to-self "train dark fishing-ship")
+)
+
+;feudal boats
+(defrule
+  (current-age == feudal-age)
+  (building-type-count-total blacksmith > 0)
+  (civilian-population < villager-feudal)
+  (unit-type-count-total galley > 0)
+  (can-train fishing-ship)
+  =>
+  (train fishing-ship)
+  (chat-local-to-self "train fishing ship, feudal alternate")
+)
+
+;castle boats
+(defrule
+  (current-age == castle-age)
+  (building-type-count-total siege-workshop > 0)
+  (civilian-population < villager-castle)
+  (can-train fishing-ship)
+  =>
+  (train fishing-ship)
+  (chat-local-to-self "train fishing ship, castle alternate")
+)
+
+#end-if
+
+(defrule
+  (or (population >= pop-cap) 
+      (and (civilian-population >= villager-castle)
+	   (current-age == castle-age)))
+  (unit-type-count fishing-ship > fifteen-percent-pop)
+  =>
+  (delete-unit fishing-ship)
+  (chat-local-to-self "too many fishing boats")
+)
+
+(defrule
+  (or (population >= pop-cap) (civilian-population >= villager-imperial))
+  (current-age == imperial-age)
+  (current-age-time > 2400)
+  (unit-type-count fishing-ship > ten-percent-pop)
+  =>
+  (delete-unit fishing-ship)
+  (chat-local-to-self "too many fishing boats in imperial")  
+)
+
+; --------------------------------------------------------------------------
+; Dock Research
+; --------------------------------------------------------------------------
+(defrule
+  (goal sec-mil-research-allowed YES)
+  (goal econ-research-done YES)
+  (can-research-with-escrow ri-war-galley)
+  =>
+  (release-escrow food)
+  (release-escrow gold)
+  (release-escrow wood)
+  (research ri-war-galley)
+  (chat-local-to-self "ri-war-galley")
+  (disable-self)
+)
+
+(defrule
+  (goal sec-mil-research-allowed YES)
+  (goal econ-research-done YES)
+  (can-research-with-escrow ri-galleon)
+  =>
+  (release-escrow food)
+  (release-escrow gold)
+  (release-escrow wood)
+  (research ri-galleon)
+  (chat-local-to-self "ri-galleon")
+  (disable-self)
+)
+
+(defrule
+  (goal sec-mil-research-allowed YES)
+  (goal econ-research-done YES)
+  (can-research-with-escrow ri-careening)
+  =>
+  (release-escrow food)
+  (release-escrow gold)
+  (release-escrow wood)
+  (research ri-careening)
+  (chat-local-to-self "ri-careening")
+  (disable-self)
+)
+
+(defrule
+  (goal sec-mil-research-allowed YES)
+  (goal econ-research-done YES)
+  (can-research-with-escrow ri-dry-dock)
+  =>
+  (release-escrow food)
+  (release-escrow gold)
+  (release-escrow wood)
+  (research ri-dry-dock)
+  (chat-local-to-self "ri-dry-dock")
+  (disable-self)
+)
+
+(defrule
+  (goal sec-mil-research-allowed YES)
+  (goal econ-research-done YES)
+  (can-research-with-escrow ri-cannon-galleon)
+  =>
+  (release-escrow food)
+  (release-escrow gold)
+  (release-escrow wood)
+  (research ri-cannon-galleon)
+  (chat-local-to-self "ri-cannon-galleon")
+  (disable-self)
+)
+
+(defrule
+  (goal sec-mil-research-allowed YES)
+  (goal econ-research-done YES)
+  (can-research-with-escrow ri-deck-guns)
+  =>
+  (release-escrow food)
+  (release-escrow gold)
+  (release-escrow wood)
+  (research ri-deck-guns)
+  (chat-local-to-self "ri-deck-guns")
+  (disable-self)
+)
+
+#load-if-defined VIKING-CIV
+(defrule
+  (goal sec-mil-research-allowed YES)
+  (goal econ-research-done YES)
+  (unit-type-count-total longboat-line >= 2)
+  (can-research-with-escrow ri-elite-longboat)
+  =>
+  (release-escrow food)
+  (release-escrow gold)
+  (release-escrow wood)
+  (research ri-elite-longboat)
+  (chat-local-to-self "elite longboat")
+  (disable-self)
+)
+#end-if
+
+
+
+
+

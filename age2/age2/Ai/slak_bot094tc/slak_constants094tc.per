@@ -1,0 +1,954 @@
+; --------------------------------------------------------------------------
+; File: Slak_Constants.per
+; Author: SlakTheEldar
+; Date: 2000-10-25
+;
+; Copyright 1999-2000, Dan Cieslak  All rights reserved.
+; Available under BSD-like license: see accompanying Copying.txt file.
+;
+; --------------------------------------------------------------------------
+
+; --------------------------------------------------------------------------
+; Timers
+; --------------------------------------------------------------------------
+(defconst t-attack 1)
+(defconst t-ground-assessment 2)
+(defconst t-lumber-camp 3)
+(defconst t-mining-camp 4)
+(defconst t-panic-timer 5)
+(defconst t-rush-check 6)
+
+; --------------------------------------------------------------------------
+; For general usage
+; --------------------------------------------------------------------------
+(defconst NONE 0)
+(defconst NO 0)
+(defconst YES 1)
+(defconst NO-ADVANCE 0)
+(defconst ADVANCE 1)
+(defconst NORMAL 0)
+(defconst NOTICE 99)
+
+; --------------------------------------------------------------------------
+; Unit types
+; --------------------------------------------------------------------------
+(defconst INFANTRY 1)
+(defconst PIKE 2)
+(defconst CAVALRY 3)
+(defconst CAMEL 4)
+(defconst LIGHTCAV 5)
+(defconst CAVARCHER 6)
+(defconst ARCHER 7)
+(defconst SKIRMISHER 8)
+(defconst MONK 9)
+(defconst MANGONEL 10)
+(defconst SCORPION 11)
+(defconst MAMELUKE 12)
+(defconst ELEPHANT 13)
+(defconst TK 14)
+(defconst HUSKARL 15)
+(defconst CASTLE 17)
+(defconst SIEGE 18)
+(defconst UNIQUE 19)
+(defconst UNIQUE-INFANTRY 20)
+(defconst UNIQUE-ARCHER 21)
+(defconst UNIQUE-CAVALRY 22)
+(defconst EAGLE 23)
+(defconst WARWAGON 24)
+(defconst PLUMIE 24)
+
+; --------------------------------------------------------------------------
+; GOALS
+; --------------------------------------------------------------------------
+(defconst boat-strategy 1)
+(defconst SOMEBOATS 1)
+(defconst MANYBOATS 10)
+
+(defconst boats-needed 2)
+(defconst CONTROL 1)
+
+(defconst attack-control 3) ; Controls when to attack
+(defconst ATTACK-WAIT 0)
+(defconst ENEMY-FOUND 1)
+(defconst ATTACK-PENDING 2)
+(defconst ATTACK-OK 3)
+(defconst AM-ATTACKING 4)
+(defconst UNDER-ATTACK 5)
+(defconst IS-RUSHING 6)
+(defconst OUTNUMBERED-OR-WONDER 7)
+
+(defconst resource-needed 4) ; Controls what to gather
+(defconst DONE-CHECKING 0)
+(defconst CHECKING 1)
+
+(defconst main-or-response-unit 5)
+(defconst MAIN 1)
+(defconst RESPONSE 2)
+(defconst BOAT 3)
+(defconst IMPERIAL-PANIC 4)
+(defconst MONKONLY 5)
+(defconst CASTLE-DEF 6)
+(defconst CASTLE-OFF 7)
+(defconst FEUDAL-DEF 8)
+(defconst FEUDAL-OFF 9)
+(defconst RESIGN 999) ; For when to resign
+
+(defconst age-advancement 6) ; Uses NO, NOTICE
+
+(defconst responding-to-threat 7)
+
+(defconst checking-for-enemy-threat 8) ; Uses YES/NO
+
+(defconst enemy-threat 9)              ; Uses Unit Types from above
+
+(defconst make-warboat 10)             ; Uses YES/NO
+
+(defconst infantry-upgrades 11)        ; Uses LOW/MED/HI-PRIORITY
+(defconst archer-upgrades 12)          ; Uses LOW/MED/HI-PRIORITY
+(defconst cav-upgrades 13)             ; Uses LOW/MED/HI-PRIORITY
+
+(defconst LOW-PRIORITY 1)
+(defconst MED-PRIORITY 2)
+(defconst HI-PRIORITY 3)
+
+(defconst escrow-wood 14)              ; Uses YES/NO
+(defconst escrow-food 15)              ; Uses YES/NO
+(defconst escrow-gold 16)              ; Uses YES/NO
+(defconst escrow-stone 17)             ; Uses YES/NO
+
+(defconst large-enemy-threat 18)       ; Uses YES/NO
+
+(defconst am-feudal-rush-detecting 19) ; Uses YES/NO
+
+(defconst ally-tribute-resource-needed 20) ; Uses FOOD/WOOD/GOLD/STONE/ALL
+(defconst FOOD 1)
+(defconst WOOD 2)
+(defconst GOLD 3)
+(defconst STONE 4)
+(defconst ALL-RESOURCES 5)
+
+(defconst research-allowed 21)         ; Uses YES/NO
+(defconst blacksmith-research-done 22) ; Uses YES/NO
+(defconst uni-research-done 23)        ; Uses YES/NO
+(defconst econ-research-done 24)       ; Uses YES/NO
+(defconst mil-research-done 25)        ; Uses YES/NO
+
+; is-zero - From BingAI.  Checks if civ-specific constant is set to
+; zero.  Useful for many applications.
+(defconst is-zero 40)
+
+; ---------------------- End goal constants.
+
+#load-if-defined ARABIA-MAP
+(defconst my-max-docks 0)
+(defconst map-trade-unit trade-cart)
+(defconst map-trade-building market)
+(defconst build-dock-age imperial-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting ARABIA map!")
+  (set-goal boat-strategy NO)
+  (disable-self)
+)
+#else
+
+#load-if-defined ARCHIPELAGO-MAP
+(defconst my-max-docks 6)
+(defconst map-trade-unit trade-cog)
+(defconst map-trade-building dock)
+(defconst build-dock-age castle-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting ARCHIPELAGO map!")
+  (set-goal boat-strategy MANYBOATS)
+  (set-goal boats-needed NO)
+  (disable-self)
+)
+#else
+
+#load-if-defined ARENA-MAP
+(defconst my-max-docks 0)
+(defconst map-trade-unit trade-cart)
+(defconst map-trade-building market)
+(defconst build-dock-age imperial-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting ARENA map!")
+  (set-goal boat-strategy NO)
+  (disable-self)
+)
+#else
+
+#load-if-defined BALTIC-MAP
+(defconst my-max-docks 4)
+(defconst map-trade-unit trade-cart)
+(defconst map-trade-building market)
+(defconst build-dock-age feudal-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting BALTIC map!")
+  (set-goal boat-strategy MANYBOATS)
+  (set-goal boats-needed NO)
+  (disable-self)
+)
+#else
+
+#load-if-defined BLACK-FOREST-MAP
+(defconst my-max-docks 0)
+(defconst map-trade-unit trade-cart)
+(defconst map-trade-building market)
+(defconst build-dock-age imperial-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting BLACK-FOREST map!")
+  (set-goal boat-strategy NO)
+  (disable-self)
+)
+#else
+
+#load-if-defined COASTAL-MAP
+(defconst my-max-docks 6)
+(defconst map-trade-unit trade-cart)
+(defconst map-trade-building market)
+(defconst build-dock-age castle-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting COASTAL map!")
+  (set-goal boat-strategy SOMEBOATS)
+  (set-goal boats-needed NO)
+  (disable-self)
+)
+#else
+
+#load-if-defined CONTINENTAL-MAP
+(defconst my-max-docks 4)
+(defconst map-trade-unit trade-cart)
+(defconst map-trade-building market)
+(defconst build-dock-age castle-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting CONTINENTAL map!")
+  (set-goal boat-strategy NO)
+  (set-goal boats-needed NO)
+  (disable-self)
+)
+#else
+
+#load-if-defined CRATER-LAKE-MAP
+(defconst my-max-docks 0)
+(defconst map-trade-unit trade-cart)
+(defconst map-trade-building market)
+(defconst build-dock-age imperial-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting CRATER-LAKE map!")
+  (set-goal boat-strategy NONE)
+  (set-goal boats-needed NO)
+  (disable-self)
+)
+#else
+
+#load-if-defined FORTRESS-MAP
+(defconst my-max-docks 0)
+(defconst map-trade-unit trade-cart)
+(defconst map-trade-building market)
+(defconst build-dock-age imperial-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting FORTRESS map!")
+  (set-goal boat-strategy NO)
+  (disable-self)
+)
+#else
+
+#load-if-defined GHOST-LAKE-MAP
+(defconst my-max-docks 0)
+(defconst map-trade-unit trade-cart)
+(defconst map-trade-building market)
+(defconst build-dock-age imperial-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting GHOST-LAKE map!")
+  (set-goal boat-strategy NO)
+  (disable-self)
+)
+#else
+
+#load-if-defined GOLD-RUSH-MAP
+(defconst my-max-docks 0)
+(defconst map-trade-unit trade-cart)
+(defconst map-trade-building market)
+(defconst build-dock-age imperial-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting GOLD-RUSH map!")
+  (set-goal boat-strategy NO)
+  (disable-self)
+)
+#else
+
+#load-if-defined HIGHLAND-MAP
+(defconst my-max-docks 0)
+(defconst map-trade-unit trade-cart)
+(defconst map-trade-building market)
+(defconst build-dock-age imperial-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting HIGHLAND map!")
+  (set-goal boat-strategy SOMEBOATS)
+  (set-goal boats-needed NO)
+  (disable-self)
+)
+#else
+
+#load-if-defined ISLANDS-MAP
+(defconst my-max-docks 6)
+(defconst map-trade-unit trade-cog)
+(defconst map-trade-building dock)
+(defconst build-dock-age feudal-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting ISLANDS map!")
+  (set-goal boat-strategy MANYBOATS)
+  (set-goal boats-needed NO)
+  (disable-self)
+)
+#else
+
+#load-if-defined MEDITERRANEAN-MAP
+(defconst my-max-docks 4)
+(defconst map-trade-unit trade-cart)
+(defconst map-trade-building market)
+(defconst build-dock-age feudal-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting MEDITERRANEAN map!")
+  (set-goal boat-strategy MANYBOATS)
+  (set-goal boats-needed NO)
+  (disable-self)
+)
+#else
+
+#load-if-defined MIGRATION-MAP
+(defconst my-max-docks 4)
+(defconst map-trade-unit trade-cog)
+(defconst map-trade-building dock)
+(defconst build-dock-age feudal-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting MIGRATION map!")
+  (set-goal boat-strategy MANYBOATS)
+  (set-goal boats-needed NO)
+  (disable-self)
+)
+#else
+
+#load-if-defined MONGOLIA-MAP
+(defconst my-max-docks 0)
+(defconst map-trade-unit trade-cart)
+(defconst map-trade-building market)
+(defconst build-dock-age imperial-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting MONGOLIA map!")
+  (set-goal boat-strategy NONE)
+  (set-goal boats-needed NO)
+  (disable-self)
+)
+#else
+
+#load-if-defined NOMAD-MAP
+(defconst my-max-docks 0)
+(defconst map-trade-unit trade-cart)
+(defconst map-trade-building market)
+(defconst build-dock-age imperial-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting NOMAD map!")
+  (set-goal boat-strategy NONE)
+  (set-goal boats-needed NO)
+  (disable-self)
+)
+#else
+
+#load-if-defined OASIS-MAP
+(defconst my-max-docks 0)
+(defconst map-trade-unit trade-cart)
+(defconst map-trade-building market)
+(defconst build-dock-age imperial-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting OASIS map!")
+  (set-goal boat-strategy NONE)
+  (set-goal boats-needed NO)
+  (disable-self)
+)
+#else
+
+#load-if-defined RIVERS-MAP
+(defconst my-max-docks 4)
+(defconst map-trade-unit trade-cog)
+(defconst map-trade-building dock)
+(defconst build-dock-age castle-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting RIVERS map!")
+  (set-goal boat-strategy SOMEBOATS)
+  (set-goal boats-needed NO)
+  (disable-self)
+)
+#else
+
+#load-if-defined SALT-MARSH-MAP
+(defconst my-max-docks 3)
+(defconst map-trade-unit trade-cog)
+(defconst map-trade-building dock)
+(defconst build-dock-age imperial-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting SALT-MARSH map!")
+  (set-goal boat-strategy NONE)
+  (set-goal boats-needed NO)
+  (disable-self)
+)
+#else
+
+#load-if-defined SCANDANAVIA-MAP
+(defconst my-max-docks 0)
+(defconst map-trade-unit trade-cart)
+(defconst map-trade-building market)
+(defconst build-dock-age imperial-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting SCANDINAVIA map!")
+  (set-goal boat-strategy NONE)
+  (set-goal boats-needed NO)
+  (disable-self)
+)
+#else
+
+#load-if-defined TEAM-ISLANDS-MAP
+(defconst my-max-docks 6)
+(defconst map-trade-unit trade-cart)
+(defconst map-trade-building market)
+(defconst build-dock-age dark-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting TEAM-ISLANDS map!")
+  (set-goal boat-strategy MANYBOATS)
+  (set-goal boats-needed NO)
+  (disable-self)
+)
+#else
+
+#load-if-defined SCENARIO-MAP
+(defconst my-max-docks 6)
+(defconst map-trade-unit trade-cart)
+(defconst map-trade-building market)
+(defconst build-dock-age castle-age)
+
+(defrule
+  (true)
+  =>
+  (set-goal boat-strategy SOMEBOATS)
+  (set-goal boats-needed NO)
+  (chat-to-all-using-id 22145)
+  (chat-to-all-using-id 22146)
+  ;"If this is an all-land or an island map, then please"
+  ;"rework thy AI script accordingly."
+  (disable-self)
+)
+#else
+
+#load-if-defined YUCATAN-MAP
+(defconst my-max-docks 0)
+(defconst map-trade-unit trade-cart)
+(defconst map-trade-building market)
+(defconst build-dock-age imperial-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting YUCATAN map!")
+  (set-goal boat-strategy NONE)
+  (set-goal boats-needed NO)
+  (disable-self)
+)
+#else
+(defconst my-max-docks 0)
+(defconst map-trade-unit trade-cart)
+(defconst map-trade-building market)
+(defconst build-dock-age imperial-age)
+
+(defrule
+  (true)
+  =>
+  (chat-local-to-self "detecting UNKNOW map!")
+  (set-goal boat-strategy NONE)
+  (set-goal boats-needed NO)
+  (disable-self)
+)
+#end-if ; YUC
+#end-if ; SCEN
+#end-if ; TEAM-ISLANDS
+#end-if ; SCAN
+#end-if ; SALT
+#end-if ; RIVERS
+#end-if ; OASIS
+#end-if ; NOMAD
+#end-if ; MONGOLIA
+#end-if ; MIGRATION
+#end-if ; MED
+#end-if ; ISL
+#end-if ; HIGHLAND
+#end-if ; GOLD-RUSH
+#end-if ; GHOST
+#end-if ; FORTRESS
+#end-if ; CRATER
+#end-if ; CONT
+#end-if ; COASTAL
+#end-if ; BLACK-FOREST
+#end-if ; BALT
+#end-if ; ARENA
+#end-if ; ARCH
+#end-if ; ARABIA
+
+
+; [Slak] set the following constants based on POPULATION-CAP
+; villager-dark-rush
+; villager-dark
+; villager-feudal
+; villager-feudal-rushed
+; villager-castle
+; villager-imperial
+; pop-cap
+; deathmatch-unit-max
+; feudal-town-size
+; castle-town-size
+; imperial-town-size
+; unit-max
+; five-percent-pop
+; ten-percent-pop
+; twenty-percent-pop
+; thirty-percent-pop
+; feudal-tower
+; feudal-tower-rushed
+; castle-tower
+; castle-tower-rushed
+; imperial-tower
+; post-imperial-tower
+; [Slak] End of comment.
+
+(defconst large-siege-threat	     5)
+(defconst large-elephant-threat      5)
+(defconst large-monk-threat	     6)
+(defconst large-tough-unit-threat   10)
+(defconst large-normal-unit-threat  13)
+(defconst large-easy-unit-threat    19)
+(defconst large-tower-threat	     7)
+(defconst large-castle-threat	     3)
+(defconst large-treb-threat          4)
+
+(defconst medium-siege-threat	     3)
+(defconst medium-elephant-threat     3)
+(defconst medium-monk-threat	     4)
+(defconst medium-tough-unit-threat   7)
+(defconst medium-normal-unit-threat  9)
+(defconst medium-easy-unit-threat   13)
+(defconst medium-tower-threat	     5)
+(defconst medium-castle-threat	     2)
+(defconst medium-treb-threat         1)
+
+(defconst feudal-def-min-mil         6)
+(defconst feudal-off-min-mil        10)
+(defconst castle-def-min-mil         6)
+(defconst castle-off-min-mil        14)
+
+(defconst feudal-tower 4)
+(defconst feudal-tower-rushed 6)
+(defconst castle-tower 5)
+(defconst castle-tower-rushed 6)
+(defconst imperial-tower 5)
+(defconst post-imperial-tower 7)
+
+#load-if-defined POPULATION-CAP-25
+
+#end-if
+
+;***************************
+#load-if-defined POPULATION-CAP-50
+
+#end-if
+
+;***************************
+#load-if-defined POPULATION-CAP-75
+(defconst villager-dark-rush 20)
+(defconst villager-dark 28)
+(defconst villager-feudal 33)
+(defconst villager-feudal-rushed 40)
+(defconst villager-castle 40)
+(defconst villager-imperial 40)
+(defconst pop-cap 75)
+(defconst deathmatch-unit-max 55)
+(defconst max-trade-units 3)
+
+(defconst feudal-town-size 18)
+(defconst castle-town-size 20)
+(defconst imperial-town-size 35)
+
+(defconst dark-farms 5)
+(defconst feudal-farms 9)
+(defconst castle-farms 14)
+(defconst imperial-farms 18)
+
+(defconst max-base-castles 3)
+(defconst max-forward-castles 5)
+
+(defconst five-percent-pop 4)
+(defconst ten-percent-pop 8)
+(defconst fifteen-percent-pop 11)
+(defconst twenty-percent-pop 15)
+(defconst twenty-five-percent-pop 19)
+(defconst thirty-percent-pop 23)
+(defconst forty-percent-pop 30)
+(defconst fifty-percent-pop 38)
+(defconst sixty-percent-pop 46)
+(defconst seventy-percent-pop 54)
+
+#end-if
+
+;***************************
+#load-if-defined POPULATION-CAP-100
+(defconst villager-dark-rush 20)
+(defconst villager-dark 28)
+(defconst villager-feudal 33)
+(defconst villager-feudal-rushed 43)
+(defconst villager-castle 44)
+(defconst villager-imperial 55)
+(defconst pop-cap 100)
+(defconst deathmatch-unit-max 75)
+(defconst max-trade-units 4)
+
+(defconst feudal-town-size 18)
+(defconst castle-town-size 20)
+(defconst imperial-town-size 35)
+
+(defconst dark-farms 5)
+(defconst feudal-farms 9)
+(defconst castle-farms 18)
+(defconst imperial-farms 24)
+
+(defconst max-base-castles 3)
+(defconst max-forward-castles 5)
+
+(defconst five-percent-pop 5)
+(defconst ten-percent-pop 10)
+(defconst fifteen-percent-pop 15)
+(defconst twenty-percent-pop 20)
+(defconst twenty-five-percent-pop 25)
+(defconst thirty-percent-pop 30)
+(defconst forty-percent-pop 40)
+(defconst fifty-percent-pop 50)
+(defconst sixty-percent-pop 60)
+(defconst seventy-percent-pop 70)
+
+#end-if
+
+;***************************
+#load-if-defined POPULATION-CAP-125
+(defconst villager-dark-rush 20)
+(defconst villager-dark 28)
+(defconst villager-feudal 36)
+(defconst villager-feudal-rushed 47)
+(defconst villager-castle 55)
+(defconst villager-imperial 70)
+(defconst pop-cap 125)
+(defconst deathmatch-unit-max 95)
+(defconst max-trade-units 8)
+
+(defconst feudal-town-size 18)
+(defconst castle-town-size 20)
+(defconst imperial-town-size 35)
+
+(defconst dark-farms 5)
+(defconst feudal-farms 9)
+(defconst castle-farms 18)
+(defconst imperial-farms 24)
+
+(defconst max-base-castles 3)
+(defconst max-forward-castles 5)
+
+(defconst five-percent-pop 6)
+(defconst ten-percent-pop 13)
+(defconst fifteen-percent-pop 18)
+(defconst twenty-percent-pop 25)
+(defconst twenty-five-percent-pop 31)
+(defconst thirty-percent-pop 38)
+(defconst forty-percent-pop 50)
+(defconst fifty-percent-pop 63)
+(defconst sixty-percent-pop 76)
+(defconst seventy-percent-pop 89)
+
+#end-if
+;***************************
+#load-if-defined POPULATION-CAP-150
+(defconst villager-dark-rush 20)
+(defconst villager-dark 28)
+(defconst villager-feudal 33)
+(defconst villager-feudal-rushed 47)
+(defconst villager-castle 58)
+(defconst villager-imperial 75)
+(defconst pop-cap 150)
+(defconst deathmatch-unit-max 125)
+(defconst max-trade-units 12)
+
+(defconst feudal-town-size 18)
+(defconst castle-town-size 20)
+(defconst imperial-town-size 35)
+
+(defconst dark-farms 5)
+(defconst feudal-farms 9)
+(defconst castle-farms 18)
+(defconst imperial-farms 24)
+
+(defconst max-base-castles 3)
+(defconst max-forward-castles 5)
+
+(defconst five-percent-pop 7)
+(defconst ten-percent-pop 15)
+(defconst fifteen-percent-pop 22)
+(defconst twenty-percent-pop 30)
+(defconst twenty-five-percent-pop 38)
+(defconst thirty-percent-pop 45)
+(defconst forty-percent-pop 60)
+(defconst fifty-percent-pop 75)
+(defconst sixty-percent-pop 90)
+(defconst seventy-percent-pop 105)
+
+#end-if
+;***************************
+#load-if-defined POPULATION-CAP-175
+(defconst villager-dark-rush 25)
+(defconst villager-dark 28)
+(defconst villager-feudal 33)
+(defconst villager-feudal-rushed 50)
+(defconst villager-castle 62)
+(defconst villager-imperial 80)
+(defconst pop-cap 175)
+(defconst deathmatch-unit-max 95)
+(defconst max-trade-units 14)
+
+(defconst feudal-town-size 18)
+(defconst castle-town-size 20)
+(defconst imperial-town-size 35)
+
+(defconst dark-farms 5)
+(defconst feudal-farms 9)
+(defconst castle-farms 18)
+(defconst imperial-farms 24)
+
+(defconst max-base-castles 3)
+(defconst max-forward-castles 5)
+
+(defconst five-percent-pop 8)
+(defconst ten-percent-pop 18)
+(defconst fifteen-percent-pop 27)
+(defconst twenty-percent-pop 35)
+(defconst twenty-five-percent-pop 44)
+(defconst thirty-percent-pop 53)
+(defconst forty-percent-pop 70)
+(defconst fifty-percent-pop 86)
+(defconst sixty-percent-pop 104)
+(defconst seventy-percent-pop 122)
+
+#end-if
+;***************************
+#load-if-defined POPULATION-CAP-200
+(defconst villager-dark-rush 25)
+(defconst villager-dark 28)
+(defconst villager-feudal 33)
+(defconst villager-feudal-rushed 55)
+(defconst villager-castle 70)
+(defconst villager-imperial 90)
+(defconst pop-cap 200)
+(defconst deathmatch-unit-max 95)
+(defconst max-trade-units 17)
+
+(defconst feudal-town-size 18)
+(defconst castle-town-size 20)
+(defconst imperial-town-size 35)
+
+(defconst dark-farms 5)
+(defconst feudal-farms 9)
+(defconst castle-farms 18)
+(defconst imperial-farms 24)
+
+(defconst max-base-castles 3)
+(defconst max-forward-castles 5)
+
+(defconst five-percent-pop 10)
+(defconst ten-percent-pop 20)
+(defconst fifteen-percent-pop 30)
+(defconst twenty-percent-pop 40)
+(defconst twenty-five-percent-pop 50)
+(defconst thirty-percent-pop 60)
+(defconst forty-percent-pop 80)
+(defconst fifty-percent-pop 100)
+(defconst sixty-percent-pop 120)
+(defconst seventy-percent-pop 140)
+
+#end-if
+;*************************************************************
+
+;*************************************************************
+; [Slak] set the following constants based on MAP
+; max-town-center-count
+; dark-mill-count
+; feudal-mill-count
+; castle-mill-count
+; imperial-mill-count
+; mining-count
+; [Slak] End of comment.
+
+#load-if-defined TINY-MAP
+(defconst max-town-center-count 5)
+(defconst max-forward-town-center-count 7)
+(defconst dark-mill-count 1)
+(defconst feudal-mill-count 1)
+(defconst castle-mill-count 1)
+(defconst imperial-mill-count 1)
+(defconst mining-count 6)
+(defconst panic-mining-count 10)
+(defconst camp-panic-distance 54)
+#end-if
+;**************************
+#load-if-defined SMALL-MAP
+(defconst max-town-center-count 7)
+(defconst max-forward-town-center-count 9)
+(defconst dark-mill-count 1)
+(defconst feudal-mill-count 1)
+(defconst castle-mill-count 1)
+(defconst imperial-mill-count 1)
+(defconst mining-count 7)
+(defconst panic-mining-count 12)
+(defconst camp-panic-distance 72)
+#end-if
+;**************************
+#load-if-defined MEDIUM-MAP
+(defconst max-town-center-count 11)
+(defconst max-forward-town-center-count 13)
+(defconst dark-mill-count 1)
+(defconst feudal-mill-count 1)
+(defconst castle-mill-count 1)
+(defconst imperial-mill-count 1)
+(defconst mining-count 10)
+(defconst panic-mining-count 14)
+(defconst camp-panic-distance 90)
+
+#end-if
+;**************************
+#load-if-defined NORMAL-MAP
+(defconst max-town-center-count 13)
+(defconst max-forward-town-center-count 15)
+(defconst dark-mill-count 1)
+(defconst feudal-mill-count 1)
+(defconst castle-mill-count 1)
+(defconst imperial-mill-count 2)
+(defconst mining-count 11)
+(defconst panic-mining-count 16)
+(defconst camp-panic-distance 108)
+#end-if
+;**************************
+#load-if-defined LARGE-MAP
+(defconst max-town-center-count 15)
+(defconst max-forward-town-center-count 17)
+(defconst dark-mill-count 1)
+(defconst feudal-mill-count 1)
+(defconst castle-mill-count 2)
+(defconst imperial-mill-count 3)
+(defconst mining-count 12)
+(defconst panic-mining-count 18)
+(defconst camp-panic-distance 150)
+#end-if
+;**************************
+#load-if-defined GIANT-MAP
+(defconst max-town-center-count 17)
+(defconst max-forward-town-center-count 19)
+(defconst dark-mill-count 1)
+(defconst feudal-mill-count 2)
+(defconst castle-mill-count 3)
+(defconst imperial-mill-count 4)
+(defconst mining-count 15)
+(defconst panic-mining-count 20)
+(defconst camp-panic-distance 192)
+#end-if
+
+;*************************************************************
+; [Slak] detect if we're on a water map.  Note that 
+; references to 'slak_fishboat' and 'slak_warboat'
+; have been removed in favor of 'slak_fishboat' and
+; 'slak_warboat'.
+;
+; Also, just for fun, I'm going to change the chats so that
+; all players see the message, so I can figure out what is
+; happening here.
+;
+; Finally, for readability (and my sanity) I'm changing all 
+; the hard-coded goals to use the constant names that we 
+; just defined.
+
+(defrule
+  (not (map-type highland) )
+=>
+  (set-strategic-number sn-minimum-water-body-size-for-dock 3000)
+  (disable-self)
+)
+;*************************************************************
+(defconst panic-time 3600)
+
+
+

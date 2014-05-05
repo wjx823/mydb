@@ -1,0 +1,449 @@
+(load "rmresign")
+
+;Farmertron AI v1.1 for AoK:TC
+;copyright 2000 Tim Partlett
+;zone name: hZ_Farmer
+;email: farmer@achtung.co.uk
+
+;v1.1 revisions
+;[brackets indicate thanks given to person who spotted bug/improvement]
+;*civilian search increased for all maps but scandinavia
+;*scandinavia search decreased, but mill time-out increased
+;*goths research perfusion instead of anarchy
+;*removal of additional, unwanted 'disable-self' commands from tech researches [erdhu@paoe]
+;*wood chopping bug fixed
+;*no mills defined for map type
+;*change from building uni for upgrade to siege workshop
+;*uni built in imperial age
+;*upgrade of fletching, etc. now a priority research [darq_shade]
+;*monks not created whilst under attack
+;*responds to an attack of skirms, rams, knights&m@a with a staggered military response
+;*fixed for mixed computer/human allies (tribute-player-any-computer-ally) [deadeasymeat@paoe]
+
+; Constants
+;goals
+(defconst GOAL-RESEARCHING-FEUDAL 1)
+(defconst GOAL-READY-FOR-CASTLE 2)
+(defconst GOAL-RESEARCHING-CASTLE 3)
+(defconst GOAL-I-AM-THE-SHOT 4)
+(defconst GOAL-DISABLE-MILL-BUILDING 5)
+(defconst GOAL-SLING-SUSPEND-TRIBUTE 6)
+(defconst GOAL-START-THE-IMPERIAL-ARMY 7)
+(defconst GOAL-NO-WOOD-NEEDED 8)
+(defconst GOAL-NO-FOOD-NEEDED 9)
+(defconst GOAL-NO-GOLD-NEEDED 10)
+(defconst GOAL-NO-STONE-NEEDED 11)
+(defconst GOAL-MOBILISE-DEFENCE 12)
+;timers
+(defconst TIMER-WHO-IS-THE-BOSS 1)
+(defconst TIMER-ATTACK 2)
+;taunts
+
+;AI INFO
+(defrule
+	(true)
+=>
+	(chat-to-all "Farmertron AI v1.1 by hZ_Farmer")
+	(disable-self)
+)
+
+; Goals
+(defrule
+	(true)
+=>
+	(set-goal GOAL-RESEARCHING-FEUDAL 0)
+	(set-goal GOAL-READY-FOR-CASTLE 0)
+	(set-goal GOAL-RESEARCHING-CASTLE 0)
+	(set-goal GOAL-I-AM-THE-SHOT 2)
+	(set-goal GOAL-DISABLE-MILL-BUILDING 0)
+	(set-goal GOAL-SLING-SUSPEND-TRIBUTE 0)
+	(set-goal GOAL-START-THE-IMPERIAL-ARMY 0)
+	(set-goal GOAL-NO-WOOD-NEEDED 0)
+	(set-goal GOAL-NO-FOOD-NEEDED 0)
+	(set-goal GOAL-NO-GOLD-NEEDED 0)
+	(set-goal GOAL-NO-STONE-NEEDED 0)
+	(set-goal GOAL-MOBILISE-DEFENCE 0)
+	(disable-self)
+)
+
+(load "Farmertron\Sling Shot")
+(load "Farmertron\map conditionals")
+
+; Strategic numbers
+;basic startup crap which will need modifying
+
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-percent-civilian-gatherers 90)
+	(set-strategic-number sn-percent-civilian-builders 10)
+	(set-strategic-number sn-percent-civilian-explorers 0)
+	(set-strategic-number sn-food-gatherer-percentage 100)
+	(set-strategic-number sn-wood-gatherer-percentage 0)
+	(set-strategic-number sn-gold-gatherer-percentage 0)
+	(set-strategic-number sn-stone-gatherer-percentage 0)
+	(disable-self)
+)
+
+; military and game winning sn to be fiddled with
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-relic-return-distance 200)
+	(disable-self)
+)
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-special-attack-type1 -1)
+	(set-strategic-number sn-special-attack-influence1 0)
+	(disable-self)
+)
+(defrule
+	(true)
+=>	
+	(set-strategic-number sn-attack-winning-player 0)
+	(set-strategic-number sn-allow-civilian-defense 1)
+	(disable-self)
+)
+
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-random-placement-factor 100)
+	(disable-self)
+)
+
+; Escrow amounts
+(defrule
+	(true)
+=>
+	(set-escrow-percentage food 0)
+	(set-escrow-percentage wood 0)
+	(set-escrow-percentage gold 0)
+	(set-escrow-percentage stone 0)
+	(disable-self)
+)
+(defrule 
+   (true) 
+=>
+   (set-strategic-number sn-initial-exploration-required 0)
+   (set-strategic-number sn-cap-civilian-explorers 2) 
+   (set-strategic-number sn-number-explore-groups 1) 
+   (set-strategic-number sn-minimum-explore-group-size 1) 
+   (set-strategic-number sn-maximum-explore-group-size 1) 
+   (set-strategic-number sn-percent-half-exploration 40)
+   (set-strategic-number sn-percentage-explore-exterminators 40)
+   (disable-self)
+)
+(defrule 
+   (true) 
+=>
+   (set-strategic-number sn-percent-civilian-builders 10)
+   (set-strategic-number sn-percent-civilian-gatherers 90)
+   (set-strategic-number sn-cap-civilian-builders 10)
+   (set-strategic-number sn-cap-civilian-gatherers 99)
+   (disable-self)
+)
+(defrule 
+   (true) 
+=>
+   (set-strategic-number sn-maximum-wood-drop-distance 7)
+   (set-strategic-number sn-maximum-food-drop-distance 10)
+   (set-strategic-number sn-maximum-hunt-drop-distance 15)
+   (set-strategic-number sn-maximum-gold-drop-distance 5)
+   (set-strategic-number sn-maximum-stone-drop-distance 5)
+   (disable-self)
+)
+(defrule 
+   (true) 
+=>
+   (set-strategic-number sn-food-dropsite-distance 5)
+   (set-strategic-number sn-wood-dropsite-distance 7)
+   (set-strategic-number sn-stone-dropsite-distance 5)
+   (set-strategic-number sn-gold-dropsite-distance 5)
+   (disable-self)
+)
+(defrule 
+   (true) 
+=>
+   (set-strategic-number sn-mill-max-distance 35)
+   (set-strategic-number sn-camp-max-distance 25)
+   (disable-self)
+)
+(defrule 
+   (true)
+=>
+   (set-strategic-number sn-minimum-town-size 8)
+   (set-strategic-number sn-maximum-town-size 10)
+   (set-strategic-number sn-intelligent-gathering 1)
+   (set-strategic-number sn-minimum-dropsite-buffer 1)
+   (set-strategic-number sn-retask-gather-amount 0)
+   (set-strategic-number sn-max-retask-gather-amount 0)
+   (disable-self)
+)
+(defrule
+   (true)
+=>
+   (set-strategic-number sn-number-attack-groups 0)
+   (set-strategic-number sn-minimum-attack-group-size 1)
+   (set-strategic-number sn-maximum-attack-group-size 1)
+   (set-strategic-number sn-scale-minimum-attack-group-size 0)
+   (set-strategic-number sn-scale-maximum-attack-group-size 0)
+   (set-strategic-number sn-percent-attack-soldiers 100)
+   (set-strategic-number sn-target-evaluation-siege-weapon 32000)
+   (disable-self)
+)
+(defrule
+   (true)
+=>
+   (set-strategic-number sn-group-commander-selection-method 2)
+   (set-strategic-number sn-group-form-distance 10)
+   (set-strategic-number sn-attack-group-gather-spacing 0)
+   (set-strategic-number sn-attack-separation-time-randomness 0)
+   (set-strategic-number sn-attack-intelligence 1)
+   (set-strategic-number sn-percent-enemy-sighted-response 0)
+   (set-strategic-number sn-enemy-sighted-response-distance 0)
+   (disable-self)
+)
+(defrule
+   (true)
+=>
+   (set-strategic-number sn-number-defend-groups 1)
+   (set-strategic-number sn-maximum-defend-group-size 60)
+   (set-strategic-number sn-gold-defend-priority 0)
+   (set-strategic-number sn-stone-defend-priority 0)
+   (set-strategic-number sn-forage-defend-priority 0)
+   (set-strategic-number sn-relic-defend-priority 0)
+   (set-strategic-number sn-town-defend-priority 0)
+   (set-strategic-number sn-defense-distance 0)
+   (set-strategic-number sn-defend-overlap-distance 5)
+   (disable-self)
+)
+(defrule
+   (true)
+=>
+   (set-strategic-number sn-group-leader-defense-distance 1)
+   (set-strategic-number sn-task-ungrouped-soldiers 0)
+   (set-strategic-number sn-allow-civilian-defense 1)
+   (set-difficulty-parameter ability-to-maintain-distance 100)
+   (set-difficulty-parameter ability-to-dodge-missiles 0)
+   (set-strategic-number sn-consecutive-idle-unit-limit 1)
+   (set-strategic-number sn-sentry-distance 0)
+   (set-strategic-number sn-sentry-distance-variation 0)
+   (set-strategic-number sn-zero-priority-distance 0)
+   (set-strategic-number sn-attack-separation-time-randomness 0)
+   (disable-self)
+)
+; detect attack on base and respond
+(defrule
+	(true)
+=>
+	(set-goal GOAL-MOBILISE-DEFENCE 0)
+)
+(defrule
+	(town-under-attack)
+	(or
+	(or
+		(players-unit-type-count any-enemy militiaman-line > 2)
+		(players-unit-type-count any-enemy skirmisher-line > 2)
+	)
+	(or
+		(players-unit-type-count any-enemy battering-ram-line > 0)
+		(players-unit-type-count any-enemy knight-line > 1)
+	)
+	)
+=>
+	(set-goal GOAL-MOBILISE-DEFENCE 1)
+)
+
+; all ages
+;increase town size
+(defrule
+	(current-age == feudal-age)
+=>
+	(set-strategic-number sn-maximum-town-size 15)
+	(set-strategic-number sn-minimum-town-size 10)
+	(disable-self)
+)
+(defrule
+	(or
+		(current-age == castle-age)
+		(game-time > 1260)
+	)
+=>
+	(set-strategic-number sn-maximum-town-size 20)
+	(set-strategic-number sn-minimum-town-size 12)
+	(disable-self)
+)
+(defrule
+	(or
+		(current-age == imperial-age)
+		(game-time > 1500)
+	)
+=>
+	(set-strategic-number sn-maximum-town-size 25)
+	(set-strategic-number sn-minimum-town-size 15)
+	(disable-self)
+)
+(defrule
+	(game-time > 1800)
+=>
+	(set-strategic-number sn-maximum-town-size 30)
+	(set-strategic-number sn-minimum-town-size 18)
+)
+(defrule
+	(game-time > 2100)
+=>
+	(set-strategic-number sn-maximum-town-size 35)
+	(set-strategic-number sn-minimum-town-size 21)
+)
+(defrule
+	(game-time > 2400)
+=>
+	(set-strategic-number sn-maximum-town-size 40)
+	(set-strategic-number sn-minimum-town-size 25)
+	;extend walking distances for that long game
+	(set-strategic-number sn-maximum-wood-drop-distance 15)
+	(set-strategic-number sn-maximum-food-drop-distance 20)
+	(set-strategic-number sn-maximum-hunt-drop-distance 25)
+	(set-strategic-number sn-maximum-gold-drop-distance 12)
+	(set-strategic-number sn-maximum-stone-drop-distance 12)
+	(disable-self)
+)
+
+;let the villagers wander....
+(defrule
+	(game-time > 1800)
+=>
+	(set-strategic-number sn-camp-max-distance 50)
+	(disable-self)
+)
+
+;maintain a town center
+(defrule
+	(game-time greater-than 45)
+	(building-type-count town-center less-than 1)
+	(can-build town-center)
+=>
+	(build town-center)
+)
+
+; build subsequent mills
+(defrule
+	(building-type-count-total lumber-camp > 0)
+	(building-type-count-total mill > 0)
+	(building-type-count-total mill < MAX-MILLS-FOR-MAP)
+	(or	
+		(sheep-and-forage-too-far)
+		(wood-amount >= 200)
+	)
+	(can-build mill)
+	(goal GOAL-DISABLE-MILL-BUILDING 0)
+=>
+	(chat-to-all "build mill (subsequent)")
+	(build mill)
+)
+;build more mines/lumber camp
+;lumber
+(defrule
+	(current-age != dark-age)
+	(or
+		(dropsite-min-distance wood > 7)
+		(and (wood-amount > 350) (building-type-count-total lumber-camp < 4))
+	)
+	(can-build lumber-camp)
+=>
+	(set-strategic-number sn-camp-max-distance 35)
+	(chat-to-all "build lumber camp (subsequent)")
+	(build lumber-camp)
+)
+;gold mine
+(defrule
+	(building-type-count-total mining-camp > 1)
+	(or
+		(dropsite-min-distance gold > 7)
+		(and (wood-amount > 350) (building-type-count-total mining-camp < 4))
+	)
+	(can-build mining-camp)
+=>
+	(set-strategic-number sn-camp-max-distance 35)
+	(chat-to-all "building mine (subsequent)")
+	(build mining-camp)
+)
+;stone mine
+(defrule
+	(building-type-count-total mining-camp > 1)
+	(or
+		(dropsite-min-distance stone > 7)
+		(and (wood-amount > 350) (building-type-count-total mining-camp < 4))
+	)
+	(can-build mining-camp)
+=>
+	(set-strategic-number sn-camp-max-distance 35)
+	(chat-to-all "building mine (subsequent)")
+	(build mining-camp)
+)
+
+;sell excess resources
+;wood
+(defrule
+	(building-type-count-total market > 0)
+	(wood-amount > 700)
+	(gold-amount < 800)
+=>
+	(sell-commodity wood)
+	(chat-to-all "selling wood")
+)
+;food
+(defrule
+	(building-type-count-total market > 0)
+	(food-amount > 1300)
+	(gold-amount < 800)
+=>
+	(sell-commodity food)
+	(chat-to-all "selling food")
+)
+;stone
+(defrule
+	(building-type-count-total market > 0)
+	(stone-amount > 800)
+	(gold-amount < 800)
+=>
+	(sell-commodity stone)
+	(chat-to-all "selling stone")
+)
+;buy required resources
+;food
+(defrule
+	(building-type-count-total market > 0)
+	(or
+		(food-amount < 200)
+		(and (food-amount < 800) (commodity-buying-price food < 151))
+	)
+	(gold-amount > 500)
+=>
+	(buy-commodity food)
+	(chat-to-all "buying food")
+)
+;wood
+(defrule
+	(building-type-count-total market > 0)
+	(wood-amount < 300)
+	(gold-amount > 900)
+=>
+	(buy-commodity wood)
+	(chat-to-all "buying wood")
+)
+
+(load "Farmertron\Dark Age")
+(load "Farmertron\Feudal Age")
+(load "Farmertron\Castle Age")
+(load "Farmertron\Imperial Age")
+#load-if-defined MAYAN-CIV
+(load "Farmertron\Military-Mayan")
+#end-if
+#load-if-not-defined MAYAN-CIV
+(load "Farmertron\Military")
+#end-if
+(load "Farmertron\Sling Military")

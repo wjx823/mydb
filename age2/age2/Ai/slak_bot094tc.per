@@ -1,0 +1,128 @@
+(load "rmresign")
+
+; --------------------------------------------------------------------------
+; File: Slak_Test1.per
+; Author: SlakTheEldar
+; Date: 2000-10-25
+;
+; Copyright 1999-2000, Dan Cieslak  All rights reserved.
+; Available under BSD-like license: see accompanying Copying.txt file.
+;
+; --------------------------------------------------------------------------
+
+; --------------------------------------------------------------------------
+; Build first house
+; --------------------------------------------------------------------------
+
+#load-if-not-defined CHINESE-CIV ; Chinese don't need to build the 1st house
+(defrule
+  (can-build house)
+  =>
+; We'd like to be able to set the sn-percent-civilian-builders to 100 until
+; the first house is built.
+  (build house)
+  (chat-local-to-self "first house")
+  (disable-self)
+)
+#end-if
+
+(defrule
+  (true)
+  =>
+  (chat-to-all " Slak_bot - Version 0.9.4 - ")
+  (disable-self)
+)
+
+(defrule
+  (true)
+  =>
+  (set-author-version " Slak_bot - Version 0.9.4 - ")
+  (set-author-name "SlakTheEldar")
+  (disable-self)
+)
+
+(load "slak_bot094tc\slak_undocumentedconstants094tc")
+
+; First, get constants & conditionally load slak_fishboat, _warboat and
+; _warboat_island if the map is a water map.
+(load "slak_bot094tc\slak_constants094tc")
+
+; Load the strategic numbers
+(load "slak_bot094tc\slak_sn094tc")
+
+; Load the economy
+(load "slak_bot094tc\slak_economy094tc")
+
+; Load the market logic
+(load "slak_bot094tc\slak_market094tc")
+
+; Get the military
+(load "slak_bot094tc\slak_military094tc")
+(load "slak_bot094tc\slak_militarybuildings094tc")
+(load "slak_bot094tc\slak_militaryresponse094tc")
+
+; Load Research module
+(load "slak_bot094tc\slak_research094tc")
+
+; Get the age advancement logic.
+(load "slak_bot094tc\slak_ages094tc")
+
+; Finally, we need to load the routines to resign from hopeless
+; causes.
+(load "slak_bot094tc\slak_resign094tc")
+
+;*************************************************************
+; Load boat stuff at the end due to parsing issues.
+#load-if-defined ARCHIPELAGO-MAP
+; Must be in separate block due to parsing.
+(load "slak_bot094tc\slak_fishboat094tc")
+(load "slak_bot094tc\slak_warboat_island094tc")
+#end-if
+
+#load-if-defined BALTIC-MAP
+; Must be in separate block due to parsing.
+(load "slak_bot094tc\slak_fishboat094tc")
+(load "slak_bot094tc\slak_warboat094tc")
+#end-if
+
+#load-if-defined COASTAL-MAP
+; Must be in separate block due to parsing.
+(load "slak_bot094tc\slak_fishboat094tc")
+(load "slak_bot094tc\slak_warboat094tc")
+#end-if
+
+#load-if-defined CONTINENTAL-MAP
+; Must be in separate block due to parsing.
+(load "slak_bot094tc\slak_fishboat094tc")
+(load "slak_bot094tc\slak_warboat094tc")
+#end-if
+
+#load-if-defined ISLANDS-MAP
+; Must be in separate block due to parsing.
+(load "slak_bot094tc\slak_fishboat094tc")
+(load "slak_bot094tc\slak_warboat_island094tc")
+#end-if
+
+#load-if-defined MEDITERRANEAN-MAP
+; Must be in separate block due to parsing.
+(load "slak_bot094tc\slak_fishboat094tc")
+(load "slak_bot094tc\slak_warboat094tc")
+#end-if
+
+#load-if-defined MIGRATION-MAP
+; Must be in separate block due to parsing.
+(load "slak_bot094tc\slak_fishboat094tc")
+(load "slak_bot094tc\slak_warboat_island094tc")
+#end-if
+
+#load-if-defined RIVERS-MAP
+; Must be in separate block due to parsing.
+(load "slak_bot094tc\slak_fishboat094tc")
+(load "slak_bot094tc\slak_warboat094tc")
+#end-if
+
+#load-if-defined TEAM-ISLANDS-MAP
+; Must be in separate block due to parsing.
+(load "slak_bot094tc\slak_fishboat094tc")
+(load "slak_bot094tc\slak_warboat_island094tc")
+#end-if

@@ -1,0 +1,278 @@
+; castle age
+;report castle age to sling and request tributes
+(defrule
+	(current-age == castle-age)
+	(goal GOAL-I-AM-THE-SHOT 1)
+=>
+	(chat-to-all "request resources")
+	(chat-to-player-using-id every-ally 22121)
+	(disable-self)
+)
+
+;sling acknowledges request for tribute
+(defrule
+	(taunt-detected any-ally 2)
+	(goal GOAL-I-AM-THE-SHOT 0)
+=>
+	(acknowledge-taunt this-any-ally 2)
+	(set-goal GOAL-SLING-SUSPEND-TRIBUTE 0)
+	(chat-to-all "resuming tributes to castle age shot")
+	(disable-self)
+)
+;research banking if sling
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(can-research ri-banking)
+=>
+	(chat-to-all "research banking")
+	(research ri-banking)
+)
+;build town centres
+(defrule
+	(current-age == castle-age)
+	(resource-found stone)
+	(can-build town-center)
+	;sling doesn't need a workshop so no need to wait for one
+	(or
+		(building-type-count-total siege-workshop > 0)
+		(goal GOAL-I-AM-THE-SHOT 0)
+	)
+	(building-type-count-total town-center < 4)
+=>
+	(build town-center)
+	(chat-to-all "build town centre")
+)
+
+; build siege workshop
+(defrule
+	(or
+		(current-age == castle-age)
+		(current-age == imperial-age) ;allows for rebuilding if lost
+	)
+	(building-type-count-total monastery > 0)
+	(building-type-count-total siege-workshop == 0)
+	(can-build siege-workshop)
+	(goal GOAL-I-AM-THE-SHOT 1)
+=>
+	(chat-to-all "build siege-workshop")
+	(build siege-workshop)
+)
+; time-out workshop - this building is essential, must keep trying
+(defrule
+	(current-age == castle-age)
+	(game-time > 1700)
+	(building-type-count-total siege-workshop == 0)
+	(can-build siege-workshop)
+	(goal GOAL-I-AM-THE-SHOT 1)
+=>
+	(chat-to-all "*****build siege-workshop TIME OUT*****")
+	(build siege-workshop)
+)
+; build monastery
+(defrule
+	(or
+		(current-age == castle-age)
+		(current-age == imperial-age) ;allows for rebuilding if lost
+	)
+	(building-type-count-total monastery == 0)
+	(can-build monastery)
+=>
+	(chat-to-all "build monastery")
+	(build monastery)
+)
+(defrule
+	(current-age == castle-age)
+	(game-time > 1700)
+	(building-type-count-total monastery == 0)
+	(can-build monastery)
+	(goal GOAL-I-AM-THE-SHOT 1)
+=>
+	(chat-to-all "*****build monastery TIME OUT*****")
+	(build monastery)
+)
+; train monks
+(defrule
+	(goal GOAL-START-THE-IMPERIAL-ARMY 0)
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(can-train monk)
+	(goal GOAL-MOBILISE-DEFENCE 0)
+	(unit-type-count-total monk <= 5)
+=>
+	(train monk)
+;	(chat-to-all "train monk")
+)
+;research hand-cart
+(defrule
+	(can-research ri-hand-cart)
+	(unit-type-count-total villager > 40)
+=>
+	(research ri-hand-cart)
+	(chat-to-all "research hand-cart")
+)
+
+; Villager training SHOT
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(current-age == castle-age)
+	(unit-type-count-total villager < 50)
+	(can-train villager)
+	(not (can-research imperial-age))
+=>
+;	(chat-to-all "train villager dca")
+	(train villager)
+)
+; Villager training SLING
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(current-age == castle-age)
+	(unit-type-count-total villager < 100)
+	(can-train villager)
+=>
+;	(chat-to-all "train villager dca")
+	(train villager)
+)
+
+; House building
+(defrule
+	(current-age == castle-age)
+	(housing-headroom < 5)
+	(building-type-count-total house < 500)
+	(can-build house)
+=>
+;	(chat-to-all "build house")
+	(build house)
+)
+
+; castle/imperial age farm
+(defrule
+	(or
+		(current-age == castle-age)
+		(current-age == imperial-age)
+	)
+	;wait until workshop is constructed, unless your the sling or have 300+ wood
+	(or
+		(or (building-type-count-total siege-workshop > 0) (goal GOAL-I-AM-THE-SHOT 0))
+		(wood-amount >= 300)
+	)
+	(idle-farm-count < 1)
+	(can-build farm)
+=>
+;	(chat-to-all "build farm dca")
+	(build farm)
+)
+
+;research
+;research bow-saw
+(defrule
+	(can-research ri-bow-saw)
+=>
+	(research ri-bow-saw)
+	(chat-to-all "research bow saw")
+)
+;research heavy-plough
+(defrule
+	(can-research ri-heavy-plow)
+=>
+	(research ri-heavy-plow)
+	(chat-to-all "research heavy-plough")
+)
+;prioritise bodkin to improve defence
+(defrule
+	(can-research ri-bodkin-arrow)
+=>
+	(chat-to-all "research bodkin")
+	(research ri-bodkin-arrow)
+)
+;research gold-mining
+(defrule
+	;wait until at least castle-age
+	(or
+		(current-age == castle-age)
+		(current-age == imperial-age)
+	)
+	(can-research ri-gold-mining)
+=>
+	(research ri-gold-mining)
+	(chat-to-all "research gold-mining")
+)
+;research gold-shaft-mining
+(defrule
+	;wait until imperial age
+	(current-age == imperial-age)
+	(can-research ri-gold-shaft-mining)
+=>
+	(research ri-gold-shaft-mining)
+	(chat-to-all "research gold-shaft-mining")
+)
+;research stone-mining
+(defrule
+	;wait until gold-mining is researched
+	(research-completed ri-gold-mining)
+	(can-research ri-stone-mining)
+=>
+	(research ri-stone-mining)
+	(chat-to-all "research stone-mining")
+)
+;research stone-shaft-mining
+(defrule
+	;wait until gold-shaft-mining is researched
+	(research-completed ri-gold-shaft-mining)
+	(can-research ri-stone-shaft-mining)
+=>
+	(research ri-stone-shaft-mining)
+	(chat-to-all "research stone-shaft-mining")
+)
+;research crop-rotation
+(defrule
+	(current-age == imperial-age)
+	(can-research ri-crop-rotation)
+=>
+	(research ri-crop-rotation)
+	(chat-to-all "research crop-rotation")
+)
+;research imperial age
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(current-age == castle-age)
+	(can-research imperial-age)
+=>
+	(chat-to-all "research imperial age")
+	(research imperial-age)
+	;re-allocate villagers to feed champ flood
+	(set-strategic-number sn-food-gatherer-percentage 55)
+	(set-strategic-number sn-wood-gatherer-percentage 15)
+	(set-strategic-number sn-gold-gatherer-percentage 20)
+	(set-strategic-number sn-stone-gatherer-percentage 10)
+	;extend camp distance
+	(set-strategic-number sn-camp-max-distance 40)
+	(set-goal GOAL-START-THE-IMPERIAL-ARMY 1)
+)
+;if mayans we need a different gatherer allocation
+(defrule
+	(civ-selected mayan)
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(goal GOAL-START-THE-IMPERIAL-ARMY 1)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 20)
+	(set-strategic-number sn-wood-gatherer-percentage 15)
+	(set-strategic-number sn-gold-gatherer-percentage 55)
+	(set-strategic-number sn-stone-gatherer-percentage 10)
+	(set-strategic-number sn-camp-max-distance 40)
+	(chat-to-all "re-allocating gatherers for eagle-warrior flood")
+	(chat-to-player any-ally "I'm making Eagle Warriors")
+	(chat-to-player-using-id every-ally 22130) 
+	(disable-self)
+)
+;sling acknowledges the mayan ew flood
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(taunt-detected any-ally 11)
+=>
+	(acknowledge-taunt this-any-ally 11)
+	(set-strategic-number sn-food-gatherer-percentage 35)
+	(set-strategic-number sn-wood-gatherer-percentage 15)
+	(set-strategic-number sn-gold-gatherer-percentage 40)
+	(set-strategic-number sn-stone-gatherer-percentage 10)
+	(chat-to-player this-any-ally "Re-allocating gatherers to support eagle-warrior flood")
+	(taunt 32)
+)

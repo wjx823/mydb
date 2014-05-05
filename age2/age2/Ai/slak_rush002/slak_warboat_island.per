@@ -1,0 +1,90 @@
+; --------------------------------------------------------------------------
+; File: Slak_Warboat_Island.per
+; Author: SlakTheEldar
+; Date: 2000-10-25
+;
+; Copyright 1999-2000, Dan Cieslak  All rights reserved.
+; Available under BSD-like license; see accompanying Copying.txt file
+;
+; --------------------------------------------------------------------------
+
+; [Slak] Below is a direct copy from petersen warboat.per
+; but with the constants from slak_constants used.  This has
+; since been modified.
+
+(defrule
+  (or (or (map-type archipelago)
+	  (map-type continental))
+      (or (map-type islands)
+	  (map-type team-islands)))
+  (goal boat-strategy MANYBOATS)
+  (current-age >= castle-age)
+  (soldier-count >= fifteen-percent-pop)
+  (unit-type-count-total transport-ship < 3)
+  (can-train transport-ship)
+  =>
+  (train transport-ship)
+  (chat-local-to-self "train transport, have soldiers but 0 or 1 trans")
+)
+
+;start the run-through for military ships
+(defrule
+  (goal make-warboat YES)
+  (current-age > dark-age)
+  =>
+  (set-goal make-warboat NO)
+)
+
+; Make warboats while blacksmith being built
+(defrule
+  (current-age == feudal-age)
+  (or (building-type-count-total blacksmith > 0)
+      (wood-amount > 300) )
+  =>
+  (set-goal make-warboat YES)
+)
+
+(defrule
+  (current-age == castle-age)
+  (or (building-type-count-total castle > 0)
+      (or (building-type-count-total university > 0)
+	  (wood-amount > 300) ) )
+  =>
+  (set-goal make-warboat YES)
+)
+
+(defrule
+  (current-age == imperial-age)
+  (players-building-type-count any-enemy dock > 0)
+  =>
+  (set-goal make-warboat YES)
+)
+
+;start the run-through for military ships & rulers of the sea
+(defrule
+  (not (goal boats-needed NO) )
+  =>
+  (set-goal boats-needed NO)
+  (set-strategic-number sn-number-boat-attack-groups 2)
+)
+
+(defrule
+  (current-age >= castle-age)
+  (players-unit-type-count every-enemy galley-line < five-percent-pop)
+  (players-unit-type-count every-enemy cannon-galleon-line < 
+			      five-percent-pop)
+  (players-unit-type-count every-enemy fire-ship-line < five-percent-pop)
+  (players-unit-type-count every-enemy longboat-line < five-percent-pop)
+  (warboat-count >= five-percent-pop)
+  =>
+  (set-goal boats-needed CONTROL)
+)
+
+(defrule
+  (goal make-warboat YES)
+  (goal boats-needed CONTROL)
+  =>
+  (set-goal make-warboat NO)
+  (set-strategic-number sn-number-boat-attack-groups 4)
+)
+

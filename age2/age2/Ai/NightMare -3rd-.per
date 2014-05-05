@@ -1,0 +1,5036 @@
+(load "rmresign")
+
+; -----------------------------------------------------------------
+; AGE OF EMPIRES II - AGE OF KINGS -  ... AI SCRIPT
+;       [ NightMare -3rd Edition- ]
+;
+;   Script Written By Shigeto Nakazawa(‚¶‚á‚í—’†‘òdl)
+;   MyHomePage: http://www7.big.or.jp/~jawa/ [CGI-StaTion]
+;   ( AoK ‚Ìî•ñ‚Íˆµ‚Á‚Ä‚¨‚è‚Ü‚¹‚ñAˆ«‚µ‚©‚ç‚¸(^-^; )
+;
+; ------------------------------------------------------------------
+;
+;   [Š´ÓEŠ´ŒƒI]
+;
+;   ‚±‚Ì AI ‚ğì¬‚·‚é‚É“–‚½‚Á‚Ä
+;       http://www.omn.ne.jp/~cat/index.htm [AOK AI Colosseum]
+;       ‚ğQl‚É‚³‚¹‚Ä’¸‚«‚Ü‚µ‚½B
+;       ‚Æ‚­‚É"ƒŠƒtƒ@ƒŒƒ“ƒX"‚Í‘å•Ï‹Md‚È‘—¿‚ÅA”ñí‚É•‚©‚è‚Ü‚µ‚½B
+;
+;   ‚Ü‚½‰¼‘z“G‚Æ‚µ‚ÄAå‚ÉˆÈ‰º‚Ì‚`‚h‚ğ—˜—p‚³‚¹‚Ä‚¢‚½‚¾‚«‚Ü‚µ‚½B
+;       ŠCí‚Ì’²®  c  Coteti_bot,MacchaƒVƒŠ[ƒY,Turbine,“ì“V‹Rm’c
+;       —¤í‚Ì’²®  c  MacchaƒVƒŠ[ƒY,ˆÇ‹Rm’c
+;       hvh ‚Å“®ì‚·‚é‚Ù‚Æ‚ñ‚Ç‚Ì‚`‚h‚Ì»ìÒ‚ÉŠ´Ó‚µ‚Ü‚·B
+;
+; -----------------------------------------------------------------
+;
+;   [AI‚Ì“Á’¥]
+;
+;   ƒQ[ƒ€          : ƒ‰ƒ“ƒ_ƒ€ƒQ[ƒ€ê—p(‘¼•s‰Â)
+;   •¶–¾            : ƒoƒCƒLƒ“ƒOA’†‘„§
+;   ƒ`[ƒ€í        : –¢‘Î‰
+;   ƒ}ƒbƒv          : ‘Sƒ}ƒbƒv‘Î‰(ƒAƒ‰ƒrƒAA—¬ˆæ„§)
+;   ƒ}ƒbƒv‚Ì‘å‚«‚³  : ¬‚³‚¢‚Ì‚İ
+;   lŒû            : 100l‚©‚ç200l(125l„§)
+;   ‘Œ¹            : •W€
+;   §ŒÀ            : ˆÃ•‚Ì‘ã‚©‚çn‚ß‚é•K—v‚ª‚ ‚è‚Ü‚·B
+;
+;       ¦ Œ»“_‚Å‚Í AOK,AOC ‚Å‚Ì“®ì‚ğŠm”F‚µ‚Ä‚¨‚è‚Ü‚·B
+;          ‚»‚êˆÈŠO‚ÌŠg’£ƒpƒbƒN‚Å‚Ì“®ì‚Í•ÛØ‚Å‚«‚Ü‚¹‚ñB
+;
+;       ¦ ‚±‚Ì‚`‚h‚Í‘ÎlíˆÈŠO‚Å‚Íƒ`[ƒgƒRƒ}ƒ“ƒh‚ğg—p‚µ‚Ü‚¹‚ñB
+;          ‚Ü‚½Aƒ^ƒEƒ“ƒTƒCƒYƒAƒ^ƒbƒN‚ğg‚Á‚Ä‚¢‚Ü‚·B
+;
+;   AI              : Aok and Aok TC pack.
+;   map Style       : Random Map Only.
+;   Civilization    : any       (best: Viking,Chinese)
+;   Team Battle     : No
+;   Map Type        : All-round (Ex: Arabia, Rivers)
+;   Pop             : 100-200 (ex:125)
+;   Resource        : normal
+;   Start Age       : dark-age
+;
+;   This AI do not use cc-XXX command(Vs AI Only).
+;   This AI do not use attack-now command.(TownSize Attak!)
+; -----------------------------------------------------------------
+
+; -----------------------
+; ¡ ƒo[ƒWƒ‡ƒ“î•ñ ¡
+; -----------------------
+;   ƒo[ƒWƒ‡ƒ“î•ñ
+(defrule
+    (true)
+=>
+    (chat-to-all " NightMare -3rd Edition- ver 2000.12.06 (AOK,AOC)")
+    (disable-self)
+)
+
+; -----------------------
+; ¡ “®ìŠÂ‹«ƒ`ƒFƒbƒN ¡
+; -----------------------
+;; #load-if-not-defined DARK-AGE-START
+;; (defrule
+;;     (true)
+;; =>
+;;     (chat-to-all "¡ ˆÃ•‚Ì‘ã‚ª‚ ‚è‚Ü‚¹‚ñB~•š‚µ‚Ü‚·")
+;;     (disable-self)
+;; )
+;; (defrule
+;;     (game-time > 30)
+;; =>
+;;     (resign)
+;; )
+;; #end-if
+;; #load-if-not-defined POPULATION-CAP-100
+;; #load-if-not-defined POPULATION-CAP-125
+;; #load-if-not-defined POPULATION-CAP-150
+;; #load-if-not-defined POPULATION-CAP-175
+;; #load-if-not-defined POPULATION-CAP-200
+;; (defconst POP-100 0)
+;; (defconst POP-80  0)
+;; (defrule
+;;     (true)
+;; =>
+;;     (chat-to-all "§ŒÀlŒû‚ª­‚È‚·‚¬‚Ü‚·B~•š‚µ‚Ü‚·")
+;;     (disable-self)
+;; )
+;; (defrule
+;;     (game-time > 30)
+;; =>
+;;     (resign)
+;; )
+;; #end-if
+;; #end-if
+;; #end-if
+;; #end-if
+;; #end-if
+
+; -----------------------
+; ¡ ’è” ¡
+; -----------------------
+;   ƒtƒ‰ƒO
+(defconst FALSE 0)
+(defconst TRUE  1)
+;   ó‘Ô”»’f—p
+(defconst NONE  0)
+(defconst SMALL 1)
+(defconst BIG   2)
+;   —Ìå‘Œ¹’²®—p
+(defconst NOT_FEUDAL    0)
+(defconst NO_FOOD       1)
+(defconst NEED_FOOD     2)
+(defconst NEED_ATTACK   3)
+(defconst NO_FOOD2      4)
+(defconst NEED_FOOD2    5)
+(defconst NEED_ATTACK2  6)
+;   í—ªŒˆ’è—p
+(defconst NEXTAGE  0)
+(defconst ATTACK   1)
+(defconst DEFENCE  2)
+(defconst SERVER   3)
+(defconst CLIENT   4)
+(defconst HELP     5)
+(defconst RESCUE   6)
+;   ƒ}ƒbƒvƒ^ƒCƒv
+(defconst UNKNOWNMAP    0)
+(defconst SEAMAP        1)
+(defconst LANDMAP       2)
+;   ‚s‚b—p“Áê’è” ¡
+(defconst eagle-warrior-line        267)
+(defconst halberdier                359)
+(defconst ri-halberdier             429)
+(defconst ri-bloodlines             435)
+
+; -----------------------
+; ¡ ƒ^ƒCƒ}[ ¡
+; -----------------------
+;   ƒ^ƒCƒ}[éŒ¾
+(defconst TIMER_RESIGN          1)  ; ~•š—p
+(defconst TIMER_RESOURCE        2)  ; ‘Œ¹’²®—p
+(defconst TIMER_BUILDING        3)  ; Œš’z§Œä—p
+(defconst TIMER_DISTANCE        4)  ; ‘Œ¹ïæ‹——£’²®—p
+(defconst TIMER_ARMY_ATTACK     5)  ; —¤ŒRUŒ‚”»’f—p
+(defconst TIMER_EXPANSION       6)  ; ƒ^ƒEƒ“ƒTƒCƒYƒAƒ^ƒbƒN—p
+(defconst TIMER_RESET_EXPANSION 7)  ; ƒ^ƒEƒ“ƒTƒCƒYƒAƒ^ƒbƒN—p
+;   ƒ^ƒCƒ}[‰Šú‰»
+(defrule
+    (true)
+=>
+    (disable-timer      TIMER_RESIGN)
+    (disable-timer    TIMER_RESOURCE)
+    (disable-timer    TIMER_BUILDING)
+    (disable-timer    TIMER_DISTANCE)
+    (disable-timer TIMER_ARMY_ATTACK)
+    (disable-self)
+)
+
+; -----------------------
+;   l”ƒ`ƒFƒbƒN
+; -----------------------
+#load-if-defined POPULATION-CAP-100
+(defconst POP-100 100)
+(defconst POP-80   80)
+#end-if
+#load-if-defined POPULATION-CAP-125
+(defconst POP-100 125)
+(defconst POP-80  100)
+#end-if
+#load-if-defined POPULATION-CAP-150
+(defconst POP-100 150)
+(defconst POP-80  120)
+#end-if
+#load-if-defined POPULATION-CAP-175
+(defconst POP-100 175)
+(defconst POP-80  140)
+#end-if
+#load-if-defined POPULATION-CAP-200
+(defconst POP-100 200)
+(defconst POP-80  160)
+#end-if
+
+; -----------------------
+; ¡ •Ï” ¡
+; -----------------------
+;   •Ï”éŒ¾
+(defconst FEUDAL_AGE_FLAG       1)  ; —Ìå‘ã‚ÌŒ¤‹†ƒtƒ‰ƒO
+(defconst CASTLE_AGE_FLAG       2)  ; éå‘ã‚ÌŒ¤‹†ƒtƒ‰ƒO
+(defconst IMPERIAL_AGE_FLAG     3)  ; ’é‰¤‘ã‚ÌŒ¤‹†ƒtƒ‰ƒO
+(defconst STRATEGY              4)  ; í—ªŒˆ’è—p
+(defconst MAPTYPE               5)  ; ƒ}ƒbƒvƒ^ƒCƒv(i‰»‚É—˜—p)
+(defconst BUILDING              6)  ; Œš’z§Œä—p
+(defconst DISTANCE              7)  ; ‘Œ¹‹——£’²®—p
+(defconst RESOURCE              8)  ; —Ìå‘Œ¹§Œä—p
+(defconst RESEARCH              9)  ; d—v‚ÈŒ¤‹†—p
+(defconst RESET_EXPANTION      10)  ; ƒ^ƒEƒ“ƒTƒCƒYƒAƒ^ƒbƒN—p
+(defconst FORMATION_SOLDIER    11)  ; ímŒn‚Ì•Ò¬‚É•ÏX‚·‚é‚©(•W€:‹Rm•Ò¬)
+(defconst RESEARCH_SOLDIER     12)  ; (“SHŠ“™‚Ì)Œ•mŒn‚ÌƒeƒNƒmƒƒW[
+(defconst RESEARCH_ARCHER      13)  ; (“SHŠ“™‚Ì)ËèŒn‚ÌƒeƒNƒmƒƒW[
+(defconst ARMY_UNIT            20)  ; —¤ŒR¶Y§Œä
+(defconst NAVY_UNIT            21)  ; ŠCŒR¶Y§Œä
+(defconst ARMY_ATTACK          22)  ; —¤ŒRUŒ‚§Œä
+(defconst NAVY_ATTACK          23)  ; ŠCŒRUŒ‚§Œä
+(defconst ARMY_LEVEL           24)  ; —¤ŒR‚Ìx”z—Í
+(defconst NAVY_LEVEL           25)  ; ŠCŒR‚Ìx”z—Í
+(defconst NEED_SIEGH_UNIT      26)  ; Ué•ºŠí‚ª•K—v‚©‚Ç‚¤‚©
+;   •Ï”‰Šú‰»
+(defrule
+    (true)
+=>
+    (set-goal FEUDAL_AGE_FLAG   FALSE)
+    (set-goal CASTLE_AGE_FLAG   FALSE)
+    (set-goal IMPERIAL_AGE_FLAG FALSE)
+    (set-goal STRATEGY        NEXTAGE)
+    (set-goal MAPTYPE      UNKNOWNMAP)
+    (set-goal BUILDING           TRUE)
+    (set-goal DISTANCE           TRUE)
+    (set-goal RESOURCE     NOT_FEUDAL)
+    (set-goal RESEARCH          FALSE)
+    (set-goal RESET_EXPANTION   FALSE)
+    (disable-self)
+)
+(defrule
+    (true)
+=>
+    (set-goal FORMATION_SOLDIER FALSE)
+    (set-goal RESEARCH_SOLDIER  FALSE)
+    (set-goal RESEARCH_ARCHER   FALSE)
+    (disable-self)
+)
+(defrule
+    (true)
+=>
+    (set-goal ARMY_UNIT         FALSE)
+    (set-goal NAVY_UNIT         FALSE)
+    (set-goal ARMY_ATTACK       FALSE)
+    (set-goal NAVY_ATTACK       FALSE)
+    (set-goal ARMY_LEVEL        FALSE)
+    (set-goal NAVY_LEVEL        FALSE)
+    (set-goal NEED_SIEGH_UNIT   FALSE)
+    (disable-self)
+)
+
+; -----------------------
+; ¡ í—ª”’l ¡
+; -----------------------
+(defrule
+    (true)
+=>
+    ; ‘Œ¹‚ğæ‚é‹——£(Šî–{)
+    (set-strategic-number sn-food-dropsite-distance  3)             ; —rAä•
+    (set-strategic-number sn-wood-dropsite-distance  3)             ; –Ø
+    (set-strategic-number sn-gold-dropsite-distance  3)             ; ‹à
+    (set-strategic-number sn-stone-dropsite-distance 3)             ; Î
+    ; ‘Œ¹‚ğæ‚é‹——£(Å‘å)
+    (set-strategic-number sn-maximum-food-drop-distance       5)    ; —rAä•
+    (set-strategic-number sn-maximum-hunt-drop-distance       0)    ; ë‚è
+    (set-strategic-number sn-maximum-fish-boat-drop-distance -1)    ; ‹™
+    (set-strategic-number sn-maximum-wood-drop-distance      -1)    ; –Ø
+    (set-strategic-number sn-maximum-gold-drop-distance      15)    ; ‹à
+    (set-strategic-number sn-maximum-stone-drop-distance     15)    ; Î
+    ; ’¬‚Ìl‚ªŸ‚Ìd–‚Ü‚Å‚É‚µ‚È‚¯‚ê‚Î‚¢‚¯‚È‚¢d–—Ê
+    (set-strategic-number sn-retask-gather-amount             1)    ; Å¬
+    (set-strategic-number sn-max-retask-gather-amount     32767)    ; Å‘å
+    (disable-self)
+)
+(defrule
+    (true)
+=>
+    ; ’†S‚©‚ç‚Ì‹——£i”j
+    (set-strategic-number sn-camp-max-distance  0)                  ; ”°ÌŠAÌŒ@Š
+    (set-strategic-number sn-mill-max-distance 25)                  ; •²‚Ğ‚«Š
+    ; —§‚Ä‚é•K—v‚È‘å‚«‚³
+    (set-strategic-number sn-required-forest-tiles             300) ; X‚Ì‘å‚«‚³
+    (set-strategic-number sn-minimum-water-body-size-for-dock 2000) ; ŠC‚Ì‘å‚«‚³
+    ; ’¬‚Ì‘å‚«‚³
+    (set-strategic-number sn-minimum-town-size  1)                  ; ’¬‚ÌÅ¬”ÍˆÍ
+    (set-strategic-number sn-maximum-town-size 12)                  ; ’¬‚ÌÅ‘å”ÍˆÍ
+    (disable-self)
+)
+(defrule
+    (true)
+=>
+    (set-strategic-number sn-percent-civilian-explorers 100)        ; ô“G
+    (set-strategic-number sn-percent-civilian-builders  100)        ; Œš•¨
+    (set-strategic-number sn-percent-civilian-gatherers 100)        ; ¶Y
+
+    (set-strategic-number sn-cap-civilian-explorers   2)            ; ô“G
+    (set-strategic-number sn-cap-civilian-builders  200)            ; Œš•¨
+    (set-strategic-number sn-cap-civilian-gatherers 200)            ; ¶Y
+
+    (set-strategic-number sn-minimum-civilian-explorers 2)          ; ’¬‚Ìlõ“G”
+    (set-strategic-number sn-number-explore-groups      3)          ; õ“GƒOƒ‹[ƒv
+    (set-strategic-number sn-minimum-explore-group-size 1)          ; õ“GÅ¬l”
+    (set-strategic-number sn-maximum-explore-group-size 1)          ; õ“GÅ‘ål”
+    (set-strategic-number sn-total-number-explorers     3)          ; õ“G‡Œvl”
+    (disable-self)
+)
+(defrule
+    (true)
+=>
+    (set-strategic-number sn-percent-exploration-required   100)    ; õ“GŠ„‡
+    (set-strategic-number sn-percentage-explore-exterminators 0)    ; õ“GUŒ‚Š„‡
+    (set-strategic-number sn-blot-size                        1)    ; –¢ŠJ‘ñˆÚ“®‹——£
+    (set-strategic-number sn-blot-exploration-map             0)    ; Äõ“Gİ’è
+    (set-strategic-number sn-initial-exploration-required     0)    ; ‰Šúõ“G”ÍˆÍ
+    (disable-self)
+)
+(defrule
+    (true)
+=>                                                                  ; —¤ŒR
+    (set-strategic-number sn-number-attack-groups              0)   ; UŒ‚ƒOƒ‹[ƒv
+    (set-strategic-number sn-number-defend-groups            200)   ; –hŒäƒOƒ‹[ƒv
+    (set-strategic-number sn-minimum-defend-group-size         5)   ; –hŒäÅ¬l”
+    (set-strategic-number sn-maximum-defend-group-size        15)   ; –hŒäÅ‘ål”
+    (disable-self)
+)
+(defrule
+    (true)
+=>                                                                  ; ŠCŒR
+    (set-strategic-number sn-minimum-boat-attack-group-size   5)    ; UŒ‚Å¬l”
+    (set-strategic-number sn-maximum-boat-attack-group-size   8)    ; UŒ‚Å‘ål”
+    (set-strategic-number sn-minimum-boat-defend-group-size   4)    ; –hŒäÅ¬l”
+    (set-strategic-number sn-maximum-boat-defend-group-size   6)    ; –hŒäÅ‘ål”
+    (set-strategic-number sn-minimum-boat-explore-group-size  1)    ; õ“GÅ¬l”
+    (set-strategic-number sn-maximum-boat-explore-group-size  1)    ; õ“GÅ‘ål”
+    (disable-self)
+)
+(defrule
+    (true)
+=>
+    (set-strategic-number sn-group-commander-selection-method    2) ; ƒŠ[ƒ_[
+    (set-strategic-number sn-group-form-distance                15) ; UŒ‚l”
+    (set-strategic-number sn-attack-group-gather-spacing        30) ; ƒOƒ‹[ƒv”ÍˆÍ
+    (set-strategic-number sn-ignore-attack-group-under-attack    1) ; UŒ‚–³‹
+    (set-strategic-number sn-attack-separation-time-randomness   0) ; UŒ‚ŠÔŠu
+;    (set-strategic-number sn-percent-enemy-sighted-response     10) ; ‹~‰‡Š„‡
+;    (set-strategic-number sn-enemy-sighted-response-distance    30) ; UŒ‚”½‰
+    (set-strategic-number sn-percent-enemy-sighted-response     80) ; ‹~‰‡Š„‡
+    (set-strategic-number sn-enemy-sighted-response-distance    15) ; UŒ‚”½‰
+    (set-strategic-number sn-attack-group-size-randomness        0) ; +×İÀŞÑl”
+    (disable-self)
+)
+(defrule
+    (true)
+=>                                                                  ; –h‰q—Dæ‡ˆÊ
+    (set-strategic-number sn-gold-defend-priority     7)            ; ‹à
+    (set-strategic-number sn-stone-defend-priority    7)            ; Î
+    (set-strategic-number sn-forage-defend-priority   7)            ; ”Ñ
+    (set-strategic-number sn-relic-defend-priority    7)            ; ¹‚È‚é” 
+    (set-strategic-number sn-town-defend-priority     0)            ; ’¬
+    (set-strategic-number sn-dock-defend-priority     7)            ; `
+    (set-strategic-number sn-zero-priority-distance 32767)          ; –h‰q‹——£
+    (set-strategic-number sn-defend-overlap-distance       1)       ; –hŒä”ÍˆÍ
+    (set-strategic-number sn-group-leader-defense-distance 1)       ; Œì‰q”ÍˆÍ
+    (set-strategic-number sn-defense-distance              1)       ; ’¬ˆÈŠO‚Æ‚Ì‹——£
+    (set-strategic-number sn-sentry-distance               1)       ; ’¬‚Æ‚Ì‹——£
+    (set-strategic-number sn-sentry-distance-variation     1)       ; ã‚Ìƒ‰ƒ“ƒ_ƒ€‰»
+    (disable-self)
+)
+(defrule
+    (true)
+=>
+    (set-strategic-number sn-allow-civilian-defense              0) ; ’¬‚Ìl‚Ì–h‰q
+    (set-strategic-number sn-gather-defense-units                1) ; ’¬‚Ìl‚Ì–h‰q”
+    (set-strategic-number sn-random-placement-factor            30) ; Œš’zƒ‰ƒ“ƒ_ƒ€
+    (set-difficulty-parameter ability-to-maintain-distance     100) ; –î‚ğ”ğ‚¯‚é
+    (set-difficulty-parameter ability-to-dodge-missiles          0) ; ‹|Œn‚ª—£‚ê‚é
+    (set-strategic-number sn-minimum-dropsite-buffer         32767) ; ’™‘ ŒÉˆÊ’u
+    (set-strategic-number sn-number-build-attempts-before-skip 100) ; –³‹‚·‚éŒš•¨
+    (disable-self)
+)
+(defrule
+    (true)
+=>
+    (set-strategic-number sn-special-attack-type1               1)  ; “Á•Ê‚È–Ú•W
+    (set-strategic-number sn-attack-intelligence                1)  ; ‚©‚µ‚±‚¢UŒ‚
+    (set-strategic-number sn-intelligent-gathering              1)  ; ‚©‚µ‚±‚¢ûW
+    (set-strategic-number sn-consecutive-idle-unit-limit     -100)  ; ‘Ò‹@
+    (set-strategic-number sn-maximum-gaia-attack-response       0)  ; ˜T‚Ö‚Ì’ïR
+    (set-strategic-number sn-coop-share-information             1)  ; î•ñ‚Ì‹¤—L
+    (set-strategic-number sn-max-build-plan-gatherer-percentage 0)  ; ûWÒŒšİŠ„‡
+    (set-strategic-number sn-task-ungrouped-soldiers            0)  ; UŠJ–h‰q
+    (set-strategic-number sn-attack-winning-player              1)  ; Ÿ—˜‘UŒ‚
+    (set-strategic-number sn-attack-winning-player-factor       0)  ; ‚»‚ÌŠ„‡
+    (disable-self)
+)
+; -----------------------
+; ¡ Å‚i—ß•” ¡
+; -----------------------
+;   •Ò¬‚ÌŒˆ’è
+(defrule
+    (game-time < 30)
+    (or
+        (unit-type-count scout-cavalry-line == 0)
+        (goal FORMATION_SOLDIER TRUE)
+    )
+=>
+    (set-goal FORMATION_SOLDIER TRUE)
+    (set-goal RESEARCH_SOLDIER TRUE)
+    (chat-local-to-self "yŒ•mŒn‚ÅŒR”õ‚µ‚Ü‚·z")
+    (disable-self)
+)
+;   UŒ‚€”õw—ß
+(defrule
+    (goal NAVY_UNIT TRUE)
+    (not (goal STRATEGY ATTACK))
+=>
+    (set-goal STRATEGY ATTACK)
+    (chat-local-to-self "9 yÅ‚w—ß–{•”z‘S—Í‚ÅUŒ‚‚¹‚æI")
+)
+(defrule
+    (goal ARMY_UNIT TRUE)
+    (not (goal STRATEGY ATTACK))
+=>
+    (set-goal STRATEGY ATTACK)
+    (chat-local-to-self "9 yÅ‚w—ß–{•”z‘S—Í‚ÅUŒ‚‚¹‚æI")
+)
+;   i‰»—Dæw—ß
+(defrule
+    (goal NAVY_UNIT FALSE)
+    (goal ARMY_UNIT FALSE)
+    (not (goal STRATEGY NEXTAGE))
+=>
+    (set-goal STRATEGY NEXTAGE)
+    (chat-local-to-self "9 yÅ‚w—ß–{•”z‘S—Í‚Åi‰»‚¹‚æI")
+)
+
+;   ƒ}ƒbƒvƒ^ƒCƒv”»•Ê
+(defrule
+    (goal MAPTYPE UNKNOWNMAP)
+    (building-type-count-total dock == 0)
+    (wood-amount >= 200)
+    (unit-type-count villager > 14)
+=>
+    (chat-local-to-self "9 yÅ‚w—ß–{•”z—¤í‚ğ’§‚Ş‚Ì‚¾I")
+    (set-goal MAPTYPE LANDMAP)
+    (disable-self)
+)
+(defrule
+    (goal MAPTYPE UNKNOWNMAP)
+    (building-type-count-total lumber-camp > 0)
+    (building-type-count-total mill > 0)
+    (building-type-count dock > 0)
+=>
+    (chat-local-to-self "9 yÅ‚w—ß–{•”zŠCí‚ğ’§‚Ş‚Ì‚¾I")
+    (set-goal MAPTYPE SEAMAP)
+    (disable-self)
+)
+
+; -----------------------
+; ¡ ’³•ñ•” ¡
+; -----------------------
+;   ŠCŒRx”z—Í’²¸(—Ìå‚Ü‚Å)
+(defrule
+    (goal FEUDAL_AGE_FLAG TRUE)
+    (players-current-age every-enemy <= feudal-age)
+    (players-unit-type-count every-enemy galley-line == 0)
+    (not (goal NAVY_LEVEL BIG))
+=>
+    (set-goal NAVY_LEVEL BIG)
+    (chat-local-to-self "y’³•ñ•”z‰ä‚ªŠÍ‘à‚É“G‚È‚µI")
+)
+(defrule
+    (players-current-age every-enemy <= feudal-age)
+    (players-unit-type-count every-enemy galley-line > 0)
+    (players-unit-type-count every-enemy galley-line <= 3)
+    (not (goal NAVY_LEVEL SMALL))
+=>
+    (set-goal NAVY_LEVEL SMALL)
+    (chat-local-to-self "y’³•ñ•”z­”‚Ì“GŠÍ‚ğ”­Œ©AŒx‰ú‚¹‚æI")
+)
+(defrule
+    (players-current-age every-enemy <= feudal-age)
+    (players-unit-type-count every-enemy galley-line > 3)
+    (not (goal NAVY_LEVEL NONE))
+=>
+    (set-goal NAVY_LEVEL NONE)
+    (chat-local-to-self "y’³•ñ•”z‘å‹K–Í‚È“GŠÍ‚ğŠm”FBŠ‹}A‘Îˆ‚¹‚æII")
+)
+;   ŠCŒRx”z—Í’²¸(éåˆÈ~)
+(defrule
+    (players-current-age any-enemy >= castle-age)
+    (players-unit-type-count every-enemy galley-line == 0)
+    (players-unit-type-count every-enemy fire-ship-line == 0)
+    (players-unit-type-count every-enemy demolition-ship-line == 0)
+    (players-unit-type-count every-enemy longboat-line == 0)
+    (not (goal NAVY_LEVEL BIG))
+=>
+    (set-goal NAVY_LEVEL BIG)
+    (chat-local-to-self "y’³•ñ•”z‰ä‚ªŠÍ‘à‚É“G‚È‚µI")
+)
+(defrule
+    (players-current-age any-enemy >= castle-age)
+    (players-unit-type-count every-enemy galley-line < 4)
+    (players-unit-type-count every-enemy fire-ship-line < 2)
+    (players-unit-type-count every-enemy demolition-ship-line > 0)
+    (players-unit-type-count every-enemy longboat-line > 0)
+    (not (goal NAVY_LEVEL SMALL))
+=>
+    (set-goal NAVY_LEVEL SMALL)
+    (chat-local-to-self "y’³•ñ•”z­”‚Ì“GŠÍ‚ğ”­Œ©AŒx‰ú‚¹‚æI")
+)
+(defrule
+    (players-current-age any-enemy >= castle-age)
+    (players-unit-type-count every-enemy galley-line >= 4)
+    (players-unit-type-count every-enemy fire-ship-line >= 2)
+    (players-unit-type-count every-enemy demolition-ship-line > 0)
+    (players-unit-type-count every-enemy longboat-line > 0)
+    (not (goal NAVY_LEVEL BIG))
+=>
+    (set-goal NAVY_LEVEL BIG)
+    (chat-local-to-self "y’³•ñ•”z‘å‹K–Í‚È“GŠÍ‚ğŠm”FBŠ‹}A‘Îˆ‚¹‚æII")
+)
+
+; -----------------------
+; ¡ ¶Yw—ß•” ¡
+; -----------------------
+;   ŠCŒRŒR‘à¶YŠÇ—
+(defrule
+    (building-type-count dock > 0)
+    (or
+        (players-building-type-count any-enemy dock > 0)
+        (or
+            (players-unit-type-count any-enemy fishing-ship > 0)
+            (players-unit-type-count any-enemy galley-line > 0)
+        )
+    )
+    (warboat-count < 14)
+    (goal NAVY_UNIT FALSE)
+=>
+    (set-goal NAVY_UNIT TRUE)
+    (chat-local-to-self "16 yŒR–w—ß•”zŠCŒR‚ğ•â‹­‚·‚é‚Ì‚¾I")
+    (chat-to-allies "34")
+)
+(defrule
+    (building-type-count dock > 0)
+    (or
+        (players-building-type-count any-enemy dock > 1)
+        (or
+            (players-unit-type-count any-enemy fishing-ship > 0)
+            (players-unit-type-count any-enemy galley-line > 0)
+        )
+    )
+    (warboat-count < 25)
+    (goal NAVY_UNIT FALSE)
+=>
+    (set-goal NAVY_UNIT TRUE)
+    (chat-local-to-self "16 yŒR–w—ß•”zŠCŒR‚ğ•â‹­‚·‚é‚Ì‚¾I")
+    (chat-to-allies "34")
+)
+(defrule
+    (warboat-count >= 14)
+    (players-building-type-count every-enemy dock == 0)
+    (players-unit-type-count every-enemy fishing-ship == 0)
+    (players-unit-type-count every-enemy galley-line == 0)
+    (goal NAVY_UNIT TRUE)
+=>
+    (set-goal NAVY_UNIT FALSE)
+    (chat-local-to-self "25 yŒR–w—ß•”zŠCŒR‚Ì¶Y‚Í’†~‚¾I")
+)
+(defrule
+    (warboat-count >= 25)
+    (goal NAVY_UNIT TRUE)
+=>
+    (set-goal NAVY_UNIT FALSE)
+    (chat-local-to-self "25 yŒR–w—ß•”zŠCŒR‚Ì¶Y‚Í’†~‚¾I")
+)
+;   —¤ŒRŒR‘à¶YŠÇ—
+(defrule
+    (current-age >= castle-age)
+    (or
+        (or
+            (players-building-type-count any-enemy barracks > 0)
+            (players-building-type-count any-enemy stable > 0)
+        )
+        (or
+            (players-building-type-count any-enemy archery-range > 0)
+            (players-building-type-count any-enemy siege-workshop > 0)
+        )
+    )
+    (goal ARMY_UNIT FALSE)
+=>
+    (set-goal ARMY_UNIT TRUE)
+    (chat-local-to-self "16 yŒR–w—ß•”z—¤ŒR‚ğ•â‹­‚·‚é‚Ì‚¾I")
+)
+(defrule
+    (current-age >= castle-age)
+    (or
+        (or
+            (players-unit-type-count any-enemy militiaman-line > 0)
+            (players-unit-type-count any-enemy spearman-line > 0)
+        )
+        (or
+            (players-unit-type-count any-enemy skirmisher-line > 0)
+            (players-unit-type-count any-enemy knight-line > 0)
+        )
+    )
+    (goal ARMY_UNIT FALSE)
+=>
+    (set-goal ARMY_UNIT TRUE)
+    (chat-local-to-self "16 yŒR–w—ß•”z—¤ŒR‚ğ•â‹­‚·‚é‚Ì‚¾I")
+)
+(defrule
+    (current-age >= castle-age)
+    (or
+        (or
+            (players-unit-type-count any-enemy camel-line > 0)
+            (players-unit-type-count any-enemy scout-cavalry-line > 2)
+        )
+        (or
+            (players-unit-type-count any-enemy eagle-warrior-line > 2)
+            (players-unit-type-count any-enemy battering-ram-line > 0)
+        )
+    )
+    (goal ARMY_UNIT FALSE)
+=>
+    (set-goal ARMY_UNIT TRUE)
+    (chat-local-to-self "16 yŒR–w—ß•”z—¤ŒR‚ğ•â‹­‚·‚é‚Ì‚¾I")
+)
+(defrule
+    (current-age >= castle-age)
+    (warboat-count >= 9)
+    (players-military-population any-enemy < 5)
+    (not (players-military-population any-enemy > 14))
+    (goal ARMY_UNIT FALSE)
+=>
+    (set-goal ARMY_UNIT TRUE)
+    (chat-local-to-self "16 yŒR–w—ß•”z—¤ŒR‚ğ•â‹­‚·‚é‚Ì‚¾I")
+)
+(defrule
+    (current-age >= castle-age)
+    (warboat-count >= 9)
+    (players-military-population every-enemy < 5)
+    (goal ARMY_UNIT FALSE)
+=>
+    (set-goal ARMY_UNIT TRUE)
+    (chat-local-to-self "16 yŒR–w—ß•”z—¤ŒR‚ğ•â‹­‚·‚é‚Ì‚¾I")
+)
+(defrule
+    (goal IMPERIAL_AGE_FLAG TRUE)
+    (warboat-count >= 5)
+    (goal NAVY_LEVEL BIG)
+    (goal ARMY_UNIT FALSE)
+=>
+    (set-goal ARMY_UNIT TRUE)
+    (chat-local-to-self "16 yŒR–w—ß•”z—¤ŒR‚ğ•â‹­‚·‚é‚Ì‚¾I")
+)
+(defrule
+    (goal IMPERIAL_AGE_FLAG TRUE)
+    (wood-amount > 600)
+    (food-amount > 800)
+    (gold-amount > 800)
+    (goal ARMY_UNIT FALSE)
+=>
+    (set-goal ARMY_UNIT TRUE)
+    (chat-local-to-self "16 yŒR–w—ß•”z—¤ŒR‚ğ•â‹­‚·‚é‚Ì‚¾I")
+)
+; -----------------------
+; ¡ ŠCŒRUŒ‚w—ß•” ¡
+; -----------------------
+(defrule
+    (warboat-count > 0)
+    (goal NAVY_LEVEL BIG)
+    (goal NAVY_ATTACK FALSE)
+=>
+    (set-goal NAVY_ATTACK TRUE)
+    (chat-local-to-self "21 yŒR–w—ß•”zŠCŒRUŒ‚ŠJnI")
+)
+(defrule
+    (warboat-count >= 5)
+    (players-building-type-count every-enemy dock == 0)
+    (goal NAVY_LEVEL SMALL)
+    (goal NAVY_ATTACK FALSE)
+=>
+    (set-goal NAVY_ATTACK TRUE)
+    (chat-local-to-self "21 yŒR–w—ß•”zŠCŒRUŒ‚ŠJnI")
+)
+(defrule
+    (warboat-count >= 8)
+    (players-building-type-count every-enemy dock > 0)
+    (goal NAVY_LEVEL SMALL)
+    (goal NAVY_ATTACK FALSE)
+=>
+    (set-goal NAVY_ATTACK TRUE)
+    (chat-local-to-self "21 yŒR–w—ß•”zŠCŒRUŒ‚ŠJnI")
+)
+(defrule
+    (warboat-count > 12)
+    (players-building-type-count every-enemy dock == 0)
+    (goal NAVY_LEVEL NONE)
+    (goal NAVY_ATTACK FALSE)
+=>
+    (set-goal NAVY_ATTACK TRUE)
+    (chat-local-to-self "21 yŒR–w—ß•”zŠCŒRUŒ‚ŠJnI")
+)
+(defrule
+    (warboat-count >= 18)
+    (players-building-type-count every-enemy dock > 0)
+    (goal NAVY_LEVEL NONE)
+    (goal NAVY_ATTACK FALSE)
+=>
+    (set-goal NAVY_ATTACK TRUE)
+    (chat-local-to-self "21 yŒR–w—ß•”zŠCŒRUŒ‚ŠJnI")
+)
+(defrule
+    (warboat-count < 10)
+    (goal NAVY_LEVEL NONE)
+    (goal NAVY_ATTACK TRUE)
+=>
+    (set-strategic-number sn-number-boat-attack-groups   0)
+    (set-strategic-number sn-number-boat-defend-groups 200)
+    (set-goal NAVY_ATTACK FALSE)
+    (chat-local-to-self "24 yŒR–w—ß•”zŠCŒR‚É‚æ‚éUŒ‚‚ğ’f”O‚µ‚Ü‚·")
+)
+;   UŒ‚–½—ß
+(defrule
+    (players-building-type-count any-enemy dock > 0)
+    (goal NAVY_ATTACK TRUE)
+=>
+    (set-strategic-number sn-number-boat-explore-groups 0)
+    (set-strategic-number sn-number-boat-attack-groups 100)
+    (set-strategic-number sn-number-boat-defend-groups 100)
+    (set-strategic-number sn-percent-attack-soldiers 0)
+    (set-strategic-number sn-percent-attack-boats 100)
+    (attack-now)
+)
+(defrule
+    (players-building-type-count every-enemy dock == 0)
+    (goal NAVY_ATTACK TRUE)
+=>
+    (set-strategic-number sn-number-boat-explore-groups  5)
+    (set-strategic-number sn-number-boat-attack-groups   0)
+    (set-strategic-number sn-number-boat-defend-groups 200)
+    (set-strategic-number sn-percent-attack-soldiers 0)
+    (set-strategic-number sn-percent-attack-boats 100)
+    (attack-now)
+)
+;   –î‚ğ”ğ‚¯‚é‹——£
+(defrule
+    (players-current-age every-enemy == feudal-age)
+    (players-building-type-count any-enemy watch-tower-line == 0)
+=>
+    (set-difficulty-parameter ability-to-maintain-distance 100)
+    (disable-self)
+)
+(defrule
+    (players-current-age any-enemy == castle-age)
+    (warboat-count > 5)
+=>
+    (set-difficulty-parameter ability-to-maintain-distance 70)
+    (disable-self)
+)
+(defrule
+    (players-current-age any-enemy == castle-age)
+    (players-building-type-count any-enemy castle > 0)
+    (warboat-count > 5)
+=>
+    (set-difficulty-parameter ability-to-maintain-distance 0)
+    (disable-self)
+)
+(defrule
+    (goal MAPTYPE LANDMAP)
+    (unit-type-count-total battering-ram-line < 2)
+    (soldier-count <= 15)
+=>
+    (set-difficulty-parameter ability-to-maintain-distance 10)
+    (set-strategic-number sn-task-ungrouped-soldiers 1)
+    (set-strategic-number sn-percent-enemy-sighted-response 1)
+    (set-strategic-number sn-enemy-sighted-response-distance 0)
+)
+(defrule
+    (goal MAPTYPE LANDMAP)
+    (unit-type-count-total battering-ram-line < 2)
+    (soldier-count > 15)
+=>
+    (set-difficulty-parameter ability-to-maintain-distance 10)
+    (set-strategic-number sn-task-ungrouped-soldiers 0)
+    (set-strategic-number sn-percent-enemy-sighted-response 1)
+    (set-strategic-number sn-enemy-sighted-response-distance 10)
+)
+(defrule
+    (goal MAPTYPE LANDMAP)
+    (unit-type-count-total battering-ram-line >= 2)
+=>
+    (set-difficulty-parameter ability-to-maintain-distance 0)
+    (set-strategic-number sn-task-ungrouped-soldiers 0)
+    (set-strategic-number sn-percent-enemy-sighted-response 15)
+    (set-strategic-number sn-enemy-sighted-response-distance 80)
+)
+(defrule
+    (players-building-type-count any-enemy dock == 0)
+    (strategic-number sn-attack-winning-player == 1)
+=>
+    (set-strategic-number sn-attack-winning-player 0)
+)
+(defrule
+    (players-building-type-count every-enemy dock > 0)
+    (strategic-number sn-attack-winning-player == 0)
+=>
+    (set-strategic-number sn-attack-winning-player 1)
+)
+
+; -----------------------
+; ¡ —¤ŒRUŒ‚w—ß•” ¡
+; -----------------------
+;   ƒ^ƒCƒ}[ƒZƒbƒg
+(defrule
+    (goal MAPTYPE LANDMAP)
+    (soldier-count > 10)
+=>
+    (enable-timer TIMER_ARMY_ATTACK 10)
+    (disable-self)
+)
+(defrule
+    (goal MAPTYPE LANDMAP)
+=>
+    (set-goal ARMY_ATTACK FALSE)
+    (disable-self)
+)
+(defrule
+    (goal MAPTYPE SEAMAP)
+    (current-age >= castle-age)
+=>
+    (enable-timer TIMER_ARMY_ATTACK 30)
+    (disable-self)
+)
+;   —Ìå—lqŒ©
+(defrule
+    (goal MAPTYPE LANDMAP)
+    (soldier-count > 1)
+=>
+    (attack-now)
+    (chat-local-to-self "21 yŒR–w—ß•”z“G‚Éæ§UŒ‚‚ğI")
+    (disable-self)
+)
+;   —¤í—Ìå‚q
+(defrule
+    (current-age == feudal-age)
+    (timer-triggered TIMER_ARMY_ATTACK)
+    (players-military-population any-enemy < 2)
+    (soldier-count > 4)
+    (goal ARMY_ATTACK FALSE)
+=>
+    (enable-timer TIMER_ARMY_ATTACK 60)
+    (set-goal ARMY_ATTACK TRUE)
+    (chat-local-to-self "21 yŒR–w—ß•”z—¤ŒR–{“yUŒ‚ŠJn:RR 4-2")
+)
+(defrule
+    (current-age == feudal-age)
+    (timer-triggered TIMER_ARMY_ATTACK)
+    (players-military-population any-enemy < 5)
+    (soldier-count > 10)
+    (goal ARMY_ATTACK FALSE)
+=>
+    (enable-timer TIMER_ARMY_ATTACK 60)
+    (set-goal ARMY_ATTACK TRUE)
+    (chat-local-to-self "21 yŒR–w—ß•”z—¤ŒR–{“yUŒ‚ŠJn:RR 10-5")
+)
+(defrule
+    (current-age == feudal-age)
+    (timer-triggered TIMER_ARMY_ATTACK)
+    (players-military-population any-enemy < 8)
+    (soldier-count > 15)
+    (goal ARMY_ATTACK FALSE)
+=>
+    (enable-timer TIMER_ARMY_ATTACK 60)
+    (set-goal ARMY_ATTACK TRUE)
+    (chat-local-to-self "21 yŒR–w—ß•”z—¤ŒR–{“yUŒ‚ŠJn:RR 15-8")
+)
+(defrule
+    (current-age == feudal-age)
+    (timer-triggered TIMER_ARMY_ATTACK)
+    (players-military-population any-enemy < 10)
+    (soldier-count > 20)
+    (goal ARMY_ATTACK FALSE)
+=>
+    (enable-timer TIMER_ARMY_ATTACK 60)
+    (set-goal ARMY_ATTACK TRUE)
+    (chat-local-to-self "21 yŒR–w—ß•”z—¤ŒR–{“yUŒ‚ŠJn:RR 20-10")
+)
+(defrule
+    (current-age == feudal-age)
+    (timer-triggered TIMER_ARMY_ATTACK)
+    (players-military-population any-enemy < 15)
+    (soldier-count > 25)
+    (goal ARMY_ATTACK FALSE)
+=>
+    (enable-timer TIMER_ARMY_ATTACK 60)
+    (set-goal ARMY_ATTACK TRUE)
+    (chat-local-to-self "21 yŒR–w—ß•”z—¤ŒR–{“yUŒ‚ŠJn:RR 25-15")
+)
+(defrule
+    (current-age == feudal-age)
+    (timer-triggered TIMER_ARMY_ATTACK)
+    (players-current-age every-enemy <= feudal-age)
+    (players-military-population any-enemy < 25)
+    (soldier-count > 35)
+    (goal ARMY_ATTACK FALSE)
+=>
+    (enable-timer TIMER_ARMY_ATTACK 60)
+    (set-goal ARMY_ATTACK TRUE)
+    (chat-local-to-self "21 yŒR–w—ß•”z—¤ŒR–{“yUŒ‚ŠJn:RR 25-15")
+)
+;   “Gé‚È‚µ - UŒ‚ŠJn
+(defrule
+    (current-age >= castle-age)
+    (timer-triggered TIMER_ARMY_ATTACK)
+    (players-building-type-count every-enemy castle == 0)
+    (players-military-population any-enemy < 3)
+    (soldier-count > 10)
+    (goal ARMY_ATTACK FALSE)
+=>
+    (enable-timer TIMER_ARMY_ATTACK 120)
+    (set-goal ARMY_ATTACK TRUE)
+    (chat-local-to-self "21 yŒR–w—ß•”z—¤ŒR–{“yUŒ‚ŠJn:é‚È‚µ 10-3")
+)
+(defrule
+    (current-age >= castle-age)
+    (timer-triggered TIMER_ARMY_ATTACK)
+    (players-building-type-count every-enemy castle == 0)
+    (not (goal NAVY_LEVEL NONE))
+    (players-military-population any-enemy < 20)
+    (soldier-count > 20)
+    (goal ARMY_ATTACK FALSE)
+=>
+    (enable-timer TIMER_ARMY_ATTACK 180)
+    (set-goal ARMY_ATTACK TRUE)
+    (chat-local-to-self "21 yŒR–w—ß•”z—¤ŒR–{“yUŒ‚ŠJn:é‚È‚µ 20-20")
+)
+(defrule
+    (current-age >= castle-age)
+    (timer-triggered TIMER_ARMY_ATTACK)
+    (players-building-type-count every-enemy castle == 0)
+    (goal NAVY_LEVEL BIG)
+    (soldier-count > 25)
+    (goal ARMY_ATTACK FALSE)
+=>
+    (enable-timer TIMER_ARMY_ATTACK 180)
+    (set-goal ARMY_ATTACK TRUE)
+    (chat-local-to-self "21 yŒR–w—ß•”z—¤ŒR–{“yUŒ‚ŠJn:é‚È‚µ ŠC‚ ‚è 25-xx")
+)
+(defrule
+    (current-age >= castle-age)
+    (timer-triggered TIMER_ARMY_ATTACK)
+    (players-building-type-count every-enemy castle == 0)
+    (soldier-count >= 30)
+    (not (goal NAVY_LEVEL NONE))
+    (goal ARMY_ATTACK FALSE)
+=>
+    (enable-timer TIMER_ARMY_ATTACK 180)
+    (set-goal ARMY_ATTACK TRUE)
+    (chat-local-to-self "21 yŒR–w—ß•”z—¤ŒR–{“yUŒ‚ŠJn:é‚È‚µ 30-30")
+)
+;   “Gé‚È‚µ - UŒ‚¸”s
+(defrule
+    (timer-triggered TIMER_ARMY_ATTACK)
+    (players-building-type-count every-enemy castle == 0)
+    (players-military-population any-enemy >= 4)
+    (soldier-count < 8)
+    (goal ARMY_ATTACK TRUE)
+=>
+    (set-goal ARMY_ATTACK FALSE)
+    (enable-timer TIMER_ARMY_ATTACK 120)
+    (chat-local-to-self "24 yŒR–w—ß•”z—¤ŒR‚ÌNUìí¸”s:é‚È‚µ 8-4")
+)
+(defrule
+    (timer-triggered TIMER_ARMY_ATTACK)
+    (players-building-type-count every-enemy castle == 0)
+    (players-military-population any-enemy >= 6)
+    (soldier-count < 12)
+    (goal ARMY_ATTACK TRUE)
+=>
+    (set-goal ARMY_ATTACK FALSE)
+    (enable-timer TIMER_ARMY_ATTACK 120)
+    (chat-local-to-self "24 yŒR–w—ß•”z—¤ŒR‚ÌNUìí¸”s:é‚È‚µ 12-6")
+)
+(defrule
+    (timer-triggered TIMER_ARMY_ATTACK)
+    (players-building-type-count every-enemy castle == 0)
+    (players-military-population any-enemy >= 10)
+    (soldier-count < 22)
+    (goal ARMY_ATTACK TRUE)
+=>
+    (set-goal ARMY_ATTACK FALSE)
+    (enable-timer TIMER_ARMY_ATTACK 120)
+    (chat-local-to-self "24 yŒR–w—ß•”z—¤ŒR‚ÌNUìí¸”s:é‚È‚µ 22-10")
+)
+;   “Gé‚ ‚è - UŒ‚ŠJn
+;   ‹Rm’†S
+(defrule
+    (timer-triggered TIMER_ARMY_ATTACK)
+    (or
+        (research-completed ri-cavalier)
+        (research-completed ri-heavy-camel)
+    )
+    (building-type-count castle > 0)
+    (players-current-age every-enemy <= castle-age)
+    (soldier-count >= 25)
+    (goal ARMY_ATTACK FALSE)
+=>
+    (enable-timer TIMER_ARMY_ATTACK 180)
+    (set-goal ARMY_ATTACK TRUE)
+    (chat-local-to-self "21 yŒR–w—ß•”z—¤ŒR–{“yUŒ‚ŠJn:i‰»Ÿ‚¿ 25-xx")
+)
+(defrule
+    (timer-triggered TIMER_ARMY_ATTACK)
+    (or
+        (research-completed ri-cavalier)
+        (research-completed ri-heavy-camel)
+    )
+    (gold-amount > 500)
+    (food-amount > 500)
+    (wood-amount > 500)
+    (building-type-count castle > 2)
+    (players-current-age every-enemy <= castle-age)
+    (soldier-count >= 30)
+    (goal ARMY_ATTACK FALSE)
+=>
+    (enable-timer TIMER_ARMY_ATTACK 180)
+    (set-goal ARMY_ATTACK TRUE)
+    (chat-local-to-self "21 yŒR–w—ß•”z—¤ŒR–{“yUŒ‚ŠJn:i‰»Ÿ‚¿ 30-")
+)
+(defrule
+    (timer-triggered TIMER_ARMY_ATTACK)
+    (or
+        (research-completed ri-cavalier)
+        (research-completed ri-heavy-camel)
+    )
+    (or
+        (research-completed ri-paladin)
+        (not (research-available ri-paladin))
+    )
+    (food-amount > 300)
+    (wood-amount > 300)
+    (gold-amount > 300)
+    (soldier-count >= 30)
+    (goal ARMY_ATTACK FALSE)
+=>
+    (enable-timer TIMER_ARMY_ATTACK 180)
+    (set-goal ARMY_ATTACK TRUE)
+    (chat-local-to-self "21 yŒR–w—ß•”z—¤ŒR–{“yUŒ‚ŠJn:’é‰¤•W€ 30-xx")
+)
+(defrule
+    (timer-triggered TIMER_ARMY_ATTACK)
+    (or
+        (research-completed ri-cavalier)
+        (research-completed ri-heavy-camel)
+    )
+    (players-military-population every-enemy < 5)
+    (soldier-count >= 30)
+    (goal ARMY_ATTACK FALSE)
+=>
+    (enable-timer TIMER_ARMY_ATTACK 180)
+    (set-goal ARMY_ATTACK TRUE)
+    (chat-local-to-self "21 yŒR–w—ß•”z—¤ŒR–{“yUŒ‚ŠJn:â‘Î—L—˜ 30-5")
+)
+;   i‰»Ÿ‚¿
+;   ím’†S
+(defrule
+    (timer-triggered TIMER_ARMY_ATTACK)
+    (research-completed ri-two-handed-swordsman)
+    (building-type-count castle > 0)
+    (players-current-age every-enemy <= castle-age)
+    (soldier-count >= 25)
+    (goal ARMY_ATTACK FALSE)
+=>
+    (enable-timer TIMER_ARMY_ATTACK 180)
+    (set-goal ARMY_ATTACK TRUE)
+    (chat-local-to-self "21 yŒR–w—ß•”z—¤ŒR–{“yUŒ‚ŠJn:i‰»Ÿ‚¿ 25-xx")
+)
+(defrule
+    (timer-triggered TIMER_ARMY_ATTACK)
+    (research-completed ri-two-handed-swordsman)
+    (gold-amount > 500)
+    (food-amount > 500)
+    (wood-amount > 500)
+    (building-type-count castle > 2)
+    (players-current-age every-enemy <= castle-age)
+    (soldier-count >= 30)
+    (goal ARMY_ATTACK FALSE)
+=>
+    (enable-timer TIMER_ARMY_ATTACK 180)
+    (set-goal ARMY_ATTACK TRUE)
+    (chat-local-to-self "21 yŒR–w—ß•”z—¤ŒR–{“yUŒ‚ŠJn:i‰»Ÿ‚¿ 30-")
+)
+(defrule
+    (timer-triggered TIMER_ARMY_ATTACK)
+    (research-completed ri-two-handed-swordsman)
+    (or
+        (research-completed ri-champion)
+        (not (research-available ri-champion))
+    )
+    (food-amount > 300)
+    (wood-amount > 300)
+    (gold-amount > 300)
+    (soldier-count >= 30)
+    (goal ARMY_ATTACK FALSE)
+=>
+    (enable-timer TIMER_ARMY_ATTACK 180)
+    (set-goal ARMY_ATTACK TRUE)
+    (chat-local-to-self "21 yŒR–w—ß•”z—¤ŒR–{“yUŒ‚ŠJn:’é‰¤•W€ 30-xx")
+)
+(defrule
+    (timer-triggered TIMER_ARMY_ATTACK)
+    (research-completed ri-two-handed-swordsman)
+    (players-military-population every-enemy < 5)
+    (soldier-count >= 30)
+    (goal ARMY_ATTACK FALSE)
+=>
+    (enable-timer TIMER_ARMY_ATTACK 180)
+    (set-goal ARMY_ATTACK TRUE)
+    (chat-local-to-self "21 yŒR–w—ß•”z—¤ŒR–{“yUŒ‚ŠJn:â‘Î—L—˜ 30-5")
+)
+;   “Gé‚ ‚è - UŒ‚¸”s
+(defrule
+    (timer-triggered TIMER_ARMY_ATTACK)
+    (soldier-count < 20)
+    (players-military-population any-enemy >= 5)
+    (players-building-type-count any-enemy castle > 0)
+    (goal ARMY_ATTACK TRUE)
+=>
+    (set-goal ARMY_ATTACK FALSE)
+    (enable-timer TIMER_ARMY_ATTACK 120)
+    (chat-local-to-self "24 yŒR–w—ß•”z—¤ŒR‚ÌNUìí¸”s:é‚ ‚è 20-5")
+)
+;   ƒ^ƒCƒ}[ƒŠƒZƒbƒg
+(defrule
+    (goal ARMY_ATTACK FALSE)
+    (timer-triggered TIMER_ARMY_ATTACK)
+=>
+    (enable-timer TIMER_ARMY_ATTACK 5)
+)
+(defrule
+    (goal ARMY_ATTACK TRUE)
+    (timer-triggered TIMER_ARMY_ATTACK)
+=>
+    (enable-timer TIMER_ARMY_ATTACK 120)
+)
+;   UŒ‚–Ú•W
+(defrule
+    (true)
+=>                                                                   ; UŒ‚–Ú•W
+    (set-strategic-number sn-target-evaluation-distance         100) ; ‹——£
+    (set-strategic-number sn-target-evaluation-hitpoints         50) ; ‘Ì—Í
+    (set-strategic-number sn-target-evaluation-damage-capability 20) ; ‘Ï«
+    (set-strategic-number sn-target-evaluation-kills            100) ; –¡•û
+    (set-strategic-number sn-target-evaluation-rof               10) ; UŒ‚‘¬“x
+    (set-strategic-number sn-target-evaluation-attack-attempts   50) ; UŒ‚‰ñ”
+    (set-strategic-number sn-target-evaluation-range             10) ; Ë’ö
+    (set-strategic-number sn-target-evaluation-time-kill-ratio  100) ; ŠÔ
+    (set-strategic-number sn-target-evaluation-in-progress      100) ; UŒ‚’†
+    (set-strategic-number sn-target-evaluation-ally-proximity    50) ; “¯–¿Ò
+    (set-strategic-number sn-target-evaluation-continent         50) ; i—ßŠ¯
+    (set-strategic-number sn-target-evaluation-boat               1) ; ŠCŒR
+    (set-strategic-number sn-target-evaluation-siege-weapon       1) ; Œš•¨
+    (disable-self)
+)
+(defrule
+    (unit-type-count cannon-galleon-line > 0)
+=>                                                                   ; UŒ‚–Ú•W
+    (set-strategic-number sn-target-evaluation-distance          20) ; ‹——£
+    (set-strategic-number sn-target-evaluation-hitpoints       -100) ; ‘Ì—Í
+    (set-strategic-number sn-target-evaluation-damage-capability 50) ; ‘Ï«
+    (set-strategic-number sn-target-evaluation-kills             50) ; –¡•û
+    (set-strategic-number sn-target-evaluation-rof               70) ; UŒ‚‘¬“x
+    (set-strategic-number sn-target-evaluation-attack-attempts   70) ; UŒ‚‰ñ”
+    (set-strategic-number sn-target-evaluation-range            100) ; Ë’ö
+    (set-strategic-number sn-target-evaluation-time-kill-ratio   80) ; ŠÔ
+    (set-strategic-number sn-target-evaluation-in-progress     -100) ; UŒ‚’†
+    (set-strategic-number sn-target-evaluation-ally-proximity    30) ; “¯–¿Ò
+    (set-strategic-number sn-target-evaluation-continent         70) ; i—ßŠ¯
+    (set-strategic-number sn-target-evaluation-boat              70) ; ŠCŒR
+    (set-strategic-number sn-target-evaluation-siege-weapon       1) ; Œš•¨
+    (disable-self)
+)
+; -----------------------
+; ¡ sê‘€ì ¡
+; -----------------------
+;   —Ìå(•W€)
+(defrule
+    (not (goal CASTLE_AGE_FLAG TRUE))
+    (food-amount > 900)
+    (gold-amount < 200)
+    (can-sell-commodity food)
+=>
+    (sell-commodity food)
+;;    (chat-local-to-self "sê‚ÅH—¿‚ğ”„‚è‚Ü‚·(éåi‰»)")
+)
+(defrule
+    (not (goal CASTLE_AGE_FLAG TRUE))
+    (food-amount < 750)
+    (gold-amount > 300)
+    (can-buy-commodity food)
+=>
+    (buy-commodity food)
+;;    (chat-local-to-self "sê‚ÅH—¿‚ğ”ƒ‚¢‚Ü‚·(éåi‰»)")
+)
+;   —Ìå(ŠCŒRUŒ‚—Dæ)
+(defrule
+    (goal STRATEGY ATTACK)
+    (goal NAVY_UNIT TRUE)
+    (not (goal CASTLE_AGE_FLAG TRUE))
+    (wood-amount < 50)
+    (gold-amount > 350)
+    (can-buy-commodity wood)
+=>
+    (buy-commodity wood)
+;;    (chat-local-to-self "sê‚Å–Ø‚ğ”ƒ‚¢‚Ü‚·(–ØŞ•s‘«)")
+)
+;   —Ìå(i‰»—Dæ)
+(defrule
+    (goal STRATEGY NEXTAGE)
+    (not (goal CASTLE_AGE_FLAG TRUE))
+    (or
+        (warboat-count > 4)
+        (goal MAPTYPE LANDMAP)
+    )
+    (wood-amount > 300)
+    (food-amount < 750)
+    (gold-amount < 350)
+    (can-sell-commodity wood)
+=>
+    (sell-commodity wood)
+;;    (chat-local-to-self "sê‚Å–Ø‚ğ”„‚è‚Ü‚·(éåi‰»)")
+)
+;   éå(•W€)
+(defrule
+    (current-age >= castle-age)
+    (current-age-time > 180)
+    (food-amount < 800)
+    (gold-amount > 600)
+    (commodity-buying-price food <= 145)
+    (can-buy-commodity food)
+=>
+    (buy-commodity food)
+;;    (chat-local-to-self "sê‚ÅH—¿‚ğ”ƒ‚¢‚Ü‚·")
+)
+(defrule
+    (current-age >= castle-age)
+    (current-age-time > 180)
+    (wood-amount < 100)
+    (gold-amount > 350)
+    (unit-type-count-total 123 < 3)
+    (unit-type-count-total 218 < 3)
+    (can-buy-commodity wood)
+=>
+    (buy-commodity wood)
+;;    (chat-local-to-self "sê‚Å–Ø‚ğ”ƒ‚¢‚Ü‚·")
+)
+(defrule
+    (current-age >= castle-age)
+    (current-age-time > 180)
+    (food-amount > 1100)
+    (gold-amount < 730)
+    (commodity-selling-price food >= 70)
+    (can-sell-commodity food)
+=>
+    (sell-commodity food)
+;;    (chat-local-to-self "sê‚ÅH—¿‚ğ”„‚è‚Ü‚·")
+)
+(defrule
+    (current-age >= castle-age)
+    (current-age-time > 180)
+    (wood-amount > 1000)
+    (gold-amount < 100)
+    (can-sell-commodity wood)
+=>
+    (sell-commodity wood)
+;;    (chat-local-to-self "sê‚Å–Ø‚ğ”„‚è‚Ü‚·")
+)
+(defrule
+    (current-age >= castle-age)
+    (current-age-time > 180)
+    (wood-amount > 1500)
+    (gold-amount < 5000)
+    (can-sell-commodity wood)
+=>
+    (sell-commodity wood)
+;;    (chat-local-to-self "sê‚Å–Ø‚ğ”„‚è‚Ü‚·")
+)
+(defrule
+    (current-age >= castle-age)
+    (current-age-time > 180)
+    (food-amount > 1600)
+    (gold-amount < 5000)
+    (can-sell-commodity food)
+=>
+    (sell-commodity food)
+;;    (chat-local-to-self "sê‚ÅH—¿‚ğ”„‚è‚Ü‚·")
+)
+(defrule
+    (current-age >= castle-age)
+    (goal RESEARCH_ARCHER TRUE)
+    (current-age-time > 180)
+    (food-amount > 1100)
+    (gold-amount < 5000)
+    (can-sell-commodity food)
+=>
+    (sell-commodity food)
+;;    (chat-local-to-self "sê‚ÅH—¿‚ğ”„‚è‚Ü‚·")
+)
+(defrule
+    (current-age >= castle-age)
+    (current-age-time > 180)
+    (unit-type-count-total 579 == 0)
+    (unit-type-count-total 581 == 0)
+    (wood-amount > 1000)
+    (gold-amount < 300)
+    (can-sell-commodity wood)
+=>
+    (sell-commodity wood)
+;;    (chat-local-to-self "sê‚Å–Ø‚ğ”„‚è‚Ü‚·")
+)
+(defrule
+    (current-age >= castle-age)
+    (current-age-time > 180)
+    (unit-type-count-total 579 == 0)
+    (unit-type-count-total 581 == 0)
+    (food-amount > 1500)
+    (gold-amount < 300)
+    (can-sell-commodity food)
+=>
+    (sell-commodity food)
+;;    (chat-local-to-self "sê‚ÅH—¿‚ğ”„‚è‚Ü‚·")
+)
+;   ‰““Š‚Ì‚½‚ß
+(defrule
+    (current-age == imperial-age)
+    (current-age-time > 180)
+    (building-type-count castle > 0)
+    (unit-type-count-total trebuchet == 0)
+    (unit-type-count-total 42 == 0)
+    (wood-amount > 800)
+    (gold-amount < 200)
+    (can-sell-commodity food)
+=>
+    (sell-commodity food)
+;;    (chat-local-to-self "sê‚ÅH—¿‚ğ”„‚è‚Ü‚·")
+)
+(defrule
+    (current-age == imperial-age)
+    (current-age-time > 180)
+    (building-type-count castle > 0)
+    (unit-type-count-total trebuchet == 0)
+    (unit-type-count-total 42 == 0)
+    (wood-amount > 800)
+    (gold-amount < 200)
+    (can-sell-commodity wood)
+=>
+    (sell-commodity wood)
+;;    (chat-local-to-self "sê‚Å–Ø‚ğ”„‚è‚Ü‚·")
+)
+
+; -----------------------
+; ¡ ’¬‚ÌlA‹™‘DŠÇ— ¡
+; -----------------------
+;   ˆÃ•(22l‚Ü‚Å)
+(defrule
+    (current-age == dark-age)
+    (or
+        (research-completed ri-loom)
+        (or
+            (building-type-count mill == 0)
+            (building-type-count lumber-camp == 0)
+        )
+    )
+    (unit-type-count-total villager < 22)
+    (can-train villager)
+=>
+    (train villager)
+;;     (chat-local-to-self "’¬‚Ìl‚ğ¶Y‚µ‚Ü‚·(ˆÃ•‘ã)")
+)
+;   ˆÃ•(’Ç‰Á24l‚Ü‚Å)
+(defrule
+    (current-age == dark-age)
+    (goal MAPTYPE LANDMAP)
+    (food-amount < 500)
+    (research-completed ri-loom)
+    (unit-type-count-total villager < 24)
+    (can-train villager)
+=>
+    (train villager)
+;;     (chat-local-to-self "’¬‚Ìl‚ğ¶Y‚µ‚Ü‚·(ˆÃ•‘ã:’Ç‰Á)")
+)
+;   —Ìå(60l‚Ü‚Å)
+(defrule
+    (current-age == feudal-age)
+    (not (can-research castle-age))
+    (goal MAPTYPE SEAMAP)
+    (research-completed ri-double-bit-axe)
+    (unit-type-count-total villager < 60)
+    (can-train villager)
+=>
+    (train villager)
+;;     (chat-local-to-self "’¬‚Ìl‚ğ¶Y‚µ‚Ü‚·(—Ìå‘ã)")
+)
+(defrule
+    (current-age == feudal-age)
+    (not (can-research castle-age))
+    (goal MAPTYPE LANDMAP)
+    (or
+        (and
+            (research-completed ri-double-bit-axe)
+            (unit-type-count-total villager < 32)
+        )
+        (and
+            (or
+                (goal RESEARCH ri-wheel-barrow)
+                (not (can-research ri-wheel-barrow))
+            )
+            (unit-type-count-total villager < 60)
+        )
+    )
+    (can-train villager)
+=>
+    (train villager)
+;;     (chat-local-to-self "’¬‚Ìl‚ğ¶Y‚µ‚Ü‚·(—Ìå‘ã)")
+)
+;   éå(70l‚Ü‚Å)
+(defrule
+    (current-age == castle-age)
+    (or
+        (research-completed ri-war-galley)
+        (not (goal NAVY_UNIT TRUE))
+    )
+    (or
+        (goal RESEARCH ri-wheel-barrow)
+        (building-type-count town-center == 1)
+    )
+    (unit-type-count-total villager < 50)
+    (can-train villager)
+=>
+    (train villager)
+;;     (chat-local-to-self "’¬‚Ìl‚ğ¶Y‚µ‚Ü‚·(éå‘ã:1)")
+)
+(defrule
+    (current-age == castle-age)
+    (or
+        (research-completed ri-war-galley)
+        (not (goal NAVY_UNIT TRUE))
+    )
+    (population < POP-80)
+    (goal RESEARCH ri-wheel-barrow)
+    (building-type-count town-center > 1)
+    (unit-type-count-total villager < 70)
+    (can-train villager)
+=>
+    (train villager)
+;;     (chat-local-to-self "’¬‚Ìl‚ğ¶Y‚µ‚Ü‚·(éå‘ã:2)")
+)
+;   ’é‰¤(70l‚Ü‚Å)
+(defrule
+    (current-age == imperial-age)
+    (unit-type-count-total villager < 50)
+    (can-train villager)
+=>
+    (train villager)
+;;     (chat-local-to-self "’¬‚Ìl‚ğ¶Y‚µ‚Ü‚·(’é‰¤‘ã:1)")
+)
+(defrule
+    (current-age == imperial-age)
+    (unit-type-count-total villager < 100)
+    (population < POP-80)
+    (can-train villager)
+=>
+    (train villager)
+;;     (chat-local-to-self "’¬‚Ìl‚ğ¶Y‚µ‚Ü‚·(’é‰¤‘ã:2)")
+)
+(defrule
+    (population >= POP-100)
+    (unit-type-count-total fishing-ship == 0)
+    (unit-type-count-total villager > 60)
+=>
+    (delete-unit fishing-ship)
+;    (chat-local-to-self "’¬‚Ìl‚ğ©E‚³‚¹‚Ü‚·")
+)
+;   ˆÃ•(9Ç‚Ü‚Å)
+(defrule
+    (current-age == dark-age)
+    (or
+        (building-type-count-total mill > 1)
+        (wood-amount > 100)
+    )
+    (unit-type-count-total fishing-ship < 9)
+    (can-train fishing-ship)
+=>
+    (train fishing-ship)
+;;    (chat-local-to-self "‹™‘D‚ğ¶Y‚µ‚Ü‚·")
+)
+;   —Ìå(14Ç‚Ü‚Å)
+(defrule
+    (not (goal CASTLE_AGE_FLAG TRUE))
+    (dropsite-min-distance gold <= 5)
+    (or
+        (warboat-count >= 7)
+        (gold-amount < 30)
+    )
+    (or
+        (players-unit-type-count every-enemy galley < 3)
+        (warboat-count >= 15)
+    )
+    (unit-type-count-total fishing-ship < 12)
+    (can-train fishing-ship)
+=>
+    (train fishing-ship)
+;;    (chat-local-to-self "‹™‘D‚ğ¶Y‚µ‚Ü‚·")
+)
+(defrule
+    (population >= POP-100)
+    (unit-type-count-total fishing-ship > 0)
+=>
+    (delete-unit fishing-ship)
+;;    (chat-local-to-self "‹™‘D‚ğ’¾–v‚³‚¹‚Ü‚·")
+)
+
+; -----------------------
+; ¡ ‘Œ¹’²® ¡
+; -----------------------
+;   ˆÃ•(•W€)
+(defrule
+    (true)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage   0)
+    (set-strategic-number sn-food-gatherer-percentage   0)
+    (set-strategic-number sn-gold-gatherer-percentage   0)
+    (set-strategic-number sn-stone-gatherer-percentage  0)
+    (disable-self)
+)
+(defrule
+    (game-time > 15)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage   0)
+    (set-strategic-number sn-food-gatherer-percentage 100)
+    (set-strategic-number sn-gold-gatherer-percentage   0)
+    (set-strategic-number sn-stone-gatherer-percentage  0)
+    (disable-self)
+)
+(defrule
+    (unit-type-count villager > 7)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  30)
+    (set-strategic-number sn-food-gatherer-percentage  70)
+    (set-strategic-number sn-gold-gatherer-percentage   0)
+    (set-strategic-number sn-stone-gatherer-percentage  0)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(–Ø‚ğŠm•Û)")
+    (disable-self)
+)
+(defrule
+    (goal MAPTYPE LANDMAP)
+    (unit-type-count villager > 22)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  10)
+    (set-strategic-number sn-food-gatherer-percentage  90)
+    (set-strategic-number sn-gold-gatherer-percentage   0)
+    (set-strategic-number sn-stone-gatherer-percentage  0)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(—¤i‰»Ø‚è‘Ö‚¦)")
+    (disable-self)
+)
+;   ˆÃ•¨—Ìå(•W€)
+(defrule
+    (goal FEUDAL_AGE_FLAG TRUE)
+    (goal MAPTYPE SEAMAP)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  90)
+    (set-strategic-number sn-food-gatherer-percentage  10)
+    (set-strategic-number sn-gold-gatherer-percentage   0)
+    (set-strategic-number sn-stone-gatherer-percentage  0)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(–Ø‚ğŠm•Û)")
+    (disable-self)
+)
+;   ˆÃ•¨—Ìå(•W€)
+(defrule
+    (goal FEUDAL_AGE_FLAG TRUE)
+    (goal MAPTYPE LANDMAP)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  55)
+    (set-strategic-number sn-food-gatherer-percentage  35)
+    (set-strategic-number sn-gold-gatherer-percentage  10)
+    (set-strategic-number sn-stone-gatherer-percentage  0)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(–Ø‚ğŠm•Û)")
+    (disable-self)
+)
+;   —Ìå(•W€)
+(defrule
+    (goal MAPTYPE SEAMAP)
+    (current-age == feudal-age)
+    (building-type-count-total market > 0)
+    (goal STRATEGY NEXTAGE)
+    (sheep-and-forage-too-far)
+    (not (goal RESOURCE NO_FOOD))
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  65)
+    (set-strategic-number sn-food-gatherer-percentage   5)
+    (set-strategic-number sn-gold-gatherer-percentage  30)
+    (set-strategic-number sn-stone-gatherer-percentage  0)
+    (set-goal RESOURCE NO_FOOD)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(i‰»—Dæ:”Ñ‚È‚µ)")
+)
+(defrule
+    (goal MAPTYPE SEAMAP)
+    (current-age == feudal-age)
+    (building-type-count-total market > 0)
+    (goal STRATEGY NEXTAGE)
+    (not (sheep-and-forage-too-far))
+    (not (goal RESOURCE NEED_FOOD))
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  55)
+    (set-strategic-number sn-food-gatherer-percentage  25)
+    (set-strategic-number sn-gold-gatherer-percentage  20)
+    (set-strategic-number sn-stone-gatherer-percentage  0)
+    (set-goal RESOURCE NEED_FOOD)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(i‰»—Dæ:”Ñ‚ ‚è)")
+)
+(defrule
+    (goal MAPTYPE SEAMAP)
+    (current-age == feudal-age)
+    (or
+        (building-type-count-total market == 0)
+        (goal STRATEGY ATTACK)
+    )
+    (not (goal RESOURCE NEED_ATTACK))
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  70)
+    (set-strategic-number sn-food-gatherer-percentage   5)
+    (set-strategic-number sn-gold-gatherer-percentage  25)
+    (set-strategic-number sn-stone-gatherer-percentage  0)
+    (set-goal RESOURCE NEED_ATTACK)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(UŒ‚—Dæ)")
+)
+(defrule
+    (goal MAPTYPE LANDMAP)
+    (current-age == feudal-age)
+    (building-type-count-total blacksmith > 0)
+    (unit-type-count-total villager < 35)
+    (wood-amount > 220)
+    (gold-amount < 180)
+    (not (goal RESOURCE NEED_ATTACK))
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  46)
+    (set-strategic-number sn-food-gatherer-percentage  25)
+    (set-strategic-number sn-gold-gatherer-percentage  27)
+    (set-strategic-number sn-stone-gatherer-percentage  2)
+    (set-goal RESOURCE NEED_ATTACK)
+    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(‹à‚ğŠm•Û)")
+)
+(defrule
+    (goal MAPTYPE LANDMAP)
+    (current-age == feudal-age)
+    (building-type-count-total blacksmith > 0)
+    (unit-type-count-total villager < 35)
+    (wood-amount < 150)
+    (not (goal RESOURCE NO_FOOD))
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  63)
+    (set-strategic-number sn-food-gatherer-percentage  25)
+    (set-strategic-number sn-gold-gatherer-percentage  10)
+    (set-strategic-number sn-stone-gatherer-percentage  2)
+    (set-goal RESOURCE NO_FOOD)
+    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(–Ø‚ğŠm•Û)")
+)
+(defrule
+    (goal MAPTYPE LANDMAP)
+    (current-age == feudal-age)
+    (building-type-count-total blacksmith > 0)
+    (unit-type-count-total villager < 35)
+    (wood-amount > 230)
+    (gold-amount > 200)
+    (not (goal RESOURCE NEED_FOOD))
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  33)
+    (set-strategic-number sn-food-gatherer-percentage  55)
+    (set-strategic-number sn-gold-gatherer-percentage  10)
+    (set-strategic-number sn-stone-gatherer-percentage  2)
+    (set-goal RESOURCE NEED_FOOD)
+    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(H—¿‚ğŠm•Û)")
+)
+(defrule
+    (goal MAPTYPE LANDMAP)
+    (current-age == feudal-age)
+    (building-type-count-total blacksmith > 0)
+    (unit-type-count-total villager >= 35)
+    (wood-amount > 220)
+    (gold-amount < 180)
+    (not (goal RESOURCE NEED_ATTACK2))
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  27)
+    (set-strategic-number sn-food-gatherer-percentage  45)
+    (set-strategic-number sn-gold-gatherer-percentage  23)
+    (set-strategic-number sn-stone-gatherer-percentage  5)
+    (set-goal RESOURCE NEED_ATTACK2)
+    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(‹à‚ğŠm•Û:35)")
+)
+(defrule
+    (goal MAPTYPE LANDMAP)
+    (current-age == feudal-age)
+    (building-type-count-total blacksmith > 0)
+    (unit-type-count-total villager >= 35)
+    (wood-amount < 150)
+    (not (goal RESOURCE NO_FOOD2))
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  50)
+    (set-strategic-number sn-food-gatherer-percentage  35)
+    (set-strategic-number sn-gold-gatherer-percentage  10)
+    (set-strategic-number sn-stone-gatherer-percentage  5)
+    (set-goal RESOURCE NO_FOOD2)
+    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(–Ø‚ğŠm•Û:35)")
+)
+(defrule
+    (goal MAPTYPE LANDMAP)
+    (current-age == feudal-age)
+    (building-type-count-total blacksmith > 0)
+    (unit-type-count-total villager >= 35)
+    (wood-amount > 230)
+    (gold-amount > 200)
+    (not (goal RESOURCE NEED_FOOD2))
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  25)
+    (set-strategic-number sn-food-gatherer-percentage  55)
+    (set-strategic-number sn-gold-gatherer-percentage  15)
+    (set-strategic-number sn-stone-gatherer-percentage  5)
+    (set-goal RESOURCE NEED_FOOD2)
+    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(H—¿‚ğŠm•Û:30)")
+)
+;   éå(ƒ^ƒCƒ}[)
+(defrule
+    (goal CASTLE_AGE_FLAG TRUE)
+=>
+    (enable-timer TIMER_RESOURCE 1)
+;;    (chat-local-to-self "ˆÈŒãAŠÔ‚ğ’u‚¢‚Ä‘Œ¹‚ğ’²‚×ŠÇ—‚µ‚Ü‚·")
+    (disable-self)
+)
+(defrule
+    (timer-triggered TIMER_RESOURCE)
+    (game-time > 3600)
+    (dropsite-min-distance gold > 5)
+    (dropsite-min-distance stone <= 5)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  45)
+    (set-strategic-number sn-food-gatherer-percentage  40)
+    (set-strategic-number sn-gold-gatherer-percentage   0)
+    (set-strategic-number sn-stone-gatherer-percentage 15)
+    (enable-timer TIMER_RESOURCE 30)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(‘Œ¹‹à‚È‚µ)")
+)
+;   éå(ƒ^ƒCƒ}[)
+(defrule
+    (goal CASTLE_AGE_FLAG TRUE)
+=>
+    (enable-timer TIMER_RESOURCE 1)
+;;    (chat-local-to-self "ˆÈŒãAŠÔ‚ğ’u‚¢‚Ä‘Œ¹‚ğ’²‚×ŠÇ—‚µ‚Ü‚·")
+    (disable-self)
+)
+(defrule
+    (timer-triggered TIMER_RESOURCE)
+    (game-time > 3600)
+    (dropsite-min-distance gold > 5)
+    (dropsite-min-distance stone <= 5)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  45)
+    (set-strategic-number sn-food-gatherer-percentage  40)
+    (set-strategic-number sn-gold-gatherer-percentage   0)
+    (set-strategic-number sn-stone-gatherer-percentage 15)
+    (enable-timer TIMER_RESOURCE 30)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(‘Œ¹‹à‚È‚µ)")
+)
+(defrule
+    (timer-triggered TIMER_RESOURCE)
+    (game-time > 3600)
+    (dropsite-min-distance gold > 5)
+    (dropsite-min-distance stone > 5)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  60)
+    (set-strategic-number sn-food-gatherer-percentage  40)
+    (set-strategic-number sn-gold-gatherer-percentage   0)
+    (set-strategic-number sn-stone-gatherer-percentage  0)
+    (enable-timer TIMER_RESOURCE 30)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(‘Œ¹‹àAÎ‚È‚µ)")
+)
+(defrule
+    (timer-triggered TIMER_RESOURCE)
+    (current-age < castle-age)
+    (wood-amount > 600)
+    (dropsite-min-distance stone > 5)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  65)
+    (set-strategic-number sn-food-gatherer-percentage  20)
+    (set-strategic-number sn-gold-gatherer-percentage  15)
+    (set-strategic-number sn-stone-gatherer-percentage  0)
+    (enable-timer TIMER_RESOURCE 30)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(–Ø‚ğŠm•Û)")
+)
+(defrule
+    (timer-triggered TIMER_RESOURCE)
+    (building-type-count-total castle == 0)
+    (dropsite-min-distance stone <= 5)
+    (wood-amount > 600)
+    (stone-amount < 500)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  30)
+    (set-strategic-number sn-food-gatherer-percentage  20)
+    (set-strategic-number sn-gold-gatherer-percentage  25)
+    (set-strategic-number sn-stone-gatherer-percentage 15)
+    (enable-timer TIMER_RESOURCE 60)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(H—¿‚Æ‹à‚ğŠm•Û)")
+)
+(defrule
+    (timer-triggered TIMER_RESOURCE)
+    (building-type-count-total castle == 0)
+    (dropsite-min-distance stone <= 5)
+    (wood-amount > 600)
+    (gold-amount > 300)
+    (stone-amount < 500)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  30)
+    (set-strategic-number sn-food-gatherer-percentage  40)
+    (set-strategic-number sn-gold-gatherer-percentage  15)
+    (set-strategic-number sn-stone-gatherer-percentage 15)
+    (enable-timer TIMER_RESOURCE 60)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(H—¿‚ğŠm•Û)")
+)
+(defrule
+    (timer-triggered TIMER_RESOURCE)
+    (building-type-count-total castle == 0)
+    (dropsite-min-distance stone <= 5)
+    (wood-amount > 600)
+    (stone-amount < 500)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  30)
+    (set-strategic-number sn-food-gatherer-percentage  20)
+    (set-strategic-number sn-gold-gatherer-percentage  25)
+    (set-strategic-number sn-stone-gatherer-percentage 15)
+    (enable-timer TIMER_RESOURCE 60)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(H—¿‚Æ‹à‚ğŠm•Û)")
+)
+(defrule
+    (timer-triggered TIMER_RESOURCE)
+    (building-type-count-total castle == 0)
+    (dropsite-min-distance stone <= 5)
+    (wood-amount < 300)
+    (gold-amount > 200)
+    (stone-amount < 500)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  60)
+    (set-strategic-number sn-food-gatherer-percentage  15)
+    (set-strategic-number sn-gold-gatherer-percentage  10)
+    (set-strategic-number sn-stone-gatherer-percentage 15)
+    (enable-timer TIMER_RESOURCE 60)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(–Ø‚ğŠm•Û)")
+)
+(defrule
+    (timer-triggered TIMER_RESOURCE)
+    (building-type-count-total castle == 0)
+    (dropsite-min-distance stone <= 5)
+    (stone-amount < 500)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  55)
+    (set-strategic-number sn-food-gatherer-percentage  10)
+    (set-strategic-number sn-gold-gatherer-percentage  10)
+    (set-strategic-number sn-stone-gatherer-percentage 15)
+    (enable-timer TIMER_RESOURCE 60)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(Î‚ğŠm•Û)")
+)
+(defrule
+    (timer-triggered TIMER_RESOURCE)
+    (wood-amount > 500)
+    (food-amount < 800)
+    (gold-amount < 600)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  15)
+    (set-strategic-number sn-food-gatherer-percentage  40)
+    (set-strategic-number sn-gold-gatherer-percentage  35)
+    (set-strategic-number sn-stone-gatherer-percentage 10)
+    (enable-timer TIMER_RESOURCE 60)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(–Ø‚ª‘½‚¢)")
+)
+(defrule
+    (timer-triggered TIMER_RESOURCE)
+    (wood-amount < 200)
+    (food-amount > 800)
+    (gold-amount < 400)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  50)
+    (set-strategic-number sn-food-gatherer-percentage  10)
+    (set-strategic-number sn-gold-gatherer-percentage  30)
+    (set-strategic-number sn-stone-gatherer-percentage 10)
+    (enable-timer TIMER_RESOURCE 60)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(H—¿‚ª‘½‚¢)")
+)
+(defrule
+    (timer-triggered TIMER_RESOURCE)
+    (wood-amount < 200)
+    (food-amount < 800)
+    (gold-amount > 600)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  50)
+    (set-strategic-number sn-food-gatherer-percentage  30)
+    (set-strategic-number sn-gold-gatherer-percentage  10)
+    (set-strategic-number sn-stone-gatherer-percentage 10)
+    (enable-timer TIMER_RESOURCE 60)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(‹à‚ª‘½‚¢)")
+)
+(defrule
+    (timer-triggered TIMER_RESOURCE)
+    (wood-amount > 500)
+    (food-amount < 800)
+    (gold-amount > 600)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  20)
+    (set-strategic-number sn-food-gatherer-percentage  50)
+    (set-strategic-number sn-gold-gatherer-percentage  20)
+    (set-strategic-number sn-stone-gatherer-percentage 10)
+    (enable-timer TIMER_RESOURCE 60)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(H—¿‚¾‚¯­‚È‚¢)")
+)
+(defrule
+    (timer-triggered TIMER_RESOURCE)
+    (wood-amount > 500)
+    (food-amount > 800)
+    (gold-amount < 600)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  20)
+    (set-strategic-number sn-food-gatherer-percentage  30)
+    (set-strategic-number sn-gold-gatherer-percentage  40)
+    (set-strategic-number sn-stone-gatherer-percentage 10)
+    (enable-timer TIMER_RESOURCE 60)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(‹à‚¾‚¯­‚È‚¢)")
+)
+(defrule
+    (timer-triggered TIMER_RESOURCE)
+    (building-type-count farm < 20)
+    (wood-amount < 200)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  50)
+    (set-strategic-number sn-food-gatherer-percentage  20)
+    (set-strategic-number sn-gold-gatherer-percentage  20)
+    (set-strategic-number sn-stone-gatherer-percentage 10)
+    (enable-timer TIMER_RESOURCE 60)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(–Ø‚ğŠm•Û)")
+)
+(defrule
+    (timer-triggered TIMER_RESOURCE)
+    (building-type-count farm >= 20)
+    (wood-amount < 150)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  45)
+    (set-strategic-number sn-food-gatherer-percentage  25)
+    (set-strategic-number sn-gold-gatherer-percentage  20)
+    (set-strategic-number sn-stone-gatherer-percentage 10)
+    (enable-timer TIMER_RESOURCE 60)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(–Ø‚ğŠm•Û)")
+)
+(defrule
+    (timer-triggered TIMER_RESOURCE)
+    (wood-amount > 300)
+    (gold-amount < 100)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  35)
+    (set-strategic-number sn-food-gatherer-percentage  25)
+    (set-strategic-number sn-gold-gatherer-percentage  30)
+    (set-strategic-number sn-stone-gatherer-percentage 10)
+    (enable-timer TIMER_RESOURCE 60)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(‹à‚ğŠm•Û)")
+)
+(defrule
+    (timer-triggered TIMER_RESOURCE)
+    (wood-amount < 200)
+    (gold-amount < 100)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  45)
+    (set-strategic-number sn-food-gatherer-percentage  15)
+    (set-strategic-number sn-gold-gatherer-percentage  30)
+    (set-strategic-number sn-stone-gatherer-percentage 10)
+    (enable-timer TIMER_RESOURCE 60)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(–Ø‚Æ‹à‚ğŠm•Û)")
+)
+(defrule
+    (timer-triggered TIMER_RESOURCE)
+    (food-amount < 200)
+    (gold-amount > 300)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  30)
+    (set-strategic-number sn-food-gatherer-percentage  50)
+    (set-strategic-number sn-gold-gatherer-percentage  10)
+    (set-strategic-number sn-stone-gatherer-percentage 10)
+    (enable-timer TIMER_RESOURCE 60)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(H—¿‚ğŠm•Û)")
+)
+(defrule
+    (timer-triggered TIMER_RESOURCE)
+    (food-amount < 200)
+    (gold-amount < 100)
+=>
+    (set-strategic-number sn-wood-gatherer-percentage  30)
+    (set-strategic-number sn-food-gatherer-percentage  45)
+    (set-strategic-number sn-gold-gatherer-percentage  20)
+    (set-strategic-number sn-stone-gatherer-percentage  5)
+    (enable-timer TIMER_RESOURCE 60)
+;;    (chat-local-to-self "‘Œ¹’²®‚ğ‚µ‚Ü‚·(H—¿‚Æ‹à‚ğŠm•Û)")
+)
+(defrule
+    (timer-triggered TIMER_RESOURCE)
+=>
+    (enable-timer TIMER_RESOURCE 20)
+)
+
+; -----------------------
+; ¡ Œš’zŠÇ— ¡
+; -----------------------
+;   ’¬‚Ì’†S
+(defrule
+    (goal BUILDING TRUE)
+    (resource-found wood)
+    (building-type-count-total town-center < 2)
+    (can-build town-center)
+=>
+    (set-strategic-number sn-minimum-town-size 20)
+    (set-strategic-number sn-maximum-town-size 30)
+    (set-goal BUILDING FALSE)
+    (enable-timer TIMER_BUILDING 10)
+    (build town-center)
+    (chat-local-to-self "’¬‚Ì’†S‚ğŒš‚Ä‚Ü‚·")
+)
+(defrule
+    (goal BUILDING TRUE)
+    (wood-amount > 1000)
+    (building-type-count castle > 0)
+    (building-type-count-total town-center == 2)
+    (can-build town-center)
+=>
+    (set-strategic-number sn-minimum-town-size 24)
+    (set-strategic-number sn-maximum-town-size 30)
+    (set-goal BUILDING FALSE)
+    (enable-timer TIMER_BUILDING 10)
+    (build town-center)
+    (chat-local-to-self "’¬‚Ì’†S‚ğŒš‚Ä‚Ü‚·")
+)
+(defrule
+    (goal BUILDING TRUE)
+    (wood-amount > 800)
+    (dropsite-min-distance stone > 10)
+    (building-type-count-total town-center < 5)
+    (can-build town-center)
+=>
+    (set-strategic-number sn-minimum-town-size 30)
+    (set-strategic-number sn-maximum-town-size 35)
+    (set-goal BUILDING FALSE)
+    (enable-timer TIMER_BUILDING 10)
+    (build town-center)
+    (chat-local-to-self "’¬‚Ì’†S‚ğŒš‚Ä‚Ü‚·")
+)
+;   ‰Æ
+(defrule
+    (current-age >= dark-age)
+    (population-headroom > 0)
+    (housing-headroom < 5)
+    (can-build house)
+=>
+    (build house)
+;;     (chat-local-to-self "‰Æ‚ğŒš‚Ä‚Ü‚·(5)")
+)
+(defrule
+    (current-age >= feudal-age)
+    (population-headroom > 0)
+    (housing-headroom < 8)
+    (can-build house)
+=>
+    (build house)
+;;     (chat-local-to-self "‰Æ‚ğŒš‚Ä‚Ü‚·(5)")
+)
+;   •²‚Ğ‚«Š
+(defrule
+    (game-time > 45)
+    (or
+        (housing-headroom > 3)
+        (wood-amount >= 130)
+    )
+    (or
+        (building-type-count lumber-camp > 0)
+        (or
+            (and
+                (unit-type-count 594 == 0)  ;958
+                (unit-type-count 833 == 0)
+            )
+            (sheep-and-forage-too-far)
+        )
+    )
+    (building-type-count-total mill == 0)
+    (resource-found food)
+    (can-build mill)
+=>
+    (build mill)
+    (chat-local-to-self "3 H—¿‚ğŠl“¾‚·‚é‚½‚ß•²‚Ğ‚«Š‚ğŒš‚Ä‚Ü‚·")
+)
+#load-if-defined SCANDANAVIA-MAP
+(defrule
+    (game-time > 45)
+    (sheep-and-forage-too-far)
+    (or
+        (housing-headroom > 3)
+        (wood-amount >= 130)
+    )
+    (building-type-count-total mill == 0)
+    (can-build mill)
+=>
+    (build mill)
+    (chat-local-to-self "3 H—¿‚ğŠl“¾‚·‚é‚½‚ß•²‚Ğ‚«Š‚ğŒš‚Ä‚Ü‚·(ƒXƒJƒ“ƒWƒiƒrƒA)")
+    (disable-self)
+)
+#end-if
+#load-if-defined YUCATAN-MAP
+(defrule
+    (unit-type-count villager > 15)
+    (building-type-count lumber-camp > 0)
+    (building-type-count-total mill == 1)
+    (or
+        (housing-headroom >= 5)
+        (wood-amount >= 130)
+    )
+    (resource-found food)
+    (can-build mill)
+=>
+    (chat-local-to-self "3 H—¿‚ğŠl“¾‚·‚é‚½‚ß•²‚Ğ‚«Š‚ğŒš‚Ä‚Ü‚·(ƒ†ƒJƒ^ƒ“)")
+    (build mill)
+    (disable-self)
+)
+#end-if
+;; (defrule
+;;     (or
+;;         (unit-type-count 216 > 0)
+;;         (unit-type-count 122 > 0)
+;;     )
+;;     (building-type-count-total lumber-camp > 0)
+;;     (building-type-count-total mill == 1)
+;;     (can-build mill)
+;; =>
+;;     (build mill)
+;;     (chat-local-to-self "3 H—¿‚ğŠl“¾‚·‚é‚½‚ß•²‚Ğ‚«Š‚ğŒš‚Ä‚Ü‚·(Š ‚è)")
+;;     (disable-self)
+;; )
+;   ”°ÌŠ(‚P‚Â–Ú)
+(defrule
+    (unit-type-count-total villager > 10)
+    (or
+        (housing-headroom > 3)
+        (wood-amount >= 130)
+    )
+    (or
+        (building-type-count mill > 0)
+        (or
+            (unit-type-count 594 > 5)  ;958
+            (unit-type-count 833 > 5)
+        )
+    )
+    (building-type-count-total lumber-camp == 0)
+    (can-build lumber-camp)
+=>
+    (set-goal DISTANCE lumber-camp)
+    (set-strategic-number sn-camp-max-distance 12)
+    (enable-timer TIMER_DISTANCE 2)
+    (chat-local-to-self "4 Å‰‚Ì”°ÌŠ‚ğŒš‚Ä‚Ü‚·(‚P‚Â–Ú)")
+)
+;   ”°ÌŠ(30•ªˆÈ“à:‹——£)
+(defrule
+    (goal DISTANCE TRUE)
+    (building-type-count lumber-camp < 3)
+    (dropsite-min-distance wood > 5)
+    (can-build lumber-camp)
+=>
+    (set-goal DISTANCE lumber-camp)
+    (set-strategic-number sn-camp-max-distance 18)
+    (enable-timer TIMER_DISTANCE 2)
+    (chat-local-to-self "4 X‚ª‰“‚­‚É‚ ‚é‚Ì‚Å”°ÌŠ‚ğŒš‚Ä‚Ü‚·:25")
+)
+;   ”°ÌŠ(30`60•ª:‹——£)
+(defrule
+    (goal DISTANCE TRUE)
+    (building-type-count lumber-camp < 5)
+    (dropsite-min-distance wood > 5)
+    (can-build lumber-camp)
+=>
+    (set-goal DISTANCE lumber-camp)
+    (set-strategic-number sn-camp-max-distance 30)
+    (enable-timer TIMER_DISTANCE 2)
+    (chat-local-to-self "4 X‚ª‰“‚­‚É‚ ‚é‚Ì‚Å”°ÌŠ‚ğŒš‚Ä‚Ü‚·:30")
+)
+;   ”°ÌŠ(60`120•ª:‹——£)
+(defrule
+    (goal DISTANCE TRUE)
+    (building-type-count lumber-camp < 9)
+    (dropsite-min-distance wood > 5)
+    (can-build lumber-camp)
+=>
+    (set-goal DISTANCE lumber-camp)
+    (set-strategic-number sn-camp-max-distance 60)
+    (enable-timer TIMER_DISTANCE 2)
+    (chat-local-to-self "4 X‚ª‰“‚­‚É‚ ‚é‚Ì‚Å”°ÌŠ‚ğŒš‚Ä‚Ü‚·:60")
+)
+;   ”°ÌŠ(120•ªˆÈã:‹——£)
+(defrule
+    (goal DISTANCE TRUE)
+    (building-type-count lumber-camp >= 9)
+    (dropsite-min-distance wood > 5)
+    (goal ARMY_ATTACK TRUE)
+    (can-build lumber-camp)
+=>
+    (set-goal DISTANCE lumber-camp)
+    (set-strategic-number sn-camp-max-distance 999)
+    (enable-timer TIMER_DISTANCE 2)
+    (chat-local-to-self "4 X‚ª‰“‚­‚É‚ ‚é‚Ì‚Å”°ÌŠ‚ğŒš‚Ä‚Ü‚·:999")
+)
+(defrule
+    (resource-found wood)
+    (goal DISTANCE lumber-camp)
+    (can-build lumber-camp)
+=>
+    (chat-local-to-self "”°ÌŠ‚ğì¬")
+    (build lumber-camp)
+)
+;   ”°ÌŠíœ
+(defrule
+    (current-age >= castle-age)
+    (building-type-count lumber-camp >= 4)
+=>
+    (delete-unit lumber-camp)
+    (chat-local-to-self "7 êŠŠm•Û‚Ì‚½‚ß”°ÌŠ‚ğíœ‚µ‚Ü‚·")
+    (disable-self)
+)
+;   ÌŒ@Š(ˆÃ•`—Ìå:‹à‚ğŠm•Û)
+(defrule
+    (goal DISTANCE TRUE)
+    (goal MAPTYPE LANDMAP)
+    (building-type-count-total barracks > 0)
+    (dropsite-min-distance gold > 5)
+    (building-type-count-total mining-camp < 3)
+    (can-build mining-camp)
+=>
+    (set-goal DISTANCE mining-camp)
+    (set-strategic-number sn-camp-max-distance 20)
+    (enable-timer TIMER_DISTANCE 2)
+    (chat-local-to-self "5 ÌŒ@Š(‹à)‚ğŒš‚Ä‚Ü‚·")
+)
+;   ÌŒ@Š(—Ìå:‹à‚ğŠm•Û)
+(defrule
+    (goal DISTANCE TRUE)
+    (current-age == feudal-age)
+    (building-type-count-total dock > 1)
+    (dropsite-min-distance gold > 5)
+    (building-type-count-total mining-camp < 3)
+    (can-build mining-camp)
+=>
+    (set-goal DISTANCE mining-camp)
+    (set-strategic-number sn-camp-max-distance 20)
+    (enable-timer TIMER_DISTANCE 2)
+    (chat-local-to-self "5 ÌŒ@Š(‹à)‚ğŒš‚Ä‚Ü‚·")
+)
+;   ÌŒ@Š(60•ªˆÈ“à:—]è‰ñ”ğ -‹à-)
+(defrule
+    (goal DISTANCE TRUE)
+    (game-time < 3600)
+    (wood-amount > 500)
+    (dropsite-min-distance gold <= 5)
+    (unit-type-count-total 579 > 8)
+    (unit-type-count-total 581 > 8)
+    (building-type-count-total mining-camp < 5)
+    (can-build mining-camp)
+=>
+    (set-goal DISTANCE mining-camp)
+    (set-strategic-number sn-camp-max-distance 40)
+    (enable-timer TIMER_DISTANCE 2)
+    (chat-local-to-self "5 ÌŒ@Š(‹à)‚ğŒš‚Ä‚Ü‚·")
+)
+;   ÌŒ@Š(40•ªˆÈ“à:Šë‹@‰ñ”ğ -‹à-)
+(defrule
+    (goal DISTANCE TRUE)
+    (current-age >= feudal-age)
+    (game-time < 2400)
+    (dropsite-min-distance gold <= 5)
+    (unit-type-count-total villager >= 25)
+    (unit-type-count-total 579 == 0)
+    (unit-type-count-total 581 == 0)
+    (resource-found gold)
+    (building-type-count-total mining-camp < 6)
+    (can-build mining-camp)
+=>
+    (set-strategic-number sn-camp-max-distance 30)
+    (set-goal DISTANCE mining-camp)
+    (enable-timer TIMER_DISTANCE 2)
+    (chat-local-to-self "5 ‹à‚ªŠm•Û‚Å‚«‚Ä‚È‚¢‚Ì‚ÅÌŒ@Š‚ğŒš‚Ä‚Ü‚·:30")
+)
+;   ÌŒ@Š(40`90•ª:Šë‹@‰ñ”ğ -‹à-)
+(defrule
+    (goal DISTANCE TRUE)
+    (game-time < 2400)
+    (game-time >= 5400)
+    (dropsite-min-distance gold <= 5)
+    (unit-type-count-total 579 < 2)
+    (unit-type-count-total 581 < 2)
+    (resource-found gold)
+    (building-type-count-total mining-camp < 8)
+    (unit-type-count-total villager > 30)
+    (can-build mining-camp)
+=>
+    (set-strategic-number sn-camp-max-distance 60)
+    (set-goal DISTANCE mining-camp)
+    (enable-timer TIMER_DISTANCE 2)
+    (chat-local-to-self "5 ‹à‚ªŠm•Û‚Å‚«‚Ä‚È‚¢‚Ì‚ÅÌŒ@Š‚ğŒš‚Ä‚Ü‚·:60")
+)
+;   ÌŒ@Š(90•ªˆÈã:Šë‹@‰ñ”ğ -‹à-)
+(defrule
+    (goal DISTANCE TRUE)
+    (game-time >= 5400)
+    (goal ARMY_ATTACK TRUE)
+    (dropsite-min-distance gold <= 5)
+    (unit-type-count-total 579 < 3)
+    (unit-type-count-total 581 < 3)
+    (resource-found gold)
+    (unit-type-count-total villager > 30)
+    (building-type-count-total mining-camp < 15)
+    (can-build mining-camp)
+=>
+    (set-strategic-number sn-camp-max-distance 999)
+    (set-goal DISTANCE mining-camp)
+    (enable-timer TIMER_DISTANCE 2)
+    (chat-local-to-self "5 ‹à‚ªŠm•Û‚Å‚«‚Ä‚È‚¢‚Ì‚ÅÌŒ@Š‚ğŒš‚Ä‚Ü‚·:999")
+)
+;   ÌŒ@Š(40•ªˆÈ“à:‹——£ -‹à-)
+(defrule
+    (goal DISTANCE TRUE)
+    (current-age >= feudal-age)
+    (game-time < 2400)
+    (dropsite-min-distance gold > 5)
+    (resource-found gold)
+    (building-type-count-total mining-camp < 6)
+    (can-build mining-camp)
+=>
+    (set-strategic-number sn-camp-max-distance 30)
+    (set-goal DISTANCE mining-camp)
+    (enable-timer TIMER_DISTANCE 2)
+    (chat-local-to-self "5 ‹à‚ª‰“‚­‚É‚ ‚é‚Ì‚ÅAÌŒ@Š‚ğŒš‚Ä‚Ü‚·:30")
+)
+;   ÌŒ@Š(40`90•ªˆÈ“à:‹——£ -‹à-)
+(defrule
+    (goal DISTANCE TRUE)
+    (game-time >= 2400)
+    (game-time < 5400)
+    (dropsite-min-distance gold > 5)
+    (resource-found gold)
+    (building-type-count-total mining-camp < 8)
+    (can-build mining-camp)
+=>
+    (set-strategic-number sn-camp-max-distance 60)
+    (set-goal DISTANCE mining-camp)
+    (enable-timer TIMER_DISTANCE 2)
+    (chat-local-to-self "5 ‹à‚ª‰“‚­‚É‚ ‚é‚Ì‚ÅAÌŒ@Š‚ğŒš‚Ä‚Ü‚·:60")
+)
+;   ÌŒ@Š(90•ªˆÈã:‹——£ -‹à-)
+(defrule
+    (goal DISTANCE TRUE)
+    (game-time >= 5400)
+    (goal ARMY_ATTACK TRUE)
+    (dropsite-min-distance gold > 5)
+    (resource-found gold)
+    (building-type-count-total mining-camp < 18)
+    (can-build mining-camp)
+=>
+    (set-strategic-number sn-camp-max-distance 999)
+    (set-goal DISTANCE mining-camp)
+    (enable-timer TIMER_DISTANCE 2)
+    (chat-local-to-self "5 ‹à‚ª‰“‚­‚É‚ ‚é‚Ì‚ÅAÌŒ@Š‚ğŒš‚Ä‚Ü‚·:999")
+)
+;   ÌŒ@Š(—Ìå:Î‚ğŠm•Û)
+(defrule
+    (goal DISTANCE TRUE)
+    (goal FEUDAL_AGE_FLAG TRUE)
+    (goal MAPTYPE LANDMAP)
+    (dropsite-min-distance stone > 5)
+    (building-type-count-total blacksmith > 0)
+    (building-type-count-total mining-camp < 3)
+    (can-build mining-camp)
+=>
+    (set-goal DISTANCE mining-camp)
+    (set-strategic-number sn-camp-max-distance 30)
+    (enable-timer TIMER_DISTANCE 2)
+    (chat-local-to-self "6 ÌŒ@Š(Î)‚ğŒš‚Ä‚Ü‚·")
+)
+;   ÌŒ@Š(—Ìå¨éå:Î‚ğŠm•Û)
+(defrule
+    (goal DISTANCE TRUE)
+    (goal CASTLE_AGE_FLAG TRUE)
+    (dropsite-min-distance stone > 5)
+    (building-type-count-total mining-camp < 6)
+    (or
+        (building-type-count-total castle == 0)
+        (stone-amount < 650)
+    )
+    (can-build mining-camp)
+=>
+    (set-goal DISTANCE mining-camp)
+    (set-strategic-number sn-camp-max-distance 30)
+    (enable-timer TIMER_DISTANCE 2)
+    (chat-local-to-self "6 ÌŒ@Š(Î)‚ğŒš‚Ä‚Ü‚·")
+)
+;   ÌŒ@Š(éå:Šë‹@‰ñ”ğ -Î-)
+(defrule
+    (goal DISTANCE TRUE)
+    (current-age >= castle-age)
+    (strategic-number sn-stone-gatherer-percentage > 0)
+    (unit-type-count-total 124 == 0)
+    (unit-type-count-total 220 == 0)
+    (building-type-count-total mining-camp < 6)
+    (or
+        (building-type-count-total castle == 0)
+        (stone-amount < 650)
+    )
+    (unit-type-count-total villager > 25)
+    (can-build mining-camp)
+=>
+    (set-strategic-number sn-camp-max-distance 60)
+    (set-goal DISTANCE mining-camp)
+    (enable-timer TIMER_DISTANCE 2)
+    (chat-local-to-self "6 Î‚ªŠm•Û‚Å‚«‚Ä‚È‚¢‚Ì‚ÅÌŒ@Š‚ğŒš‚Ä‚Ü‚·B")
+)
+(defrule
+    (or
+        (resource-found gold)
+        (resource-found stone)
+    )
+    (goal DISTANCE mining-camp)
+    (can-build mining-camp)
+=>
+    (chat-local-to-self "ÌŒ@Š‚ğì¬")
+    (build mining-camp)
+)
+;   `(‚P‚Â–Ú:ˆÃ•)
+(defrule
+    (not (goal MAPTYPE LANDMAP))
+    (building-type-count mill > 0)
+    (building-type-count lumber-camp > 0)
+    (building-type-count dock == 0)
+    (can-build dock)
+=>
+    (build dock)
+    (chat-local-to-self "29 `‚ğŒšİ‚µ‚Ü‚·(‚P‚Â–Ú)")
+)
+;   `(‚Q‚Â–Ú:ˆÃ•¨—Ìå)
+(defrule
+    (not (goal MAPTYPE LANDMAP))
+    (goal FEUDAL_AGE_FLAG TRUE)
+    (building-type-count-total dock < 2)
+    (can-build dock)
+=>
+    (build dock)
+    (chat-local-to-self "29 `‚ğŒšİ‚µ‚Ü‚·(‚Q‚Â–Ú)")
+)
+;   `(‚R‚Â–Ú:“GŠCŒR”­Œ©)
+(defrule
+    (not (goal MAPTYPE LANDMAP))
+    (goal FEUDAL_AGE_FLAG TRUE)
+    (building-type-count blacksmith > 0)
+    (building-type-count market > 0)
+    (players-building-type-count any-enemy dock > 1)
+    (players-unit-type-count any-enemy galley-line > 0)
+    (building-type-count-total dock < 3)
+    (can-build dock)
+=>
+    (build dock)
+    (chat-local-to-self "29 `‚ğŒšİ‚µ‚Ü‚·(‚R‚Â–Ú)")
+)
+;   ”¨(ˆÃ•:—\”õ)
+(defrule
+    (not (goal FEUDAL_AGE_FLAG TRUE))
+    (not (resource-found food))
+    (sheep-and-forage-too-far)
+    (building-type-count-total farm < 5)
+    (can-build farm)
+=>
+    (build farm)
+;;    (chat-local-to-self "”¨‚ğk‚µ‚Ü‚·(‚T–‡‚Ü‚Å)")
+)
+;   ”¨(ˆÃ•:—¤i‰»)
+(defrule
+    (not (goal FEUDAL_AGE_FLAG TRUE))
+    (goal MAPTYPE LANDMAP)
+    (building-type-count-total farm < 16)
+    (can-build farm)
+=>
+    (build farm)
+;;    (chat-local-to-self "”¨‚ğk‚µ‚Ü‚·(‚P‚U–‡‚Ü‚Å)")
+)
+;   ”¨(—Ìå:—\”õ)
+(defrule
+    (current-age == feudal-age)
+    (not (goal CASTLE_AGE_FLAG TRUE))
+    (building-type-count blacksmith > 0)
+    (building-type-count market > 0)
+    (wood-amount > 180)
+    (idle-farm-count == 0)
+    (building-type-count-total farm < 5)
+    (can-build farm)
+=>
+    (build farm)
+;;    (chat-local-to-self "”¨‚ğk‚µ‚Ü‚·(‚T–‡‚Ü‚Å)")
+)
+;   ”¨(—Ìå:—¤i‰»)
+(defrule
+    (current-age ==  feudal-age)
+    (goal MAPTYPE LANDMAP)
+    (building-type-count-total blacksmith > 0)
+    (idle-farm-count < 2)
+    (can-build farm)
+=>
+    (build farm)
+;;    (chat-local-to-self "”¨‚ğk‚µ‚Ü‚·(—¤í•W€)")
+)
+;   ”¨(—Ìå:”¨)
+(defrule
+    (goal MAPTYPE LANDMAP)
+    (research-completed ri-horse-collar)
+    (wood-amount > 300)
+    (building-type-count-total farm < 24)
+    (can-build farm)
+=>
+    (build farm)
+;;    (chat-local-to-self "”¨‚ğk‚µ‚Ü‚·(‚Q‚S–‡‚Ü‚Å)")
+)
+;   ”¨(—Ìå¨éå)
+(defrule
+    (current-age == feudal-age)
+    (goal CASTLE_AGE_FLAG TRUE)
+    (wood-amount > 600)
+    (building-type-count-total farm < 12)
+    (can-build farm)
+=>
+    (build farm)
+;;    (chat-local-to-self "”¨‚ğk‚µ‚Ü‚·(‚P‚Q–‡‚Ü‚Å)")
+)
+;   ”¨(éå:‘æ‚PŠú)
+(defrule
+    (current-age >= castle-age)
+    (or
+        (wood-amount > 500)
+        (food-amount < 50)
+    )
+    (building-type-count-total farm < 8)
+    (can-build farm)
+=>
+    (build farm)
+;;    (chat-local-to-self "”¨‚ğk‚µ‚Ü‚·(‚W–‡‚Ü‚Å)")
+)
+;   ”¨(éå:‘æ‚QŠú)
+(defrule
+    (current-age <= castle-age)
+    (wood-amount > 300)
+    (building-type-count town-center > 1)
+    (research-completed ri-horse-collar)
+    (building-type-count-total farm < 16)
+    (can-build farm)
+=>
+    (build farm)
+;;    (chat-local-to-self "”¨‚ğk‚µ‚Ü‚·(‚P‚U–‡‚Ü‚Å)")
+)
+;   ”¨(éå:‘æ‚RŠú)
+(defrule
+    (current-age >= castle-age)
+    (wood-amount > 300)
+    (building-type-count town-center > 1)
+    (research-completed ri-gold-mining)
+    (research-completed ri-heavy-plow)
+    (building-type-count-total farm < 28)
+    (can-build farm)
+=>
+    (build farm)
+;;    (chat-local-to-self "”¨‚ğk‚µ‚Ü‚·(‚Q‚W–‡‚Ü‚Å)")
+)
+;   ”¨(éå:‘æ‚SŠú)
+(defrule
+    (current-age >= castle-age)
+    (or
+        (wood-amount > 500)
+        (idle-farm-count == 0)
+    )
+    (building-type-count town-center > 1)
+    (building-type-count-total farm < 32)
+    (can-build farm)
+=>
+    (build farm)
+;;    (chat-local-to-self "”¨‚ğk‚µ‚Ü‚·(‚R‚Q–‡‚Ü‚Å)")
+)
+;   ”¨(’é‰¤)
+(defrule
+    (current-age == imperial-age)
+    (idle-farm-count == 0)
+    (can-build farm)
+=>
+    (build farm)
+;;    (chat-local-to-self "”¨‚ğk‚µ‚Ü‚·(’é‰¤)")
+)
+;   ímˆç¬Š
+(defrule
+    (goal BUILDING TRUE)
+    (goal FEUDAL_AGE_FLAG TRUE)
+    (goal MAPTYPE LANDMAP)
+    (building-type-count-total barracks == 0)
+    (can-build barracks)
+=>
+    (set-strategic-number sn-minimum-town-size 1)
+    (set-strategic-number sn-maximum-town-size 20)
+    (set-goal BUILDING FALSE)
+    (enable-timer TIMER_BUILDING 20)
+    (build barracks)
+    (chat-local-to-self "29 ímˆç¬Š‚ğŒš‚Ä‚Ü‚·(—¤í)")
+)
+(defrule
+    (goal BUILDING TRUE)
+    (goal MAPTYPE LANDMAP)
+    (not (goal CASTLE_AGE_FLAG TRUE))
+    (building-type-count-total archery-range < 2)
+    (can-build archery-range)
+=>
+    (set-strategic-number sn-minimum-town-size 1)
+    (set-strategic-number sn-maximum-town-size 12)
+    (set-goal BUILDING FALSE)
+    (enable-timer TIMER_BUILDING 20)
+    (build archery-range)
+    (chat-local-to-self "29 Ëèˆç¬Š‚ğŒš‚Ä‚Ü‚·(—¤í)")
+)
+(defrule
+    (goal BUILDING TRUE)
+    (goal MAPTYPE LANDMAP)
+    (players-unit-type-count any-enemy skirmisher-line < 3)
+    (not (goal CASTLE_AGE_FLAG TRUE))
+    (wood-amount > 350)
+    (building-type-count-total archery-range < 3)
+    (can-build archery-range)
+=>
+    (set-strategic-number sn-minimum-town-size 1)
+    (set-strategic-number sn-maximum-town-size 12)
+    (set-goal BUILDING FALSE)
+    (enable-timer TIMER_BUILDING 20)
+    (build archery-range)
+    (chat-local-to-self "29 Ëèˆç¬Š‚ğŒš‚Ä‚Ü‚·(—¤í)")
+)
+;   “SHŠ
+(defrule
+    (goal BUILDING TRUE)
+    (or
+        (goal MAPTYPE SEAMAP)
+        (building-type-count-total archery-range > 1)
+    )
+    (building-type-count-total blacksmith == 0)
+    (can-build blacksmith)
+=>
+    (set-strategic-number sn-minimum-town-size 20)
+    (set-strategic-number sn-maximum-town-size 35)
+    (set-goal BUILDING FALSE)
+    (enable-timer TIMER_BUILDING 20)
+    (build blacksmith)
+    (chat-local-to-self "29 “SHŠ‚ğŒš‚Ä‚Ü‚·")
+)
+;   sê
+(defrule
+    (goal BUILDING TRUE)
+    (goal MAPTYPE SEAMAP)
+    (building-type-count-total market == 0)
+    (can-build market)
+=>
+    (set-strategic-number sn-minimum-town-size 20)
+    (set-strategic-number sn-maximum-town-size 30)
+    (set-goal BUILDING FALSE)
+    (enable-timer TIMER_BUILDING 20)
+    (build market)
+    (chat-local-to-self "29 sê‚ğŒš‚Ä‚Ü‚·")
+)
+(defrule
+    (goal BUILDING TRUE)
+    (goal MAPTYPE LANDMAP)
+    (wood-amount > 300)
+    (building-type-count blacksmith > 0)
+    (building-type-count-total market == 0)
+    (can-build market)
+=>
+    (set-strategic-number sn-minimum-town-size 20)
+    (set-strategic-number sn-maximum-town-size 30)
+    (set-goal BUILDING FALSE)
+    (enable-timer TIMER_BUILDING 20)
+    (build market)
+    (chat-local-to-self "29 sê‚ğŒš‚Ä‚Ü‚·")
+)
+;   ímˆç¬Š
+(defrule
+    (goal BUILDING TRUE)
+    (warboat-count >= 7)
+    (wood-amount > 265)
+    (building-type-count-total barracks == 0)
+    (can-build barracks)
+=>
+    (set-strategic-number sn-minimum-town-size 1)
+    (set-strategic-number sn-maximum-town-size 20)
+    (set-goal BUILDING FALSE)
+    (enable-timer TIMER_BUILDING 20)
+    (build barracks)
+    (chat-local-to-self "29 ímˆç¬Š‚ğŒš‚Ä‚Ü‚·(–h‰q)")
+)
+;   _“a
+(defrule
+    (goal BUILDING TRUE)
+    (or
+        (building-type-count-total town-center > 1)
+        (stone-amount < 100)
+    )
+    (building-type-count-total monastery == 0)
+    (can-build monastery)
+=>
+    (set-strategic-number sn-minimum-town-size 1)
+    (set-strategic-number sn-maximum-town-size 15)
+    (set-goal BUILDING FALSE)
+    (enable-timer TIMER_BUILDING 20)
+    (build monastery)
+    (chat-local-to-self "29 _“a‚ğŒš‚Ä‚Ü‚·")
+)
+;   •ïˆÍUŒ‚ŒP—ûŠ
+(defrule
+    (goal BUILDING TRUE)
+    (building-type-count-total town-center > 1)
+    (building-type-count-total monastery > 0)
+    (building-type-count-total siege-workshop == 0)
+    (can-build siege-workshop)
+=>
+    (set-strategic-number sn-minimum-town-size 1)
+    (set-strategic-number sn-maximum-town-size 20)
+    (set-goal BUILDING FALSE)
+    (enable-timer TIMER_BUILDING 20)
+    (build siege-workshop)
+    (chat-local-to-self "29 •ïˆÍUŒ‚ŒP—ûŠ‚ğŒš‚Ä‚Ü‚·")
+)
+;   ímˆç¬Š
+(defrule
+    (goal BUILDING TRUE)
+    (goal ARMY_UNIT TRUE)
+    (or
+        (research-completed ri-war-galley)
+        (not (goal NAVY_UNIT TRUE))
+    )
+    (building-type-count-total monastery > 0)
+    (building-type-count-total barracks == 0)
+    (can-build barracks)
+=>
+    (set-strategic-number sn-minimum-town-size 1)
+    (set-strategic-number sn-maximum-town-size 20)
+    (set-goal BUILDING FALSE)
+    (enable-timer TIMER_BUILDING 20)
+    (build barracks)
+    (chat-local-to-self "29 ímˆç¬Š‚ğŒš‚Ä‚Ü‚·(—¤ŒR•Ò¬ŠJn)")
+)
+(defrule
+    (goal BUILDING TRUE)
+    (goal ARMY_UNIT TRUE)
+    (goal FORMATION_SOLDIER TRUE)
+    (building-type-count-total monastery > 0)
+    (building-type-count-total barracks == 1)
+    (can-build barracks)
+=>
+    (set-strategic-number sn-minimum-town-size 1)
+    (set-strategic-number sn-maximum-town-size 20)
+    (set-goal BUILDING FALSE)
+    (enable-timer TIMER_BUILDING 20)
+    (build barracks)
+    (chat-local-to-self "29 ímˆç¬Š‚ğŒš‚Ä‚Ü‚·(ímŒn)")
+)
+(defrule
+    (goal BUILDING TRUE)
+    (goal ARMY_UNIT TRUE)
+    (goal FORMATION_SOLDIER TRUE)
+    (strategic-number sn-maximum-town-size >= 70)
+    (building-type-count-total barracks < 4)
+    (wood-amount > 500)
+    (can-build barracks)
+=>
+    (build barracks)
+    (chat-local-to-self "29 ímˆç¬Š‚ğŒš‚Ä‚Ü‚·(‘Oü)")
+)
+;   ‹R•ºˆç¬Š
+(defrule
+    (goal BUILDING TRUE)
+    (goal ARMY_UNIT TRUE)
+    (goal FORMATION_SOLDIER FALSE)
+    (building-type-count-total monastery > 0)
+    (building-type-count-total stable == 0)
+    (can-build stable)
+=>
+    (set-strategic-number sn-minimum-town-size 1)
+    (set-strategic-number sn-maximum-town-size 20)
+    (set-goal BUILDING FALSE)
+    (enable-timer TIMER_BUILDING 20)
+    (build stable)
+    (chat-local-to-self "29 ‹R•ºˆç¬Š‚ğŒš‚Ä‚Ü‚·(—¤ŒR•Ò¬ŠJn)")
+)
+(defrule
+    (goal BUILDING TRUE)
+    (goal ARMY_UNIT TRUE)
+    (goal FORMATION_SOLDIER FALSE)
+    (building-type-count-total castle > 0)
+    (building-type-count-total stable == 1)
+    (can-build stable)
+=>
+    (set-strategic-number sn-minimum-town-size 1)
+    (set-strategic-number sn-maximum-town-size 20)
+    (set-goal BUILDING FALSE)
+    (enable-timer TIMER_BUILDING 20)
+    (build stable)
+    (chat-local-to-self "29 ‹R•ºˆç¬Š‚ğŒš‚Ä‚Ü‚·(‹RmŒn)")
+)
+(defrule
+    (goal ARMY_UNIT TRUE)
+    (goal FORMATION_SOLDIER FALSE)
+    (strategic-number sn-maximum-town-size >= 70)
+    (building-type-count-total stable < 4)
+    (wood-amount > 500)
+    (can-build stable)
+=>
+    (build stable)
+    (chat-local-to-self "29 ‹R•ºˆç¬Š‚ğŒš‚Ä‚Ü‚·(‘Oü)")
+)
+;   Šw–âŠ
+(defrule
+    (goal BUILDING TRUE)
+    (goal ARMY_UNIT TRUE)
+    (building-type-count-total monastery > 0)
+    (building-type-count-total barracks > 0)
+    (building-type-count-total castle > 1)
+    (building-type-count-total siege-workshop > 0)
+    (building-type-count-total university == 0)
+    (can-build university)
+=>
+    (set-strategic-number sn-minimum-town-size 20)
+    (set-strategic-number sn-maximum-town-size 30)
+    (set-goal BUILDING FALSE)
+    (enable-timer TIMER_BUILDING 20)
+    (build university)
+    (chat-local-to-self "29 Šw–åŠ‚ğŒš‚Ä‚Ü‚·")
+)
+(defrule
+    (building-type-count castle > 2)
+    (goal ARMY_ATTACK TRUE)
+    (can-build castle)
+=>
+    (build castle)
+    (chat-local-to-self "29 é‚ğŒš‚Ä‚Ü‚·")
+)
+(defrule
+    (goal BUILDING TRUE)
+    (or
+        (building-type-count castle < 3)
+        (town-under-attack)
+    )
+    (can-build castle)
+=>
+    (set-strategic-number sn-minimum-town-size 15)
+    (set-strategic-number sn-maximum-town-size 26)
+    (set-goal BUILDING FALSE)
+    (enable-timer TIMER_BUILDING 20)
+    (build castle)
+    (chat-local-to-self "29 é‚ğŒš‚Ä‚Ü‚·")
+)
+;   ‘O£
+(defrule
+    (goal BUILDING TRUE)
+    (research-completed ri-loom)
+    (unit-type-count-total fishing-ship > 2)
+    (can-build outpost)
+=>
+    (set-strategic-number sn-minimum-town-size 28)
+    (set-strategic-number sn-maximum-town-size 30)
+    (set-goal BUILDING FALSE)
+    (enable-timer TIMER_BUILDING 60)
+    (build outpost)
+    (chat-local-to-self "‘O£‚ğŒš‚Ä‚Ü‚·(‰Šú)")
+    (disable-self)
+)
+(defrule
+    (soldier-count > 5)
+    (goal BUILDING TRUE)
+    (goal ARMY_ATTACK FALSE)
+    (town-under-attack)
+    (building-type-count-total outpost < 6)
+    (can-build outpost)
+=>
+    (set-strategic-number sn-minimum-town-size 28)
+    (set-strategic-number sn-maximum-town-size 30)
+    (set-goal BUILDING FALSE)
+    (enable-timer TIMER_BUILDING 15)
+    (build outpost)
+    (chat-local-to-self "‘O£‚ğŒš‚Ä‚Ü‚·(‰Šú)")
+)
+;   “ƒ
+(defrule
+    (goal BUILDING TRUE)
+    (goal MAPTYPE LANDMAP)
+    (enemy-buildings-in-town)
+    (building-type-count watch-tower-line < 5)
+    (can-build watch-tower-line)
+=>
+    (build-forward watch-tower-line)
+    (chat-local-to-self "23 ‘Oü‚É“ƒ‚ğŒš‚Ä‚Ü‚·")
+)
+(defrule
+    (goal BUILDING TRUE)
+    (building-type-count town-center > 1)
+    (building-type-count castle > 0)
+    (building-type-count watch-tower-line < 5)
+    (can-build watch-tower-line)
+=>
+    (build watch-tower-line)
+    (chat-local-to-self "29 “ƒ‚ğŒš‚Ä‚Ü‚·")
+)
+(defrule
+    (current-age == feudal-age)
+    (players-military-population every-enemy < 3)
+    (players-building-count any-enemy > 2)
+    (can-build watch-tower-line)
+=>
+    (build-forward watch-tower-line)
+    (chat-local-to-self "23 ‘Oü‚É“ƒ‚ğŒš‚Ä‚Ü‚·")
+    (disable-self)
+)
+;   --- é•Ç ---
+#load-if-not-defined AZTEC-CIV
+#load-if-not-defined BYZANTINE-CIV
+#load-if-not-defined CELTIC-CIV
+#load-if-not-defined FRANKISH-CIV
+#load-if-not-defined HUN-CIV
+#load-if-not-defined JAPANESE-CIV
+#load-if-not-defined PERSIAN-CIV
+#load-if-not-defined TEUTONIC-CIV
+#load-if-not-defined VIKING-CIV
+(defrule
+    (true)
+=>
+    (enable-wall-placement 2)
+)
+(defrule
+    (goal NAVY_LEVEL BIG)
+    (can-build-gate 2)
+=>
+    (build-gate 2)
+)
+(defrule
+    (goal NAVY_LEVEL BIG)
+    (building-type-count town-center > 1)
+    (can-build-wall 2 stone-wall-line)
+=>
+    (build-wall 2 stone-wall-line)
+)
+#end-if
+#end-if
+#end-if
+#end-if
+#end-if
+#end-if
+#end-if
+#end-if
+#end-if
+; -----------------------
+; ¡ ƒeƒNƒmƒƒW[ŠÇ— ¡
+; -----------------------
+;   ˆÃ•
+(defrule
+    (can-research ri-loom)
+=>
+    (research ri-loom)
+    (chat-local-to-self "u‹@D‚èv‚ğŒ¤‹†‚µ‚Ü‚·")
+)
+(defrule
+    (can-research feudal-age)
+=>
+    (set-goal FEUDAL_AGE_FLAG TRUE)
+    (research feudal-age)
+    (chat-local-to-self "30 —Ìå‚Ì‘ã‚Éi‰»‚µ‚Ü‚·")
+)
+;   —Ìå
+(defrule
+    (goal MAPTYPE LANDMAP)
+    (can-research ri-town-watch)
+=>
+    (chat-local-to-self "uŒ©’£‚èv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+    (research ri-town-watch)
+)
+(defrule
+    (goal MAPTYPE LANDMAP)
+    (research-completed ri-double-bit-axe)
+    (can-research ri-wheel-barrow)
+=>
+    (research ri-wheel-barrow)
+    (set-goal RESEARCH ri-wheel-barrow)
+    (chat-local-to-self "uè‰Ÿ‚µÔv‚ğŒ¤‹†‚µ‚Ü‚·")
+)(defrule
+    (can-research ri-double-bit-axe)
+=>
+    (research ri-double-bit-axe)
+    (chat-local-to-self "u—¼n•€v‚ğŒ¤‹†‚µ‚Ü‚·")
+)
+(defrule
+    (or
+        (goal CASTLE_AGE_FLAG TRUE)
+        (goal NAVY_UNIT TRUE)
+    )
+    (can-research ri-fletching)
+=>
+    (research ri-fletching)
+    (chat-local-to-self "u–î‰Hªv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (unit-type-count archer-line > 3)
+    (food-amount > 200)
+    (can-research ri-fletching)
+=>
+    (research ri-fletching)
+    (chat-local-to-self "u–î‰Hªv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (can-research castle-age)
+=>
+    (set-goal CASTLE_AGE_FLAG TRUE)
+    (research castle-age)
+    (chat-local-to-self "30 éå‚Ì‘ã‚Éi‰»‚µ‚Ü‚·")
+)
+;   éå
+(defrule
+    (current-age >= castle-age)
+    (or
+        (research-completed ri-war-galley)
+        (not (goal NAVY_UNIT TRUE))
+    )
+    (can-research ri-wheel-barrow)
+=>
+    (research ri-wheel-barrow)
+    (set-goal RESEARCH ri-wheel-barrow)
+    (chat-local-to-self "uè‰Ÿ‚µÔv‚ğŒ¤‹†‚µ‚Ü‚·")
+)
+(defrule
+    (research-completed ri-wheel-barrow)
+=>
+    (set-goal RESEARCH ri-wheel-barrow)
+    (disable-self)
+)
+(defrule
+    (building-type-count-total town-center > 1)
+    (can-research ri-hand-cart)
+=>
+    (research ri-hand-cart)
+    (chat-local-to-self "u‰×Ôv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (can-research ri-war-galley)
+=>
+    (research ri-war-galley)
+    (chat-local-to-self "u‘åŒ^ƒKƒŒ[‘Dv‚ÉƒAƒbƒvƒOƒŒ[ƒg‚µ‚Ü‚·")
+)
+(defrule
+    (unit-type-count-total monk > 0)
+    (can-research ri-fervor)
+=>
+    (research ri-fervor)
+    (chat-local-to-self "u“ÄMv‚ğŒ¤‹†‚µ‚Ü‚·")
+)
+(defrule
+    (goal FORMATION_SOLDIER TRUE)
+    (or
+        (research-completed ri-war-galley)
+        (not (goal NAVY_UNIT TRUE))
+    )
+    (building-type-count-total barracks > 1)
+    (can-research ri-man-at-arms)
+=>
+    (research ri-man-at-arms)
+    (chat-local-to-self "uŒR•ºv‚ÉƒAƒbƒvƒOƒŒ[ƒg‚µ‚Ü‚·")
+)
+(defrule
+    (goal FORMATION_SOLDIER TRUE)
+    (building-type-count-total archery-range > 1)
+    (can-research ri-man-at-arms)
+=>
+    (research ri-man-at-arms)
+    (chat-local-to-self "uŒR•ºv‚ÉƒAƒbƒvƒOƒŒ[ƒg‚µ‚Ü‚·")
+)
+(defrule
+    (goal FORMATION_SOLDIER TRUE)
+    (building-type-count barracks > 1)
+    (can-research ri-long-swordsman)
+=>
+    (research ri-long-swordsman)
+    (chat-local-to-self "u’·Œ•ímv‚ÉƒAƒbƒvƒOƒŒ[ƒg‚µ‚Ü‚·")
+)
+(defrule
+    (soldier-count > 20)
+    (research-completed ri-long-swordsman)
+    (can-research ri-pikeman)
+=>
+    (research ri-pikeman)
+    (chat-local-to-self "u’·‘„•ºv‚ÉƒAƒbƒvƒOƒŒ[ƒg‚µ‚Ü‚·")
+)
+(defrule
+    (unit-type-count spearman-line > 12)
+    (can-research ri-pikeman)
+=>
+    (research ri-pikeman)
+    (chat-local-to-self "u’·‘„•ºv‚ÉƒAƒbƒvƒOƒŒ[ƒg‚µ‚Ü‚·")
+)
+(defrule
+    (unit-type-count archer-line > 20)
+    (can-research ri-crossbow)
+=>
+    (research ri-crossbow)
+    (chat-local-to-self "uÎ‹|Ëèv‚ÉƒAƒbƒvƒOƒŒ[ƒg‚µ‚Ü‚·")
+)
+(defrule
+    (unit-type-count knight-line > 2)
+    (can-research ri-bloodlines)
+=>
+    (research ri-bloodlines)
+    (chat-local-to-self "uŒŒ“v‚ğŒ¤‹†‚µ‚Ü‚·")
+)
+(defrule
+    (building-type-count barracks > 1)
+    (unit-type-count militiaman-line > 3)
+    (can-research ri-squires)
+=>
+    (research ri-squires)
+    (chat-local-to-self "u•ÒC‹Æv‚ğŒ¤‹†‚µ‚Ü‚·")
+)
+(defrule
+    (or
+        (research-completed ri-war-galley)
+        (not (goal NAVY_UNIT TRUE))
+    )
+    (can-research ri-bow-saw)
+=>
+    (research ri-bow-saw)
+    (chat-local-to-self "u‚Ì‚±‚¬‚èv‚ğŒ¤‹†‚µ‚Ü‚·")
+)
+(defrule
+    (building-type-count town-center > 1)
+    (or
+        (research-completed ri-war-galley)
+        (not (goal NAVY_UNIT TRUE))
+    )
+    (goal RESEARCH ri-wheel-barrow)
+    (can-research ri-gold-mining)
+=>
+    (research ri-gold-mining)
+    (chat-local-to-self "u‹à‚ÌÌŒ@v‚ğŒ¤‹†‚µ‚Ü‚·")
+)
+(defrule
+    (research-completed ri-gold-mining)
+    (can-research ri-horse-collar)
+=>
+    (research ri-horse-collar)
+    (chat-local-to-self "uˆø‚«‹ïv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (wood-amount > 300)
+    (can-research ri-horse-collar)
+=>
+    (research ri-horse-collar)
+    (chat-local-to-self "uˆø‚«‹ïv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (goal RESEARCH ri-wheel-barrow)
+    (can-research ri-heavy-plow)
+=>
+    (research ri-heavy-plow )
+    (chat-local-to-self "u”nŒLv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (or
+        (research-completed ri-war-galley)
+        (not (goal NAVY_UNIT TRUE))
+    )
+    (can-research ri-bodkin-arrow)
+=>
+    (research ri-bodkin-arrow)
+    (chat-local-to-self "uó–î‚¶‚èv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (research-completed ri-bodkin-arrow)
+    (can-research ri-careening)
+=>
+    (research ri-careening)
+    (chat-local-to-self "uŒX‘D‹Zpv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (building-type-count-total stable > 0)
+    (can-research ri-scale-barding)
+=>
+    (research ri-scale-barding)
+    (chat-local-to-self "u‹R•º—p‚¤‚ë‚±‚ÌŠZv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (or
+        (goal ARMY_UNIT TRUE)
+        (research-completed ri-padded-archer-armor)
+    )
+    (goal RESEARCH_SOLDIER TRUE)
+    (can-research ri-scale-mail)
+=>
+    (research ri-scale-mail)
+    (chat-local-to-self "u•à•º—p‚¤‚ë‚±‚ÌŠZv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (goal ARMY_UNIT TRUE)
+    (goal RESEARCH_ARCHER TRUE)
+    (can-research ri-padded-archer-armor)
+=>
+    (research ri-padded-archer-armor)
+    (chat-local-to-self "uËè—p‹¹“–‚Ä‚ÌŠZv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (goal MAPTYPE LANDMAP)
+    (soldier-count > 10)
+    (food-amount > 250)
+    (can-research ri-padded-archer-armor)
+=>
+    (research ri-padded-archer-armor)
+    (chat-local-to-self "uËè—p‹¹“–‚Ä‚ÌŠZv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (or
+        (research-completed ri-scale-barding)
+        (research-completed ri-scale-mail)
+    )
+    (can-research ri-forging)
+=>
+    (research ri-forging)
+    (chat-local-to-self "u’b‘¢v‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (can-research-with-escrow imperial-age)
+=>
+    (set-goal IMPERIAL_AGE_FLAG TRUE)
+    (release-escrow food)
+    (release-escrow gold)
+    (research imperial-age)
+    (chat-local-to-self "30 ’é‰¤‚Ì‘ã‚Éi‰»‚µ‚Ü‚·")
+)
+;   ’é‰¤
+(defrule
+    (building-type-count castle > 0)
+    (town-under-attack)
+    (can-research ri-murder-holes)
+=>
+    (research ri-murder-holes)
+    (chat-local-to-self "uŒ}Œ‚—p‘‹v‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (goal FORMATION_SOLDIER TRUE)
+    (can-research ri-two-handed-swordsman)
+=>
+    (research ri-two-handed-swordsman)
+    (chat-local-to-self "udŒ•Œ•mv‚ÉƒAƒbƒvƒOƒŒ[ƒg‚µ‚Ü‚·")
+)
+(defrule
+    (goal FORMATION_SOLDIER TRUE)
+    (can-research ri-champion)
+=>
+    (research ri-champion)
+    (chat-local-to-self "u‹ß‰qŒ•mv‚ÉƒAƒbƒvƒOƒŒ[ƒg‚µ‚Ü‚·")
+)
+(defrule
+    (soldier-count > 20)
+    (research-completed ri-champion)
+    (can-research ri-halberdier)
+=>
+    (research ri-halberdier)
+    (chat-local-to-self "u–µ‘„•ºv‚ÉƒAƒbƒvƒOƒŒ[ƒg‚µ‚Ü‚·")
+)
+(defrule
+    (can-research ri-cavalier)
+=>
+    (research ri-cavalier)
+    (chat-local-to-self "ud‹Rmv‚ÉƒAƒbƒvƒOƒŒ[ƒh‚µ‚Ü‚·")
+)
+(defrule
+    (can-research ri-paladin)
+=>
+    (research ri-paladin)
+    (chat-local-to-self "u‹ß‰q‹Rmv‚ÉƒAƒbƒvƒOƒŒ[ƒh‚µ‚Ü‚·")
+)
+(defrule
+    (or
+        (civ-selected saracen)
+        (players-unit-type-count any-enemy knight-line > 10)
+    )
+    (can-research ri-heavy-camel)
+=>
+    (research ri-heavy-camel)
+    (chat-local-to-self "ud‘•‚ç‚­‚¾‹R•ºv‚ÉƒAƒbƒvƒOƒŒ[ƒh‚µ‚Ü‚·")
+)
+(defrule
+    (goal NAVY_UNIT TRUE)
+    (or
+        (players-building-type-count any-enemy dock > 0)
+        (warboat-count > 9)
+    )
+    (can-research ri-galleon)
+=>
+    (research ri-galleon)
+    (chat-local-to-self "uƒKƒŠƒIƒ“‘Dv‚ÉƒAƒbƒvƒOƒŒ[ƒg‚µ‚Ü‚·")
+)
+(defrule
+    (goal NAVY_UNIT TRUE)
+    (players-unit-type-count any-enemy fire-ship-line > 2)
+    (research-completed ri-galleon)
+    (can-research ri-fast-fire-ship)
+=>
+    (research ri-fast-fire-ship)
+    (chat-local-to-self "u‚‘¬‰Î‰Š‘Dv‚ÉƒAƒbƒvƒOƒŒ[ƒg‚µ‚Ü‚·")
+)
+(defrule
+    (not (goal NAVY_LEVEL NONE))
+    (can-research ri-cannon-galleon)
+=>
+    (research ri-cannon-galleon)
+    (chat-local-to-self "uƒLƒƒƒmƒ“ƒKƒŠƒIƒ“‘Dv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (goal NAVY_LEVEL BIG)
+    (unit-type-count-total cannon-galleon-line == 5)
+    (can-research ri-deck-guns)
+=>
+    (research ri-deck-guns)
+    (chat-local-to-self "u‹@“®ƒLƒƒƒmƒ“ƒKƒŠƒIƒ“‘Dv‚ÉƒAƒbƒvƒOƒŒ[ƒg‚µ‚Ü‚·")
+)
+(defrule
+    (can-research ri-guilds)
+=>
+    (research ri-guilds)
+    (chat-local-to-self "u‘g‡v‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (or
+        (research-completed ri-guilds)
+        (not (research-available ri-guilds))
+    )
+    (can-research ri-gold-shaft-mining)
+=>
+    (research ri-gold-shaft-mining)
+    (chat-local-to-self "u‹à‚ÌŒ@ív‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (or
+        (research-completed ri-gold-shaft-mining)
+        (not (research-available ri-gold-shaft-mining))
+    )
+    (can-research ri-crop-rotation)
+=>
+    (research ri-crop-rotation)
+    (chat-local-to-self "u—Öìv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (or
+        (research-completed ri-crop-rotation)
+        (not (research-available ri-crop-rotation))
+    )
+    (can-research ri-two-man-saw)
+=>
+    (research ri-two-man-saw)
+    (chat-local-to-self "u—¼‚Ğ‚«‚Ì‚±‚¬‚èv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (can-research ri-chemistry)
+=>
+    (research ri-chemistry)
+    (chat-local-to-self "u‰»Šwv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (can-research ri-ballistics)
+=>
+    (research ri-ballistics)
+    (chat-local-to-self "u’e“¹Šwv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (goal RESEARCH_ARCHER TRUE)
+    (can-research ri-bracer)
+=>
+    (chat-local-to-self "u¬èv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+    (research ri-bracer)
+)
+(defrule
+    (or
+        (unit-type-count cannon-galleon-line > 4)
+        (unit-type-count 42 > 2)
+    )
+    (or
+        (research-completed ri-two-man-saw)
+        (not (research-available ri-two-man-saw))
+    )
+    (can-research ri-siege-engineers)
+=>
+    (research ri-siege-engineers)
+    (chat-local-to-self "u•ïˆÍUŒ‚‹Zpv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (or
+        (goal ARMY_ATTACK TRUE)
+        (goal IMPERIAL_AGE_FLAG TRUE)
+    )
+    (can-research ri-chain-barding)
+=>
+    (research ri-chain-barding)
+    (chat-local-to-self "u‹R”n—p½‚©‚½‚Ñ‚çv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (or
+        (goal ARMY_ATTACK TRUE)
+        (soldier-count >= 30)
+    )
+    (can-research ri-plate-barding)
+=>
+    (research ri-plate-barding)
+    (chat-local-to-self "u‹R”n—pb™hv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (or
+        (goal ARMY_ATTACK TRUE)
+        (goal IMPERIAL_AGE_FLAG TRUE)
+    )
+    (can-research ri-chain-mail)
+=>
+    (research ri-chain-mail)
+    (chat-local-to-self "u•à•º—p½‚©‚½‚Ñ‚çv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (or
+        (goal ARMY_ATTACK TRUE)
+        (soldier-count >= 30)
+    )
+    (can-research ri-plate-mail)
+=>
+    (research ri-plate-mail)
+    (chat-local-to-self "u•à•º—pb™hv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (or
+        (goal ARMY_ATTACK TRUE)
+        (goal IMPERIAL_AGE_FLAG TRUE)
+    )
+    (can-research ri-leather-archer-armor)
+=>
+    (research ri-leather-archer-armor)
+    (chat-local-to-self "uËè—pŠv‚ÌŠZv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (or
+        (goal ARMY_ATTACK TRUE)
+        (soldier-count >= 30)
+    )
+    (can-research ri-ring-archer-armor)
+=>
+    (research ri-ring-archer-armor)
+    (chat-local-to-self "uËè—p½‚ÌŠZv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (or
+        (goal ARMY_ATTACK TRUE)
+        (goal IMPERIAL_AGE_FLAG TRUE)
+    )
+    (can-research ri-iron-casting)
+=>
+    (research ri-iron-casting)
+    (chat-local-to-self "u’’‘¢v‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (or
+        (goal ARMY_ATTACK TRUE)
+        (soldier-count >= 30)
+    )
+    (can-research ri-blast-furnace)
+=>
+    (research ri-blast-furnace)
+    (chat-local-to-self "u‚‰·—nz˜Fv‚ÌŒ¤‹†‚ğŠJn‚µ‚Ü‚·")
+)
+(defrule
+    (can-research my-unique-unit-upgrade)
+=>
+    (research my-unique-unit-upgrade)
+    (chat-local-to-self "uƒ†ƒj[ƒNƒ†ƒjƒbƒgv‚ğƒAƒbƒvƒOƒŒ[ƒh‚µ‚Ü‚·")
+)
+
+; -----------------------
+; ¡ ŒR‘à¶YŠÇ— ¡
+; -----------------------
+;   Ué•ºŠí‚ª•K—v‚©”»’è
+(defrule
+    (soldier-count < 10)
+    (goal NEED_SIEGH_UNIT TRUE)
+=>
+    (chat-local-to-self "Ué•ºŠí‚Ì¶Y’†~:–h‰qŒR¶YŠJn")
+    (set-goal NEED_SIEGH_UNIT FALSE)
+)
+(defrule
+    (soldier-count > 9)
+    (unit-type-count-total battering-ram-line == 0)
+    (unit-type-count-total trebuchet == 0)
+    (unit-type-count-total 42 == 0)
+    (goal NEED_SIEGH_UNIT FALSE)
+=>
+    (chat-local-to-self "Ué•ºŠí‚Ì¶YŠJn:–h‰qŒR¶Y’†~")
+    (set-goal NEED_SIEGH_UNIT TRUE)
+)
+;   –ê  ... ŒR‘à‚È‚Ì‚©H
+(defrule
+    (or
+        (or
+            (research-completed ri-war-galley)
+            (gold-amount > 230)
+        )
+        (not (goal NAVY_UNIT TRUE))
+    )
+    (can-train monk)
+=>
+    (train monk)
+;;    (chat-local-to-self "–ê‚ğ¶Y‚µ‚Ü‚·(ˆêl–Ú)")
+    (disable-self)
+)
+(defrule
+    (or
+        (research-completed ri-war-galley)
+        (not (goal NAVY_UNIT TRUE))
+    )
+    (can-train monk)
+=>
+    (train monk)
+;;    (chat-local-to-self "–ê‚ğ¶Y‚µ‚Ü‚·(“ñl–Ú)")
+    (disable-self)
+)
+(defrule
+    (or
+        (research-completed ri-fervor)
+        (unit-type-count-total monk > 1)
+    )
+    (can-train monk)
+=>
+    (train monk)
+;;    (chat-local-to-self "–ê‚ğ¶Y‚µ‚Ü‚·(Ol–Ú)")
+    (disable-self)
+)
+(defrule
+    (or
+        (goal ARMY_ATTACK TRUE)
+        (goal IMPERIAL_AGE_FLAG TRUE)
+    )
+    (soldier-count > 20)
+    (goal NEED_SIEGH_UNIT FALSE)
+    (unit-type-count-total monk < 5)
+    (can-train monk)
+=>
+    (train monk)
+;;    (chat-local-to-self "–ê‚ğ¶Y‚µ‚Ü‚·(•W€)")
+)
+;   —Ìå(—¤í)
+(defrule
+    (current-age == feudal-age)
+    (can-train spearman-line)
+=>
+    (train spearman-line)
+;;    (chat-local-to-self "‘„•º‚ğ¶Y‚µ‚Ü‚·")
+    (disable-self)
+)
+(defrule
+    (current-age == feudal-age)
+    (players-unit-type-count every-enemy skirmisher-line < 3)
+    (unit-type-count-total archer-line < 10)
+    (can-train archer-line)
+=>
+    (train archer-line)
+;;    (chat-local-to-self "Ëè‚ğ¶Y‚µ‚Ü‚·")
+)
+(defrule
+    (current-age == feudal-age)
+    (or
+        (unit-type-count-total skirmisher-line >= 7)
+        (unit-type-count-total archer-line < 5)
+    )
+    (can-train archer-line)
+=>
+    (train archer-line)
+;;    (chat-local-to-self "Ëè‚ğ¶Y‚µ‚Ü‚·")
+)
+(defrule
+    (current-age == feudal-age)
+    (food-amount > 50)
+    (unit-type-count-total skirmisher-line < 12)
+    (can-train skirmisher-line)
+=>
+    (train skirmisher-line)
+;;    (chat-local-to-self "U•º‚ğ¶Y‚µ‚Ü‚·")
+)
+(defrule
+    (current-age == feudal-age)
+    (food-amount > 130)
+    (soldier-count > 12)
+    (unit-type-count-total man-at-arms < 10)
+    (can-train man-at-arms)
+=>
+    (train man-at-arms)
+;;    (chat-local-to-self "ŒR•º‚ğ¶Y‚µ‚Ü‚·")
+)
+(defrule
+    (current-age == feudal-age)
+    (soldier-count > 4)
+    (food-amount > 50)
+    (unit-type-count-total spearman-line < 15)
+    (can-train spearman-line)
+=>
+    (train spearman-line)
+;;    (chat-local-to-self "‘„•º‚ğ¶Y‚µ‚Ü‚·")
+)
+;   —Ìå(–h‰q)
+(defrule
+    (current-age == feudal-age)
+    (warboat-count < 7)
+    (can-train galley)
+=>
+    (train galley)
+;;    (chat-local-to-self "ƒKƒŒ[‘D‚ğ¶Y‚µ‚Ü‚·")
+)
+(defrule
+    (soldier-count < 10)
+    (town-under-attack)
+    (unit-type-count-total spearman-line < 5)
+    (can-train spearman-line)
+=>
+    (train spearman-line)
+;;    (chat-local-to-self "‘„•º‚ğ¶Y‚µ‚Ü‚·")
+)
+;   —Ìå(ŠCŒR‹­‰»)
+(defrule
+    (current-age == feudal-age)
+    (goal NAVY_UNIT TRUE)
+    (warboat-count < 18)
+    (can-train galley)
+=>
+    (train galley)
+;;    (chat-local-to-self "ƒKƒŒ[‘D‚ğ¶Y‚µ‚Ü‚·(ŠCŒRw—ß)")
+)
+;   éå(•W€)
+(defrule
+    (current-age == castle-age)
+    (warboat-count < 5)
+    (can-train war-galley)
+=>
+    (train war-galley)
+;;    (chat-local-to-self "‘åŒ^ƒKƒŒ[‘D‚ğ¶Y‚µ‚Ü‚·")
+)
+(defrule
+    (current-age == castle-age)
+    (goal ARMY_UNIT TRUE)
+    (not (town-under-attack))
+    (soldier-count > 5)
+    (unit-type-count-total battering-ram-line == 0)
+    (can-train battering-ram-line)
+=>
+    (train battering-ram-line)
+    (set-goal NEED_SIEGH_UNIT FALSE)
+;;    (chat-local-to-self "”j‰ó’Æ‚ğ¶Y‚µ‚Ü‚·(í”z”õ)")
+)
+(defrule
+    (current-age == castle-age)
+    (goal ARMY_UNIT TRUE)
+    (soldier-count > 9)
+    (unit-type-count-total battering-ram-line < 2)
+    (can-train battering-ram-line)
+=>
+    (train battering-ram-line)
+    (set-goal NEED_SIEGH_UNIT FALSE)
+;;    (chat-local-to-self "”j‰ó’Æ‚ğ¶Y‚µ‚Ü‚·(UŒ‚”z”õ)")
+)
+(defrule
+    (current-age == castle-age)
+    (goal ARMY_UNIT TRUE)
+    (goal NEED_SIEGH_UNIT FALSE)
+    (goal RESEARCH_ARCHER FALSE)
+    (unit-type-count-total scorpion-line < 12)
+    (or
+        (unit-type-count-total scorpion-line >= 7)
+        (unit-type-count-total battering-ram-line > 0)
+    )
+    (can-train scorpion-line)
+=>
+    (train scorpion-line)
+;;    (chat-local-to-self "ƒXƒR[ƒsƒIƒ“‚ğ¶Y‚µ‚Ü‚·")
+)
+(defrule
+    (current-age == castle-age)
+    (goal ARMY_UNIT TRUE)
+    (goal NEED_SIEGH_UNIT FALSE)
+    (players-unit-type-count any-enemy scorpion-line > 0)
+    (unit-type-count-total scorpion-line >= 7)
+    (unit-type-count-total mangonel-line < 2)
+    (can-train mangonel-line)
+=>
+    (train mangonel-line)
+;;    (chat-local-to-self "“ŠÎŠí‚ğ¶Y‚µ‚Ü‚·")
+)
+;   éå(ŠCŒR‹­‰»)
+(defrule
+    (current-age == castle-age)
+    (goal NAVY_UNIT TRUE)
+    (research-completed ri-war-galley)
+    (or
+        (players-unit-type-count any-enemy fire-ship-line > 0)
+        (players-unit-type-count any-enemy galley-line > 0)
+    )
+    (unit-type-count-total fire-ship-line < 6)
+    (can-train fire-ship-line)
+=>
+    (train fire-ship-line)
+;;    (chat-local-to-self "‰Î‰Š‘D‚ğ¶Y‚µ‚Ü‚·(ŠCŒRw—ß)")
+)
+(defrule
+    (current-age == castle-age)
+    (goal NAVY_UNIT TRUE)
+    (or
+        (players-unit-type-count any-enemy fire-ship-line > 0)
+        (players-unit-type-count any-enemy galley-line > 0)
+    )
+    (can-train longboat-line)
+=>
+    (train longboat-line)
+;;    (chat-local-to-self "ƒoƒCƒLƒ“ƒO‘D‚ğ¶Y‚µ‚Ü‚·(ŠCŒRw—ß)")
+)
+(defrule
+    (current-age == castle-age)
+    (goal NAVY_UNIT TRUE)
+    (can-train war-galley)
+=>
+    (train war-galley)
+;;    (chat-local-to-self "‘åŒ^ƒKƒŒ[‘D‚ğ¶Y‚µ‚Ü‚·(ŠCŒRw—ß)")
+)
+;   éå(—¤ŒR‹­‰»)
+(defrule
+    (current-age == castle-age)
+    (goal ARMY_UNIT TRUE)
+    (goal NEED_SIEGH_UNIT FALSE)
+    (unit-type-count-total knight-line < 12)
+    (can-train knight-line)
+=>
+    (train knight-line)
+;;    (chat-local-to-self "‹Rm‚ğ¶Y‚µ‚Ü‚·(—¤ŒRw—ß)")
+)
+(defrule
+    (current-age == castle-age)
+    (goal ARMY_UNIT TRUE)
+    (goal NEED_SIEGH_UNIT FALSE)
+    (unit-type-count-total militiaman-line < 12)
+    (research-completed ri-long-swordsman)
+    (can-train militiaman-line)
+=>
+    (train militiaman-line)
+;;    (chat-local-to-self "’·Œ•Œ•m‚ğ¶Y‚µ‚Ü‚·(—¤ŒRw—ß)")
+)
+(defrule
+    (current-age == castle-age)
+    (goal ARMY_UNIT TRUE)
+    (goal NEED_SIEGH_UNIT FALSE)
+    (or
+        (civ-selected saracen)
+        (players-unit-type-count any-enemy knight-line > 10)
+    )
+    (unit-type-count-total camel < 12)
+    (can-train camel)
+=>
+    (train camel)
+;;    (chat-local-to-self "‚ç‚­‚¾‹R•º‚ğ¶Y‚µ‚Ü‚·(—¤ŒRw—ß)")
+)
+(defrule
+    (current-age == castle-age)
+    (goal ARMY_UNIT TRUE)
+    (goal NEED_SIEGH_UNIT FALSE)
+    (players-unit-type-count any-enemy knight-line > 1)
+    (unit-type-count-total pikeman < 6)
+    (can-train pikeman)
+=>
+    (train pikeman)
+;;    (chat-local-to-self "’·‘„•º‚ğ¶Y‚µ‚Ü‚·(—¤ŒRw—ß)")
+)
+(defrule
+    (current-age == castle-age)
+    (goal ARMY_UNIT TRUE)
+    (goal NEED_SIEGH_UNIT FALSE)
+    (soldier-count > 10)
+    (can-train my-unique-unit-line)
+=>
+    (train my-unique-unit-line)
+;;    (chat-local-to-self "ƒ†ƒj[ƒNƒ†ƒjƒbƒg‚ğ¶Y‚µ‚Ü‚·(—¤ŒRw—ß)")
+)
+;   ’é‰¤(•W€)
+(defrule
+    (soldier-count > 9)
+    (goal ARMY_UNIT TRUE)
+    (unit-type-count-total trebuchet < 4)
+    (unit-type-count-total 42 < 3)
+    (can-train trebuchet)
+=>
+    (set-goal NEED_SIEGH_UNIT FALSE)
+    (train trebuchet)
+;;     (chat-local-to-self "‰““Š“ŠÎŠí‚ğ¶Y‚µ‚Ü‚·")
+)
+(defrule
+    (current-age == imperial-age)
+    (warboat-count < 5)
+    (can-train galleon)
+=>
+    (train galleon)
+;;    (chat-local-to-self "‘åŒ^ƒKƒŒ[‘D‚ğ¶Y‚µ‚Ü‚·")
+)
+(defrule
+    (current-age == imperial-age)
+    (goal ARMY_UNIT TRUE)
+    (soldier-count > 12)
+    (gold-amount > 300)
+    (wood-amount > 600)
+    (unit-type-count-total scorpion-line < 5)
+    (unit-type-count-total trebuchet > 1)
+    (can-train scorpion-line)
+=>
+    (train scorpion-line)
+;;    (chat-local-to-self "ƒXƒR[ƒsƒIƒ“‚ğ¶Y‚µ‚Ü‚·")
+)
+;   éå(ŠCŒR‹­‰»)
+(defrule
+    (current-age == imperial-age)
+    (goal NAVY_UNIT TRUE)
+    (research-completed ri-galleon)
+    (or
+        (players-unit-type-count any-enemy fire-ship-line > 0)
+        (players-unit-type-count any-enemy galley-line > 0)
+    )
+    (unit-type-count-total fire-ship-line < 6)
+    (can-train fire-ship-line)
+=>
+    (train fire-ship-line)
+;;    (chat-local-to-self "‰Î‰Š‘D‚ğ¶Y‚µ‚Ü‚·(ŠCŒRw—ß)")
+)
+(defrule
+    (current-age == imperial-age)
+    (research-completed ri-galleon)
+    (goal NAVY_UNIT TRUE)
+    (or
+        (players-unit-type-count any-enemy fire-ship-line > 0)
+        (players-unit-type-count any-enemy galley-line > 0)
+    )
+    (can-train longboat-line)
+=>
+    (train longboat-line)
+;;    (chat-local-to-self "ƒoƒCƒLƒ“ƒO‘D‚ğ¶Y‚µ‚Ü‚·(ŠCŒRw—ß)")
+)
+(defrule
+    (current-age == imperial-age)
+    (goal NAVY_UNIT TRUE)
+    (can-train galleon)
+=>
+    (train galleon)
+;;    (chat-local-to-self "ƒKƒŠƒIƒ“‘D‚ğ¶Y‚µ‚Ü‚·(ŠCŒRw—ß)")
+)
+;   ’é‰¤(—¤ŒR‹­‰»)
+(defrule
+    (current-age == imperial-age)
+    (goal ARMY_UNIT TRUE)
+    (goal NEED_SIEGH_UNIT FALSE)
+    (unit-type-count-total long-swordsman < 10)
+    (can-train long-swordsman)
+=>
+    (train long-swordsman)
+;;    (chat-local-to-self "’·Œ•Œ•m‚ğ¶Y‚µ‚Ü‚·(—¤ŒRw—ß)")
+)
+(defrule
+    (goal ARMY_UNIT TRUE)
+    (goal NEED_SIEGH_UNIT FALSE)
+    (unit-type-count-total militiaman-line < 14)
+    (research-completed ri-two-handed-swordsman)
+    (not (research-completed ri-champion))
+    (can-train militiaman-line)
+=>
+    (train militiaman-line)
+;;    (chat-local-to-self "dŒ•Œ•m‚ğ¶Y‚µ‚Ü‚·(—¤ŒRw—ß)")
+)
+(defrule
+    (goal ARMY_UNIT TRUE)
+    (goal NEED_SIEGH_UNIT FALSE)
+    (research-completed ri-champion)
+    (can-train militiaman-line)
+=>
+    (train militiaman-line)
+;;    (chat-local-to-self "‹ß‰qŒ•m‚ğ¶Y‚µ‚Ü‚·(—¤ŒRw—ß)")
+)
+(defrule
+    (current-age == imperial-age)
+    (goal ARMY_UNIT TRUE)
+    (goal NEED_SIEGH_UNIT FALSE)
+    (unit-type-count-total knight < 10)
+    (can-train knight)
+=>
+    (train knight)
+;;    (chat-local-to-self "‹Rm‚ğ¶Y‚µ‚Ü‚·(—¤ŒRw—ß)")
+)
+(defrule
+    (current-age == imperial-age)
+    (goal ARMY_UNIT TRUE)
+    (goal NEED_SIEGH_UNIT FALSE)
+    (unit-type-count-total cavalier < 14)
+    (can-train cavalier)
+=>
+    (train cavalier)
+;;    (chat-local-to-self "d‹Rm‚ğ¶Y‚µ‚Ü‚·(—¤ŒRw—ß)")
+)
+(defrule
+    (current-age == imperial-age)
+    (goal ARMY_UNIT TRUE)
+    (goal NEED_SIEGH_UNIT FALSE)
+    (can-train paladin)
+=>
+    (train paladin)
+;;    (chat-local-to-self "‹ß‰q‹Rm‚ğ¶Y‚µ‚Ü‚·(—¤ŒRw—ß)")
+)
+(defrule
+    (current-age == imperial-age)
+    (goal ARMY_UNIT TRUE)
+    (goal NEED_SIEGH_UNIT FALSE)
+    (or
+        (civ-selected saracen)
+        (players-unit-type-count any-enemy knight-line > 10)
+    )
+    (can-train heavy-camel)
+=>
+    (train heavy-camel)
+;;    (chat-local-to-self "d‘•‚ç‚­‚¾‹R•º‚ğ¶Y‚µ‚Ü‚·(—¤ŒRw—ß)")
+)
+(defrule
+    (current-age == imperial-age)
+    (goal ARMY_UNIT TRUE)
+    (goal NEED_SIEGH_UNIT FALSE)
+    (players-unit-type-count any-enemy knight-line > 1)
+    (unit-type-count-total halberdier < 6)
+    (can-train halberdier)
+=>
+    (train pikeman)
+;;    (chat-local-to-self "–µ‘„•º‚ğ¶Y‚µ‚Ü‚·(—¤ŒRw—ß)")
+)
+(defrule
+    (current-age == imperial-age)
+    (goal ARMY_UNIT TRUE)
+    (goal NEED_SIEGH_UNIT FALSE)
+    (unit-type-count-total my-unique-unit-line < 14)
+    (can-train my-unique-unit-line)
+=>
+    (train my-unique-unit-line)
+;;    (chat-local-to-self "ƒ†ƒj[ƒNƒ†ƒjƒbƒg‚ğ¶Y‚µ‚Ü‚·(—¤ŒRw—ß)")
+)
+(defrule
+    (goal NAVY_ATTACK TRUE)
+    (goal NEED_SIEGH_UNIT FALSE)
+    (not (goal NAVY_LEVEL NONE))
+    (unit-type-count-total cannon-galleon-line < 5)
+    (can-train cannon-galleon-line)
+=>
+    (train cannon-galleon-line)
+;;     (chat-local-to-self "ƒLƒƒƒmƒ“ƒKƒŠƒIƒ“‘Di‚TÇ‚Ü‚Åj‚ğ¶Y‚µ‚Ü‚·")
+)
+
+; -----------------------
+; ¡ ’¬‚Ì‘å‚«‚³’²® ¡
+; -----------------------
+;   ƒfƒtƒHƒ‹ƒg
+(defrule
+    (soldier-count < 15)
+    (timer-triggered TIMER_BUILDING)
+=>
+    (set-strategic-number sn-minimum-town-size 1)
+    (set-strategic-number sn-maximum-town-size 25)
+    (set-goal BUILDING TRUE)
+    (disable-timer TIMER_BUILDING)
+)
+(defrule
+    (soldier-count >= 15)
+    (timer-triggered TIMER_BUILDING)
+=>
+    (set-strategic-number sn-minimum-town-size 1)
+    (set-strategic-number sn-maximum-town-size 35)
+    (set-goal BUILDING TRUE)
+    (disable-timer TIMER_BUILDING)
+)
+(defrule
+    (goal ARMY_ATTACK FALSE)
+    (strategic-number sn-maximum-town-size > 35)
+=>
+    (set-goal BUILDING FALSE)
+    (enable-timer TIMER_BUILDING 1)
+)
+;   ƒ^ƒEƒ“ƒTƒCƒYƒAƒ^ƒbƒNI
+(defrule
+    (goal ARMY_ATTACK TRUE)
+=>
+    (enable-timer TIMER_EXPANSION 1)
+    (disable-self)
+)
+(defrule
+    (goal ARMY_ATTACK TRUE)
+    (goal BUILDING TRUE)
+    (timer-triggered TIMER_EXPANSION)
+    (not (town-under-attack))
+    (not (enemy-buildings-in-town))
+    (strategic-number sn-maximum-town-size < 40)
+=>
+    (set-goal RESET_EXPANTION FALSE)
+    (set-strategic-number sn-maximum-town-size 40)
+    (enable-timer TIMER_EXPANSION 3)
+    (chat-local-to-self "19 ¨—Í”ÍˆÍ‚ğŠg‘å‚µ‚Ü‚·:40")
+)
+(defrule
+    (goal ARMY_ATTACK TRUE)
+    (goal BUILDING TRUE)
+    (timer-triggered TIMER_EXPANSION)
+    (not (town-under-attack))
+    (not (enemy-buildings-in-town))
+    (strategic-number sn-maximum-town-size >= 40)
+    (strategic-number sn-maximum-town-size < 50)
+=>
+    (set-goal RESET_EXPANTION FALSE)
+    (set-strategic-number sn-maximum-town-size 50)
+    (enable-timer TIMER_EXPANSION 3)
+    (chat-local-to-self "¨—Í”ÍˆÍ‚ğŠg‘å‚µ‚Ü‚·:50")
+)
+(defrule
+    (goal ARMY_ATTACK TRUE)
+    (goal BUILDING TRUE)
+    (timer-triggered TIMER_EXPANSION)
+    (not (town-under-attack))
+    (not (enemy-buildings-in-town))
+    (strategic-number sn-maximum-town-size >= 50)
+    (strategic-number sn-maximum-town-size < 60)
+=>
+    (set-goal RESET_EXPANTION FALSE)
+    (set-strategic-number sn-maximum-town-size 60)
+    (enable-timer TIMER_EXPANSION 3)
+    (chat-local-to-self "¨—Í”ÍˆÍ‚ğŠg‘å‚µ‚Ü‚·:60")
+)
+(defrule
+    (goal ARMY_ATTACK TRUE)
+    (goal BUILDING TRUE)
+    (timer-triggered TIMER_EXPANSION)
+    (not (town-under-attack))
+    (not (enemy-buildings-in-town))
+    (strategic-number sn-maximum-town-size >= 60)
+    (strategic-number sn-maximum-town-size < 65)
+=>
+    (set-goal RESET_EXPANTION FALSE)
+    (set-strategic-number sn-maximum-town-size 65)
+    (enable-timer TIMER_EXPANSION 3)
+    (chat-local-to-self "¨—Í”ÍˆÍ‚ğŠg‘å‚µ‚Ü‚·:65")
+)
+(defrule
+    (goal ARMY_ATTACK TRUE)
+    (goal BUILDING TRUE)
+    (timer-triggered TIMER_EXPANSION)
+    (not (town-under-attack))
+    (not (enemy-buildings-in-town))
+    (strategic-number sn-maximum-town-size >= 65)
+    (strategic-number sn-maximum-town-size < 70)
+=>
+    (set-goal RESET_EXPANTION FALSE)
+    (set-strategic-number sn-maximum-town-size 70)
+    (enable-timer TIMER_EXPANSION 3)
+    (chat-local-to-self "¨—Í”ÍˆÍ‚ğŠg‘å‚µ‚Ü‚·:70")
+)
+(defrule
+    (goal ARMY_ATTACK TRUE)
+    (goal BUILDING TRUE)
+    (timer-triggered TIMER_EXPANSION)
+    (not (town-under-attack))
+    (not (enemy-buildings-in-town))
+    (strategic-number sn-maximum-town-size >= 70)
+    (strategic-number sn-maximum-town-size < 75)
+=>
+    (set-goal RESET_EXPANTION FALSE)
+    (set-strategic-number sn-maximum-town-size 75)
+    (enable-timer TIMER_EXPANSION 3)
+    (chat-local-to-self "¨—Í”ÍˆÍ‚ğŠg‘å‚µ‚Ü‚·:75")
+)
+(defrule
+    (goal ARMY_ATTACK TRUE)
+    (goal BUILDING TRUE)
+    (timer-triggered TIMER_EXPANSION)
+    (not (town-under-attack))
+    (not (enemy-buildings-in-town))
+    (strategic-number sn-maximum-town-size >= 75)
+    (strategic-number sn-maximum-town-size < 80)
+=>
+    (set-goal RESET_EXPANTION FALSE)
+    (set-strategic-number sn-maximum-town-size 80)
+    (enable-timer TIMER_EXPANSION 3)
+    (chat-local-to-self "¨—Í”ÍˆÍ‚ğŠg‘å‚µ‚Ü‚·:80")
+)
+(defrule
+    (goal ARMY_ATTACK TRUE)
+    (goal BUILDING TRUE)
+    (timer-triggered TIMER_EXPANSION)
+    (not (town-under-attack))
+    (not (enemy-buildings-in-town))
+    (strategic-number sn-maximum-town-size >= 80)
+    (strategic-number sn-maximum-town-size < 85)
+=>
+    (set-goal RESET_EXPANTION FALSE)
+    (set-strategic-number sn-maximum-town-size 85)
+    (enable-timer TIMER_EXPANSION 3)
+    (chat-local-to-self "¨—Í”ÍˆÍ‚ğŠg‘å‚µ‚Ü‚·:85")
+)
+(defrule
+    (goal ARMY_ATTACK TRUE)
+    (goal BUILDING TRUE)
+    (timer-triggered TIMER_EXPANSION)
+    (not (town-under-attack))
+    (not (enemy-buildings-in-town))
+    (strategic-number sn-maximum-town-size >= 85)
+    (strategic-number sn-maximum-town-size < 90)
+=>
+    (set-goal RESET_EXPANTION FALSE)
+    (set-strategic-number sn-maximum-town-size 90)
+    (enable-timer TIMER_EXPANSION 3)
+    (chat-local-to-self "¨—Í”ÍˆÍ‚ğŠg‘å‚µ‚Ü‚·:90")
+)
+(defrule
+    (goal ARMY_ATTACK TRUE)
+    (goal BUILDING TRUE)
+    (timer-triggered TIMER_EXPANSION)
+    (not (town-under-attack))
+    (not (enemy-buildings-in-town))
+    (strategic-number sn-maximum-town-size >= 90)
+    (strategic-number sn-maximum-town-size < 95)
+=>
+    (set-goal RESET_EXPANTION FALSE)
+    (set-strategic-number sn-maximum-town-size 95)
+    (enable-timer TIMER_EXPANSION 3)
+    (chat-local-to-self "¨—Í”ÍˆÍ‚ğŠg‘å‚µ‚Ü‚·:95")
+)
+(defrule
+    (goal ARMY_ATTACK TRUE)
+    (goal BUILDING TRUE)
+    (timer-triggered TIMER_EXPANSION)
+    (not (town-under-attack))
+    (not (enemy-buildings-in-town))
+    (strategic-number sn-maximum-town-size >= 95)
+    (strategic-number sn-maximum-town-size < 100)
+=>
+    (set-goal RESET_EXPANTION FALSE)
+    (set-strategic-number sn-maximum-town-size 100)
+    (enable-timer TIMER_EXPANSION 3)
+    (chat-local-to-self "¨—Í”ÍˆÍ‚ğŠg‘å‚µ‚Ü‚·:100")
+)
+(defrule
+    (goal ARMY_ATTACK TRUE)
+    (goal BUILDING TRUE)
+    (timer-triggered TIMER_EXPANSION)
+    (not (town-under-attack))
+    (not (enemy-buildings-in-town))
+    (strategic-number sn-maximum-town-size >= 100)
+    (strategic-number sn-maximum-town-size < 105)
+=>
+    (set-goal RESET_EXPANTION FALSE)
+    (set-strategic-number sn-maximum-town-size 105)
+    (enable-timer TIMER_EXPANSION 3)
+    (chat-local-to-self "¨—Í”ÍˆÍ‚ğŠg‘å‚µ‚Ü‚·:105")
+)
+(defrule
+    (goal ARMY_ATTACK TRUE)
+    (goal BUILDING TRUE)
+    (timer-triggered TIMER_EXPANSION)
+    (not (town-under-attack))
+    (not (enemy-buildings-in-town))
+    (strategic-number sn-maximum-town-size >= 105)
+    (strategic-number sn-maximum-town-size < 110)
+=>
+    (set-goal RESET_EXPANTION FALSE)
+    (set-strategic-number sn-maximum-town-size 110)
+    (enable-timer TIMER_EXPANSION 3)
+    (chat-local-to-self "¨—Í”ÍˆÍ‚ğŠg‘å‚µ‚Ü‚·:110")
+)
+(defrule
+    (goal ARMY_ATTACK TRUE)
+    (goal BUILDING TRUE)
+    (timer-triggered TIMER_EXPANSION)
+    (not (town-under-attack))
+    (not (enemy-buildings-in-town))
+    (strategic-number sn-maximum-town-size >= 110)
+    (strategic-number sn-maximum-town-size < 120)
+=>
+    (set-goal RESET_EXPANTION FALSE)
+    (set-strategic-number sn-maximum-town-size 120)
+    (enable-timer TIMER_EXPANSION 3)
+    (chat-local-to-self "¨—Í”ÍˆÍ‚ğŠg‘å‚µ‚Ü‚·:120")
+)
+(defrule
+    (goal ARMY_ATTACK TRUE)
+    (goal BUILDING TRUE)
+    (timer-triggered TIMER_EXPANSION)
+    (not (town-under-attack))
+    (not (enemy-buildings-in-town))
+    (strategic-number sn-maximum-town-size >= 120)
+    (strategic-number sn-maximum-town-size < 130)
+=>
+    (set-goal RESET_EXPANTION FALSE)
+    (set-strategic-number sn-maximum-town-size 130)
+    (enable-timer TIMER_EXPANSION 3)
+    (chat-local-to-self "¨—Í”ÍˆÍ‚ğŠg‘å‚µ‚Ü‚·:130")
+)
+(defrule
+    (goal ARMY_ATTACK TRUE)
+    (goal BUILDING TRUE)
+    (timer-triggered TIMER_EXPANSION)
+    (not (town-under-attack))
+    (not (enemy-buildings-in-town))
+    (strategic-number sn-maximum-town-size >= 130)
+    (strategic-number sn-maximum-town-size < 140)
+=>
+    (set-goal RESET_EXPANTION FALSE)
+    (set-strategic-number sn-maximum-town-size 140)
+    (enable-timer TIMER_EXPANSION 3)
+    (chat-local-to-self "¨—Í”ÍˆÍ‚ğŠg‘å‚µ‚Ü‚·:140")
+)
+(defrule
+    (goal ARMY_ATTACK TRUE)
+    (goal BUILDING TRUE)
+    (timer-triggered TIMER_EXPANSION)
+    (not (town-under-attack))
+    (not (enemy-buildings-in-town))
+    (strategic-number sn-maximum-town-size >= 140)
+    (strategic-number sn-maximum-town-size < 160)
+=>
+    (set-goal RESET_EXPANTION FALSE)
+    (set-strategic-number sn-maximum-town-size 160)
+    (enable-timer TIMER_EXPANSION 3)
+    (chat-local-to-self "¨—Í”ÍˆÍ‚ğŠg‘å‚µ‚Ü‚·:160")
+)
+(defrule
+    (goal ARMY_ATTACK TRUE)
+    (goal BUILDING TRUE)
+    (timer-triggered TIMER_EXPANSION)
+    (not (town-under-attack))
+    (not (enemy-buildings-in-town))
+    (strategic-number sn-maximum-town-size >= 160)
+    (strategic-number sn-maximum-town-size < 180)
+=>
+    (set-goal RESET_EXPANTION FALSE)
+    (set-strategic-number sn-maximum-town-size 180)
+    (enable-timer TIMER_EXPANSION 3)
+    (chat-local-to-self "¨—Í”ÍˆÍ‚ğŠg‘å‚µ‚Ü‚·:180")
+)
+(defrule
+    (goal ARMY_ATTACK TRUE)
+    (goal BUILDING TRUE)
+    (timer-triggered TIMER_EXPANSION)
+    (not (town-under-attack))
+    (not (enemy-buildings-in-town))
+    (strategic-number sn-maximum-town-size >= 180)
+    (strategic-number sn-maximum-town-size < 200)
+=>
+    (set-goal RESET_EXPANTION FALSE)
+    (set-strategic-number sn-maximum-town-size 200)
+    (enable-timer TIMER_EXPANSION 3)
+    (chat-local-to-self "¨—Í”ÍˆÍ‚ğŠg‘å‚µ‚Ü‚·:200")
+)
+(defrule
+    (goal ARMY_ATTACK TRUE)
+    (goal BUILDING TRUE)
+    (timer-triggered TIMER_EXPANSION)
+    (not (town-under-attack))
+    (not (enemy-buildings-in-town))
+    (strategic-number sn-maximum-town-size >= 200)
+    (strategic-number sn-maximum-town-size < 999)
+=>
+    (set-goal RESET_EXPANTION FALSE)
+    (set-strategic-number sn-maximum-town-size 999)
+    (enable-timer TIMER_EXPANSION 3)
+    (chat-local-to-self "¨—Í”ÍˆÍ‚ğŠg‘å‚µ‚Ü‚·:999")
+)
+(defrule
+    (goal ARMY_ATTACK TRUE)
+    (goal RESET_EXPANTION FALSE)
+    (timer-triggered TIMER_EXPANSION)
+=>
+    (enable-timer TIMER_EXPANSION 120)
+    (set-goal RESET_EXPANTION TRUE)
+)
+(defrule
+    (goal ARMY_ATTACK TRUE)
+    (goal RESET_EXPANTION TRUE)
+    (timer-triggered TIMER_EXPANSION)
+=>
+    (set-strategic-number sn-maximum-town-size 40)
+    (set-goal RESET_EXPANTION FALSE)
+    (enable-timer TIMER_EXPANSION 3)
+    (chat-local-to-self "¨—Í”ÍˆÍ‚ğƒŠƒZƒbƒg‚µ‚Ü‚·:40")
+)
+(defrule
+    (goal ARMY_ATTACK FALSE)
+    (timer-triggered TIMER_EXPANSION)
+=>
+    (enable-timer TIMER_EXPANSION 10)
+)
+
+; -----------------------
+; ¡ ‘Œ¹ïæ‹——£’²® ¡
+; -----------------------
+(defrule
+    (current-age <= feudal-age)
+    (strategic-number sn-camp-max-distance > 50)
+=>
+    (set-strategic-number sn-camp-max-distance 50)
+    (disable-timer TIMER_DISTANCE)
+    (set-goal DISTANCE TRUE)
+;;    (chat-to-player my-player-number "‘Œ¹ïæ‹——£’²®(FEUDAL_MAX)")
+)
+(defrule
+    (current-age == castle-age)
+    (strategic-number sn-camp-max-distance > 100)
+=>
+    (set-strategic-number sn-camp-max-distance 100)
+    (disable-timer TIMER_DISTANCE)
+    (set-goal DISTANCE TRUE)
+;;    (chat-to-player my-player-number "‘Œ¹ïæ‹——£’²®(CASTLE_MAX)")
+)
+(defrule
+    (timer-triggered TIMER_DISTANCE)
+    (strategic-number sn-camp-max-distance < 20)
+=>
+    (set-strategic-number sn-camp-max-distance 20)
+    (enable-timer TIMER_DISTANCE 2)
+;;    (chat-to-player my-player-number "‘Œ¹ïæ‹——£’²®(20)")
+)
+(defrule
+    (timer-triggered TIMER_DISTANCE)
+    (strategic-number sn-camp-max-distance >= 20)
+    (strategic-number sn-camp-max-distance < 30)
+=>
+    (set-strategic-number sn-camp-max-distance 30)
+    (enable-timer TIMER_DISTANCE 2)
+;;    (chat-to-player my-player-number "‘Œ¹ïæ‹——£’²®(30)")
+)
+(defrule
+    (timer-triggered TIMER_DISTANCE)
+    (strategic-number sn-camp-max-distance >= 30)
+    (strategic-number sn-camp-max-distance < 50)
+=>
+    (set-strategic-number sn-camp-max-distance 50)
+    (enable-timer TIMER_DISTANCE 2)
+;;    (chat-to-player my-player-number "‘Œ¹ïæ‹——£’²®(50)")
+)
+(defrule
+    (timer-triggered TIMER_DISTANCE)
+    (strategic-number sn-camp-max-distance >= 50)
+    (strategic-number sn-camp-max-distance < 70)
+=>
+    (set-strategic-number sn-camp-max-distance 70)
+    (enable-timer TIMER_DISTANCE 2)
+;;    (chat-to-player my-player-number "‘Œ¹ïæ‹——£’²®(70)")
+)
+(defrule
+    (timer-triggered TIMER_DISTANCE)
+    (strategic-number sn-camp-max-distance >= 70)
+    (strategic-number sn-camp-max-distance < 100)
+=>
+    (set-strategic-number sn-camp-max-distance 100)
+    (enable-timer TIMER_DISTANCE 2)
+;;    (chat-to-player my-player-number "‘Œ¹ïæ‹——£’²®(100)")
+)
+(defrule
+    (timer-triggered TIMER_DISTANCE)
+    (strategic-number sn-camp-max-distance >= 100)
+    (strategic-number sn-camp-max-distance < 150)
+=>
+    (set-strategic-number sn-camp-max-distance 150)
+    (enable-timer TIMER_DISTANCE 2)
+;;    (chat-to-player my-player-number "‘Œ¹ïæ‹——£’²®(150)")
+)
+(defrule
+    (timer-triggered TIMER_DISTANCE)
+    (strategic-number sn-camp-max-distance >= 150)
+=>
+    (set-strategic-number sn-camp-max-distance 999)
+    (disable-timer TIMER_DISTANCE)
+    (set-goal DISTANCE TRUE)
+;;    (chat-to-player my-player-number "‘Œ¹ïæ‹——£’²®(MAX)")
+)
+
+; -----------------------
+; ¡ õ“GŠÇ— ¡
+; -----------------------
+#load-if-not-defined NOMAD-MAP
+;   ‰Šúõ“G’†~
+(defrule
+    (game-time > 24)
+    (or
+        (game-time > 60)
+        (or
+            (unit-type-count 594 > 1)   ;958
+            (unit-type-count 833 > 1)
+        )
+    )
+=>
+    (set-strategic-number sn-percent-civilian-explorers  0)
+    (set-strategic-number sn-percent-civilian-builders  10)
+    (set-strategic-number sn-percent-civilian-gatherers 90)
+    (set-strategic-number sn-cap-civilian-explorers      0)
+    (set-strategic-number sn-minimum-civilian-explorers  1)
+    (set-strategic-number sn-number-explore-groups       1)
+    (set-strategic-number sn-total-number-explorers      1)
+    (chat-local-to-self "’¬‚Ìl‚Ìõ“G‚ğ’†~‚µ‚Ü‚·")
+    (disable-self)
+)
+;   H—¿’Tõ
+#load-if-not-defined SCANDANAVIA-MAP
+(defrule
+    (game-time > 45)
+    (building-type-count-total mill == 0)
+    (wood-amount > 130)
+    (unit-type-count 594 == 0)  ;958
+    (unit-type-count 833 == 0)
+=>
+    (set-strategic-number sn-food-dropsite-distance 15)
+    (set-strategic-number sn-maximum-food-drop-distance 20)
+    (set-strategic-number sn-percent-civilian-explorers 75)
+    (set-strategic-number sn-percent-civilian-gatherers 15)
+    (set-strategic-number sn-cap-civilian-explorers      3)
+    (set-strategic-number sn-minimum-civilian-explorers  8)
+    (set-strategic-number sn-number-explore-groups       8)
+    (set-strategic-number sn-total-number-explorers      8)
+    (chat-local-to-self "•²‚Ğ‚«Š‚ªŒš‚Â‚æ‚¤H—¿‚ğ’T‚µ‚Ü‚·")
+    (disable-self)
+)
+(defrule
+    (building-type-count-total mill > 0)
+    (strategic-number sn-cap-civilian-explorers > 2)
+=>
+    (set-strategic-number sn-percent-civilian-explorers  0)
+    (set-strategic-number sn-percent-civilian-gatherers 90)
+    (set-strategic-number sn-cap-civilian-explorers      0)
+    (set-strategic-number sn-minimum-civilian-explorers  1)
+    (set-strategic-number sn-number-explore-groups       1)
+    (set-strategic-number sn-total-number-explorers      1)
+    (chat-local-to-self "H—¿‚ğ’T‚·õ“G‚ğ’†~‚µ‚Ü‚·")
+    (disable-self)
+)
+#end-if
+(defrule
+    (building-type-count mill > 0)
+    (building-type-count lumber-camp > 0)
+=>
+    (set-strategic-number sn-food-dropsite-distance      3)
+    (set-strategic-number sn-maximum-food-drop-distance  8)
+    (set-strategic-number sn-maximum-hunt-drop-distance 30)
+    (chat-local-to-self "H—¿‚Ì‹——£’²®‚ğs‚¢‚Ü‚·")
+    (disable-self)
+)
+;   H—¿’Tõ
+(defrule
+    (current-age == dark-age)
+    (building-type-count mill == 1)
+    (unit-type-count 216 == 0)  ;­
+    (unit-type-count 122 == 0)
+    (sheep-and-forage-too-far)
+=>
+    (set-strategic-number sn-percent-civilian-explorers 75)
+    (set-strategic-number sn-percent-civilian-gatherers 15)
+    (set-strategic-number sn-cap-civilian-explorers      3)
+    (set-strategic-number sn-minimum-civilian-explorers  9)
+    (set-strategic-number sn-number-explore-groups       9)
+    (set-strategic-number sn-total-number-explorers      9)
+    (chat-local-to-self "­‚ğ’T‚µ‚Ü‚·")
+    (disable-self)
+)
+#end-if
+(defrule
+    (or
+        (or
+            (game-time > 780)
+            (goal FEUDAL_AGE_FLAG TRUE)
+        )
+        (or
+            (unit-type-count 216 > 0)   ;­
+            (unit-type-count 122 > 0)
+        )
+    )
+    (strategic-number sn-cap-civilian-explorers > 1)
+=>
+    (set-strategic-number sn-percent-civilian-explorers  0)
+    (set-strategic-number sn-percent-civilian-gatherers 90)
+    (set-strategic-number sn-cap-civilian-explorers      0)
+    (set-strategic-number sn-minimum-civilian-explorers  1)
+    (set-strategic-number sn-number-explore-groups       1)
+    (set-strategic-number sn-total-number-explorers      1)
+    (chat-local-to-self "H—¿‚ğ’T‚·õ“G‚ğ’†~‚µ‚Ü‚·")
+    (disable-self)
+)
+;   “G’Tõ
+(defrule
+    (current-age == feudal-age)
+    (goal MAPTYPE LANDMAP)
+    (players-building-count any-enemy == 0)
+=>
+    (set-strategic-number sn-number-explore-groups       5)
+    (set-strategic-number sn-total-number-explorers      5)
+    (chat-local-to-self "“G‚ÌŒš•¨‚ğ’T‚µ‚Ü‚·")
+    (disable-self)
+)
+(defrule
+    (current-age >= feudal-age)
+    (goal MAPTYPE LANDMAP)
+    (players-building-count any-enemy > 0)
+=>
+    (set-strategic-number sn-number-explore-groups       1)
+    (set-strategic-number sn-total-number-explorers      1)
+    (chat-local-to-self "õ“G‚ğ’†~‚µ‚Ü‚·")
+    (disable-self)
+)
+
+; -----------------------
+; ¡ –fˆÕ ¡
+; -----------------------
+(defrule
+    (not (town-under-attack))
+    (not (enemy-buildings-in-town))
+    (player-in-game any-ally)
+    (current-age >= castle-age)
+    (players-building-type-count any-ally dock > 0)
+    (unit-type-count-total trade-cog < 5)
+    (building-type-count town-center > 1)
+    (goal NAVY_LEVEL BIG)
+    (can-train trade-cog)
+=>
+    (train trade-cog)
+)
+(defrule
+    (goal MAPTYPE LANDMAP)
+    (player-in-game any-ally)
+    (goal ARMY_ATTACK TRUE)
+    (players-building-type-count any-ally market > 0)
+    (unit-type-count-total trade-cart < 5)
+    (building-type-count town-center > 1)
+    (can-train trade-cart)
+=>
+    (train trade-cart)
+)
+
+; -----------------------
+; ¡ •¶–¾•Ê ¡
+; -----------------------
+#load-if-defined AZTEC-CIV
+
+#end-if
+#load-if-defined BRITON-CIV
+(defrule
+    (unit-type-count-total my-unique-unit-line > 3)
+=>
+    (set-goal RESEARCH_ARCHER TRUE)
+    (disable-self)
+)
+#end-if
+#load-if-defined BYZANTINE-CIV
+
+#end-if
+#load-if-defined CELTIC-CIV
+(defrule
+    (unit-type-count-total my-unique-unit-line > 3)
+=>
+    (set-goal RESEARCH_SOLDIER TRUE)
+    (disable-self)
+)
+#end-if
+#load-if-defined CHINESE-CIV
+(defrule
+    (unit-type-count-total my-unique-unit-line > 3)
+=>
+    (set-goal RESEARCH_ARCHER TRUE)
+    (disable-self)
+)
+#end-if
+#load-if-defined FRANKISH-CIV
+
+#end-if
+#load-if-defined GOTHIC-CIV
+(defrule
+    (unit-type-count-total my-unique-unit-line > 3)
+=>
+    (set-goal RESEARCH_SOLDIER TRUE)
+    (disable-self)
+)
+(defrule
+    (goal IMPERIAL_AGE_FLAG TRUE)
+=>
+    (set-goal FORMATION_SOLDIER TRUE)
+    (disable-self)
+)
+#end-if
+#load-if-defined HUN-CIV
+
+#end-if
+#load-if-defined JAPANESE-CIV
+(defrule
+    (unit-type-count-total my-unique-unit-line > 3)
+=>
+    (set-goal RESEARCH_SOLDIER TRUE)
+    (disable-self)
+)
+(defrule
+    (goal IMPERIAL_AGE_FLAG TRUE)
+=>
+    (set-goal FORMATION_SOLDIER TRUE)
+    (disable-self)
+)
+#end-if
+#load-if-defined KOREAN-CIV
+(defrule
+    (unit-type-count-total my-unique-unit-line > 3)
+=>
+    (set-goal RESEARCH_ARCHER TRUE)
+    (disable-self)
+)
+#end-if
+#load-if-defined MAYAN-CIV
+(defrule
+    (unit-type-count-total my-unique-unit-line > 3)
+=>
+    (set-goal RESEARCH_ARCHER TRUE)
+    (disable-self)
+)
+#end-if
+#load-if-defined MONGOL-CIV
+(defrule
+    (unit-type-count-total my-unique-unit-line > 3)
+=>
+    (set-goal RESEARCH_ARCHER TRUE)
+    (disable-self)
+)
+#end-if
+#load-if-defined PERSIAN-CIV
+
+#end-if
+#load-if-defined SARACEN-CIV
+
+#end-if
+#load-if-defined SPANISH-CIV
+
+#end-if
+#load-if-defined TEUTONIC-CIV
+(defrule
+    (unit-type-count-total my-unique-unit-line > 3)
+=>
+    (set-goal RESEARCH_SOLDIER TRUE)
+    (disable-self)
+)
+#end-if
+#load-if-defined TURKISH-CIV
+(defrule
+    (unit-type-count-total my-unique-unit-line > 3)
+=>
+    (set-goal RESEARCH_ARCHER TRUE)
+    (disable-self)
+)
+#end-if
+#load-if-defined VIKING-CIV
+(defrule
+    (unit-type-count-total my-unique-unit-line > 3)
+=>
+    (set-goal RESEARCH_SOLDIER TRUE)
+    (disable-self)
+)
+#end-if
+; -----------------------
+; ¡ ƒ}ƒ‹ƒ`ƒvƒŒƒC ¡
+; -----------------------
+
+    ;   vˆÄ’†(^^;
+
+; -----------------------
+; ¡ ƒ`[ƒgŠÇ— ¡
+; -----------------------
+;
+;   ‘ÎlŠÔí‚Ì‚İg—p‚µ‚Ü‚·
+;   ~~~~~~~~~~~~
+#load-if-defined DIFFICULTY-HARD
+(defrule
+    (player-in-game any-human-enemy)
+    (game-time > 300)
+=>
+    (chat-to-all "39 [5:00] “ïˆÕ“xw“ï‚µ‚¢x‚È‚Ì‚ÅAƒ`[ƒg‚ğ”­“®‚µ‚Ü‚·")
+    (chat-to-all "—r‚ğ’†S‚Ì‰º‚Å‚Ü‚Æ‚ß‚Äæ‚ê‚È‚¢‚½‚ßA")
+    (chat-to-all "H—¿80 ’Ç‰Á‚³‚ê‚Ü‚µ‚½")
+    (cc-add-resource food 80)
+    (disable-self)
+)
+(defrule
+    (player-in-game any-human-enemy)
+    (game-time > 600)
+=>
+    (chat-to-all "39 [10:00] “ïˆÕ“xw“ï‚µ‚¢x‚È‚Ì‚ÅAƒ`[ƒg‚ğ”­“®‚µ‚Ü‚·")
+    (chat-to-all "’–‚Q•C•ª‚ÌH—¿‚ğæ‚ê‚È‚¢AŒš’z§ŒÀ‚Ì‚½‚ßA")
+    (chat-to-all "–Ø100 H—¿400 ’Ç‰Á‚³‚ê‚Ü‚µ‚½")
+    (cc-add-resource food 400)
+    (cc-add-resource wood 100)
+    (disable-self)
+)
+(defrule
+    (player-in-game any-human-enemy)
+    (game-time > 900)
+=>
+    (chat-to-all "39 [15:00] “ïˆÕ“xw“ï‚µ‚¢x‚È‚Ì‚ÅAƒ`[ƒg‚ğ”­“®‚µ‚Ü‚·")
+    (chat-to-all "‚`‚h‚ÌûWAŒš’z§ŒÀ‚ğ‰ñ”ğ‚·‚é‚½‚ßA")
+    (chat-to-all "–Ø50 Î175 ’Ç‰Á‚³‚ê‚Ü‚µ‚½")
+    (cc-add-resource wood 50)
+    (cc-add-resource stone 175)
+    (disable-self)
+)
+(defrule
+    (player-in-game any-human-enemy)
+    (game-time > 1200)
+=>
+    (chat-to-all "39 [20:00] “ïˆÕ“xw“ï‚µ‚¢x‚È‚Ì‚ÅAƒ`[ƒg‚ğ”­“®‚µ‚Ü‚·")
+    (chat-to-all "‚`‚h‚Í“ƒ‚âé‚Å”ñí‚Éã‚­‚È‚é‚Ì‚ÅA")
+    (chat-to-all "H—¿400 –Ø480 ‹à225 Î650 ’Ç‰Á‚³‚ê‚Ü‚µ‚½")
+    (cc-add-resource food 400)
+    (cc-add-resource wood 480)
+    (cc-add-resource gold 225)
+    (cc-add-resource stone 650)
+    (disable-self)
+)
+(defrule
+    (player-in-game any-human-enemy)
+    (game-time > 1500)
+=>
+    (chat-to-all "39 [25:00] “ïˆÕ“xw“ï‚µ‚¢x‚È‚Ì‚ÅAƒ`[ƒg‚ğ”­“®‚µ‚Ü‚·")
+    (chat-to-all "‚ ‚«‚ç‚©‚È–³‘Ê€‚É‚·‚éŒR‘à•ª‚Ì‘Œ¹A")
+    (chat-to-all "H—¿300 ‹à375 ’Ç‰Á‚³‚ê‚Ü‚µ‚½")
+    (cc-add-resource food 600)
+    (cc-add-resource gold 750)
+    (disable-self)
+)
+(defrule
+    (player-in-game any-human-enemy)
+    (game-time > 1800)
+=>
+    (chat-to-all "39 [30:00] “ïˆÕ“xw“ï‚µ‚¢x‚È‚Ì‚ÅAƒ`[ƒg‚ğ”­“®‚µ‚Ü‚·")
+    (chat-to-all "ÌŒ@ŠŠë‹@–â‘è‚ª‚ ‚é‚½‚ß")
+    (chat-to-all "–Ø300 ‹à300 ’Ç‰Á‚³‚ê‚Ü‚µ‚½")
+    (cc-add-resource wood 500)
+    (cc-add-resource gold 500)
+    (disable-self)
+)
+(defrule
+    (player-in-game any-human-enemy)
+    (game-time > 2100)
+=>
+    (chat-to-all "39 [35:00] “ïˆÕ“xw“ï‚µ‚¢x‚È‚Ì‚ÅAƒ`[ƒg‚ğ”­“®‚µ‚Ü‚·")
+    (chat-to-all "‚ ‚«‚ç‚©‚È–³‘Ê€‚É‚·‚éŒR‘à•ª‚Ì‘Œ¹A")
+    (chat-to-all "H—¿600 ‹à750 ’Ç‰Á‚³‚ê‚Ü‚µ‚½")
+    (cc-add-resource food 600)
+    (cc-add-resource gold 750)
+    (disable-self)
+)
+(defrule
+    (player-in-game any-human-enemy)
+    (game-time > 2400)
+=>
+    (chat-to-all "39 [40:00] “ïˆÕ“xw“ï‚µ‚¢x‚È‚Ì‚ÅAƒ`[ƒg‚ğ”­“®‚µ‚Ü‚·")
+    (chat-to-all "ÌŒ@ŠŠë‹@–â‘è‚ª‚ ‚é‚½‚ß")
+    (chat-to-all "–Ø500 ‹à500 ’Ç‰Á‚³‚ê‚Ü‚µ‚½")
+    (cc-add-resource wood 500)
+    (cc-add-resource gold 500)
+    (disable-self)
+)
+(defrule
+    (player-in-game any-human-enemy)
+    (game-time > 3600)
+=>
+    (chat-to-all "39 [60:00] “ïˆÕ“xw“ï‚µ‚¢x‚È‚Ì‚ÅAƒ`[ƒg‚ğ”­“®‚µ‚Ü‚·")
+    (chat-to-all "‚`‚h‚ÍI”ÕA‘Œ¹ûW‚Å‚«‚È‚¢‚½‚ß")
+    (chat-to-all "–Ø1000 H—¿1000 ‹à1000 ’Ç‰Á‚³‚ê‚Ü‚µ‚½")
+    (cc-add-resource wood 1000)
+    (cc-add-resource food 1000)
+    (cc-add-resource gold 1000)
+    (disable-self)
+)
+(defrule
+    (player-in-game any-human-enemy)
+    (game-time > 4200)
+=>
+    (chat-to-all "39 [70:00] “ïˆÕ“xw“ï‚µ‚¢x‚È‚Ì‚ÅAŒx‚µ‚Ü‚·I")
+    (chat-to-all "‚ ‚Æ‚Q‚O•ª‚ÅƒfƒXƒ‚[ƒh‚É“Ë“ü‚µ‚Ü‚·")
+    (disable-self)
+)
+(defrule
+    (player-in-game any-human-enemy)
+    (game-time > 4800)
+=>
+    (chat-to-all "39 [80:00] “ïˆÕ“xw“ï‚µ‚¢x‚È‚Ì‚ÅAŒx‚µ‚Ü‚·I")
+    (chat-to-all "‚ ‚Æ‚P‚O•ª‚ÅƒfƒXƒ‚[ƒh‚É“Ë“ü‚µ‚Ü‚·")
+    (disable-self)
+)
+(defrule
+    (player-in-game any-human-enemy)
+    (game-time > 5400)
+=>
+    (chat-to-all "39 [90:00] “ïˆÕ“xw“ï‚µ‚¢x‚È‚Ì‚ÅAƒ`[ƒg‚ğ”­“®‚µ‚Ü‚·")
+    (chat-to-all "ƒfƒXƒ‚[ƒh‚É“Ë“ü‚µ‚Ü‚·")
+    (chat-to-all "–Ø90000 H—¿90000 ‹à90000 Î3250 ’Ç‰Á‚³‚ê‚Ü‚µ‚½")
+    (cc-add-resource wood 90000)
+    (cc-add-resource food 90000)
+    (cc-add-resource gold 90000)
+    (cc-add-resource stone 2500)
+    (disable-self)
+)
+#end-if
+
+; -----------------------
+; ¡ ƒ`ƒƒƒbƒg ¡
+; -----------------------
+;   i‰»Ÿ‚¿        10:Age1‚É–ß‚µ‚Ä‚â‚é‚º
+(defrule
+    (current-age >= castle-age)
+    (players-current-age every-enemy < castle-age)
+=>
+    (chat-to-player every-enemy "10 (Age1‚É–ß‚µ‚Ä‚â‚é‚º)")
+    (disable-self)
+)
+;   UŒ‚‚³‚ê‚Ä‚¢‚é  12:UŒ‚‚³‚ê‚Ä‚¢‚é
+(defrule
+    (current-age < castle-age)
+    (players-military-population any-enemy > 15)
+    (military-population < 10)
+    (town-under-attack)
+    (unit-type-count 112 > 0)
+=>
+    (chat-to-player this-any-enemy "12 (UŒ‚‚³‚ê‚Ä‚¢‚é)")
+    (disable-self)
+)
+;   ƒXƒRƒAŸ‚¿  13:ƒvƒƒoƒCƒ_‚ğ¦‚Ş‚ñ‚¾‚È
+(defrule
+    (current-score > 10000)
+    (players-score any-enemy < 5000)
+=>
+    (chat-to-player this-any-enemy "13 (ƒvƒƒoƒCƒ_‚ğ¦‚Ş‚ñ‚¾‚È)");
+    (disable-self)
+)
+;   “Gí—Í”­Œ©I    14:‘‚­n‚ß‚ë‚æ
+(defrule
+    (not (player-in-game any-computer-ally))
+    (military-population > 20)
+    (players-military-population any-enemy > 10)
+    (not (town-under-attack))
+=>
+    (chat-to-player this-any-enemy "14 (‘‚­n‚ß‚ë‚æ)");
+    (disable-self)
+)
+;   — ¬‰®”­Œ©I    15:‰´‚ğ‘_‚¤‚È‚æ
+(defrule
+    (current-age <= castle-age)
+    (not (goal ARMY_ATTACK TRUE))
+    (enemy-buildings-in-town)
+=>
+    (chat-to-player every-enemy "15 (‰´‚ğ‘_‚¤‚È‚æ)")
+    (disable-self)
+)
+;  “G‚ÌŒš•¨”­Œ©I   16:“G‚ğ”­Œ©
+(defrule
+    (not (player-in-game any-computer-ally))
+    (players-building-count any-enemy > 2)
+=>
+    (chat-to-player this-any-enemy "16 (“G‚ğ”­Œ©)")
+    (disable-self)
+)
+;   ’é‰¤“ü‚è        17:‰¤—l‚É‚È‚é‚Ì‚Í‚¢‚¢‹C•ª‚¾‚º
+(defrule
+    (current-age == imperial-age)
+=>
+    (chat-to-all "17 (‰¤—l‚É‚È‚é‚Ì‚Í‚¢‚¢‹C•ª‚¾‚º)")
+    (disable-self)
+)
+;   ¹EÒ‚ğ¶Y  18:¹EÒ‚ª•K—v‚¾
+(defrule
+    (unit-type-count-total monk > 0)
+=>
+    (chat-to-all "18 (¹EÒ‚ª•K—v‚¾)")
+    (disable-self)
+)
+;   Ÿ—˜–Ú‘O        20:ƒwƒ^ƒNƒ\
+(defrule
+    (current-age >= castle-age)
+    (players-population any-enemy < 10)
+    (goal ARMY_ATTACK TRUE)
+=>
+    (chat-to-player this-any-enemy "20 (ƒwƒ^ƒNƒ\)");
+    (disable-self)
+)
+;   “ËŒ‚ŠJn        21:‚¢‚¢’¬‚¾B‚¢‚½‚¾‚­‚º
+(defrule
+    (current-age >= imperial-age)
+    (players-building-count any-enemy > 0)
+    (goal ARMY_ATTACK TRUE)
+=>
+    (chat-to-player this-any-enemy "21 (‚¢‚¢’¬‚¾B‚¢‚½‚¾‚­‚º)")
+    (disable-self)
+)
+;   UŒ‚‚³‚ê‚Ä‚¢‚é  22:‰´‚ÉG‚é‚Ì‚Í‚æ‚¹
+(defrule
+    (current-age >= castle-age)
+    (players-military-population any-enemy > 15)
+    (military-population < 10)
+    (not (goal ARMY_ATTACK TRUE))
+    (town-under-attack)
+    (unit-type-count 112 > 0)
+=>
+    (chat-to-player every-enemy "22 (‰´‚ÉG‚é‚Ì‚Í‚æ‚¹)");
+    (disable-self)
+)
+;   “ËŒ‚ŠJn        23:—ª’D‚É‚¨o‚©‚¯‚¾
+(defrule
+    (current-age >= feudal-age)
+    (players-building-count any-enemy > 0)
+    (warboat-count > 2)
+    (goal NAVY_ATTACK TRUE)
+=>
+    (chat-to-player every-enemy "23 (—ª’D‚É‚¨o‚©‚¯‚¾)")
+    (disable-self)
+)
+;   UŒ‚‚³‚ê‚Ä‚¢‚é  25:‚â‚ê‚é‚à‚ñ‚È‚ç‚â‚Á‚Ä‚İ‚ÈI
+(defrule
+    (current-age >= castle-age)
+    (players-military-population any-enemy < 15)
+    (military-population > 25)
+    (town-under-attack)
+    (unit-type-count 112 > 0)
+=>
+    (chat-to-player every-enemy "25 (‚â‚ê‚é‚à‚ñ‚È‚ç‚â‚Á‚Ä‚İ‚ÈI)")
+    (disable-self)
+)
+;   ƒQ[ƒ€I—¹    27:‚QŠÔ‚à‚â‚Á‚½‚ ‚°‚­‚É
+(defrule
+    (not (player-in-game any-computer-ally))
+    (game-time > 7200)
+    (game-time <= 9000)
+    (players-military-population every-enemy < 30)
+=>
+    (chat-to-player every-enemy "27 (‚QŠÔ‚à‚â‚Á‚½‚ ‚°‚­‚É)")
+    (disable-self)
+)
+;   ”_–¯‚Ì”‚Å‹©‚Ô
+(defrule
+    (not (player-in-game any-computer-ally))
+    (unit-type-count villager == 10)
+=>
+    (chat-to-all "¡ ‰ä‚ªŒR‚Í‰i‹v‚É•s–Å‚È‚èI")
+    (chat-to-all "¡ –³“G‚ÌŠÍ‘àA‚»‚µ‚Ä‹˜r‚ÌímB")
+    (disable-self)
+)
+(defrule
+    (not (player-in-game any-computer-ally))
+    (unit-type-count villager == 11)
+=>
+    (chat-to-all "¡ ‘S‚Ä‚ğŠÑ‚­–µ‚ğŒf‚°A")
+    (chat-to-all "¡ ‘S‚Ä‚ğ–h‚®‚‚ğ‚ÂB")
+    (disable-self)
+)
+(defrule
+    (not (player-in-game any-computer-ally))
+    (unit-type-count villager == 12)
+=>
+    (chat-to-all "¡ ‰ä‚É’§‚Ş‹ğ‚©‚È“z‚æI")
+    (chat-to-all "¡ ‹M—l‚Éuˆ«–²v‚ğŒ©‚¹‚Ä‚â‚ë‚¤I")
+    (disable-self)
+)
+; -----------------------
+; ¡ –½—ß‘€ì ¡
+; -----------------------
+;   ‹­§UŒ‚        31:UŒ‚‚µ‚ëI
+(defrule
+    (taunt-detected any-ally 31)
+=>
+    (acknowledge-taunt this-any-ally 31)
+    (enable-timer TIMER_ARMY_ATTACK 120)
+    (set-goal ARMY_ATTACK TRUE)
+    (chat-local-to-self "yŒR–w—ß•”z‰ä‚ªŒR‚Ì—Í‚ğ‚İ‚¹‚Ä‚ ‚°‚Ü‚·I")
+)
+(defrule
+    (taunt-detected my-player-number 31)
+=>
+    (acknowledge-taunt my-player-number 31)
+    (enable-timer TIMER_ARMY_ATTACK 300)
+    (set-goal ARMY_ATTACK TRUE)
+    (chat-local-to-self "yƒfƒoƒbƒOzUŒ‚‚ğŠJn‚µ‚Ü‚·(Å’á300•b)")
+)
+;   “P‘Ş            36:„‚ª‡}‚·‚é‚Ü‚ÅUŒ‚‚·‚é‚È
+(defrule
+    (taunt-detected any-ally 36)
+=>
+    (acknowledge-taunt this-any-ally 36)
+    (enable-timer TIMER_ARMY_ATTACK 3600)
+    (set-goal ARMY_ATTACK FALSE)
+    (chat-local-to-self "yŒR–w—ß•”z‰ä‚ªŒR‚Í“P‘Ş‚µ‚Ü‚·I")
+)
+(defrule
+    (taunt-detected my-player-number 36)
+=>
+    (acknowledge-taunt my-player-number 36)
+    (enable-timer TIMER_ARMY_ATTACK 300)
+    (set-goal ARMY_ATTACK FALSE)
+    (chat-local-to-self "yƒfƒoƒbƒOzUŒ‚‚ğ’†~‚µ‚Ü‚·(Å’á300•b)")
+)
+#load-if-defined I-USE-DEBUG-MODE
+(defrule                        ; Start resource controll
+    (true)
+=>
+    (set-strategic-number 138 90000)
+    (set-strategic-number 139 90000)
+    (set-strategic-number 140 90000)
+    (set-strategic-number 141 90000)
+    (disable-self)
+)
+#end-if

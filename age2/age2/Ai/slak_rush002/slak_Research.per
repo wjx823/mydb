@@ -1,0 +1,1392 @@
+; --------------------------------------------------------------------------
+; File: Slak_Research.per
+; Author: SlakTheEldar
+; Date: 2000-11-29
+;
+; Available under BSD-like license; see accompanying Copying.txt file
+;
+; --------------------------------------------------------------------------
+
+(defrule
+  (true)
+  =>
+  (set-goal eco-research-allowed NO)
+  (set-goal pri-mil-research-allowed NO)
+  (set-goal sec-mil-research-allowed NO)
+) 
+
+(defrule
+  (current-age == feudal-age)
+  (research-completed ri-man-at-arms)
+  (research-completed ri-forging)
+  (building-type-count-total archery-range > 0)
+  (building-type-count-total blacksmith > 0)
+  =>
+  (set-goal pri-mil-research-allowed YES)
+  (set-goal sec-mil-research-allowed YES)
+)
+
+(defrule
+  (current-age == feudal-age)
+  (research-completed ri-cartography)
+  =>
+  (set-goal eco-research-allowed YES)
+)
+
+(defrule
+  (current-age == castle-age)
+  (research-completed ri-long-swordsman)
+  (building-type-count-total siege-workshop > 0)
+  =>
+  (set-goal eco-research-allowed YES)
+  (set-goal pri-mil-research-allowed YES)
+)
+
+(defrule
+  (current-age == castle-age)
+  (research-completed ri-iron-casting)
+  =>
+  (set-goal sec-mil-research-allowed YES)
+)
+
+
+(defrule
+  (current-age == imperial-age)
+  (research-completed ri-two-handed-swordsman)
+  =>
+  (set-goal eco-research-allowed YES)
+  (set-goal pri-mil-research-allowed YES)
+)
+
+(defrule
+  (current-age == imperial-age)
+  (research-completed ri-blast-furnace)
+  =>
+  (set-goal sec-mil-research-allowed YES)
+)
+
+(defrule
+  (current-age == feudal-age)
+  (current-age-time > 600)
+  =>
+  (set-goal eco-research-allowed NO)
+  (set-goal pri-mil-research-allowed NO)
+  (set-goal sec-mil-research-allowed NO)
+)
+
+(defrule
+  (current-age == feudal-age)
+  (players-current-age every-enemy >= castle-age)
+  (players-current-age-time every-enemy > 300)
+  =>
+  (set-goal eco-research-allowed NO)
+  (set-goal pri-mil-research-allowed NO)
+  (set-goal sec-mil-research-allowed NO)
+)
+
+(defrule
+  (current-age == castle-age)
+  (current-age-time > 300)
+  =>
+  (set-goal eco-research-allowed NO)
+  (set-goal sec-mil-research-allowed NO)
+)
+
+(defrule
+  (current-age == castle-age)
+  (players-current-age any-enemy == imperial-age)
+  (players-current-age-time this-any-enemy > 300)
+  =>
+  (set-goal eco-research-allowed NO)
+  (set-goal pri-mil-research-allowed NO)
+  (set-goal sec-mil-research-allowed NO)
+)
+
+;***************************************************************************
+;           When to stop escrow & re-building blacksmith/university
+;***************************************************************************
+(defrule
+  (current-age == feudal-age)
+  =>
+  (set-goal blacksmith-research-done NO)
+  (set-goal uni-research-done NO)
+  (disable-self)
+)
+
+(defrule
+  (true)
+  =>
+  (set-goal blacksmith-research-done YES)
+  (set-goal mil-research-done YES)
+  (set-goal uni-research-done YES)
+  (set-goal econ-research-done YES)
+  (set-goal escrow-food NO)
+  (set-goal escrow-wood NO)
+  (set-goal escrow-gold NO)
+  (set-goal escrow-stone NO)
+)
+
+(defrule
+  (current-age == castle-age)
+  (building-type-count-total university == 0)
+  =>
+  (set-goal escrow-wood YES)
+)
+
+(defrule
+  (current-age == castle-age)
+  (building-type-count-total siege-workshop == 0)
+  =>
+  (set-goal escrow-wood YES)
+)
+
+(defrule
+  (current-age == castle-age)
+  (building-type-count-total monastery == 0)
+  =>
+  (set-goal escrow-wood YES)
+)
+
+(defrule
+  (current-age == imperial-age)
+  (players-building-type-count any-enemy bombard-tower > 0)
+  =>
+  (set-goal escrow-wood YES)
+  (set-goal escrow-gold YES)
+)
+
+(defrule
+  (research-available ri-scale-mail)
+  =>
+  (set-goal blacksmith-research-done NO)
+  (set-goal mil-research-done NO)
+  (set-goal escrow-food YES)
+  (set-goal escrow-gold YES)
+)
+
+(defrule
+  (research-available ri-chain-mail)
+  =>
+  (set-goal blacksmith-research-done NO)
+  (set-goal mil-research-done NO)
+  (set-goal escrow-food YES)
+  (set-goal escrow-gold YES)
+)
+
+(defrule
+  (research-available ri-plate-mail)
+  =>
+  (set-goal blacksmith-research-done NO)
+  (set-goal mil-research-done NO)
+  (set-goal escrow-food YES)
+  (set-goal escrow-gold YES)
+)
+
+(defrule
+  (research-available ri-forging)
+  =>
+  (set-goal blacksmith-research-done NO)
+  (set-goal mil-research-done NO)
+  (set-goal escrow-food YES)
+  (set-goal escrow-gold YES)
+)
+
+(defrule
+  (research-available ri-iron-casting)
+  =>
+  (set-goal blacksmith-research-done NO)
+  (set-goal mil-research-done NO)
+  (set-goal escrow-food YES)
+  (set-goal escrow-gold YES)
+)
+
+(defrule
+  (research-available ri-blast-furnace)
+  =>
+  (set-goal blacksmith-research-done NO)
+  (set-goal mil-research-done NO)
+  (set-goal escrow-food YES)
+  (set-goal escrow-gold YES)
+)
+
+(defrule
+  (research-available ri-elite-eagle-warrior)
+  =>
+  (set-goal mil-research-done NO)
+  (set-goal escrow-food YES)
+  (set-goal escrow-gold YES)
+)
+
+(defrule
+  (research-available ri-padded-archer-armor)
+  =>
+  (set-goal blacksmith-research-done NO)
+  (set-goal mil-research-done NO)
+  (set-goal escrow-food YES)
+  (set-goal escrow-gold YES)
+)
+
+(defrule
+  (research-available ri-fletching)
+  =>
+  (set-goal blacksmith-research-done NO)
+  (set-goal mil-research-done NO)
+  (set-goal escrow-food YES)
+  (set-goal escrow-gold YES)
+)
+
+(defrule
+  (research-available ri-bodkin-arrow)
+  =>
+  (set-goal blacksmith-research-done NO)
+  (set-goal mil-research-done NO)
+  (set-goal escrow-food YES)
+  (set-goal escrow-gold YES)
+)
+
+(defrule
+  (research-available ri-bracer)
+  =>
+  (set-goal blacksmith-research-done NO)
+  (set-goal mil-research-done NO)
+  (set-goal escrow-food YES)
+  (set-goal escrow-gold YES)
+)
+
+(defrule
+  (research-available ri-chemistry)
+  =>
+  (set-goal uni-research-done NO)
+  (set-goal mil-research-done NO)
+  (set-goal escrow-food YES)
+  (set-goal escrow-gold YES)
+)
+
+(defrule
+  (research-available ri-man-at-arms)
+  =>
+  (set-goal mil-research-done NO)
+  (set-goal escrow-food YES)
+  (set-goal escrow-gold YES)
+)
+
+(defrule
+  (research-available ri-long-swordsman)
+  =>
+  (set-goal mil-research-done NO)
+  (set-goal escrow-food YES)
+  (set-goal escrow-gold YES)
+)
+
+(defrule
+  (research-available ri-two-handed-swordsman)
+  =>
+  (set-goal mil-research-done NO)
+  (set-goal escrow-food YES)
+  (set-goal escrow-gold YES)
+)
+
+(defrule
+  (research-available ri-champion)
+  =>
+  (set-goal mil-research-done NO)
+  (set-goal escrow-food YES)
+  (set-goal escrow-gold YES)
+)
+
+(defrule
+  (research-available ri-elite-skirmisher)
+  =>
+  (set-goal mil-research-done NO)
+  (set-goal escrow-wood YES)
+  (set-goal escrow-gold YES)
+)
+
+(defrule
+  (research-available ri-conscription)
+  =>
+  (set-goal mil-research-done NO)
+  (set-goal escrow-food YES)
+  (set-goal escrow-gold YES)
+)
+
+(defrule
+  (research-available ri-murder-holes)
+  =>
+  (set-goal mil-research-done NO)
+  (set-goal escrow-food YES)
+  (set-goal escrow-stone YES)
+)
+
+(defrule
+  (research-available ri-ballistics)
+  =>
+  (set-goal mil-research-done NO)
+  (set-goal uni-research-done NO)
+  (set-goal escrow-wood YES)
+  (set-goal escrow-gold YES)
+)
+
+(defrule
+  (research-available ri-wheel-barrow)
+  =>
+  (set-goal econ-research-done NO)
+  (set-goal escrow-wood YES)
+  (set-goal escrow-food YES)
+)
+
+(defrule
+  (research-available ri-hand-cart)
+  =>
+  (set-goal econ-research-done NO)
+  (set-goal escrow-wood YES)
+  (set-goal escrow-food YES)
+)
+
+(defrule
+  (research-available ri-horse-collar)
+  =>
+  (set-goal econ-research-done NO)
+  (set-goal escrow-wood YES)
+  (set-goal escrow-food YES)
+)
+
+(defrule
+  (research-available ri-crop-rotation)
+  =>
+  (set-goal econ-research-done NO)
+  (set-goal escrow-wood YES)
+  (set-goal escrow-food YES)
+)
+
+(defrule
+  (research-available ri-double-bit-axe)
+  =>
+  (set-goal econ-research-done NO)
+  (set-goal escrow-wood YES)
+  (set-goal escrow-food YES)
+)
+
+(defrule
+  (research-available ri-guilds)
+  =>
+  (set-goal econ-research-done NO)
+  (set-goal escrow-wood YES)
+  (set-goal escrow-food YES)
+)
+
+(defrule
+  (research-available ri-bow-saw)
+  =>
+  (set-goal econ-research-done NO)
+  (set-goal escrow-wood YES)
+  (set-goal escrow-food YES)
+)
+
+(defrule
+  (research-available ri-two-man-saw)
+  =>
+  (set-goal econ-research-done NO)
+  (set-goal escrow-wood YES)
+  (set-goal escrow-food YES)
+)
+
+(defrule
+  (research-available ri-heavy-plow)
+  =>
+  (set-goal econ-research-done NO)
+  (set-goal escrow-wood YES)
+  (set-goal escrow-food YES)
+)
+
+(defrule
+  (research-available ri-gold-mining)
+  =>
+  (set-goal econ-research-done NO)
+  (set-goal escrow-wood YES)
+  (set-goal escrow-food YES)
+)
+
+(defrule
+  (research-available ri-gold-shaft-mining)
+  =>
+  (set-goal econ-research-done NO)
+  (set-goal escrow-wood YES)
+  (set-goal escrow-food YES)
+)
+
+(defrule
+  (research-available ri-stone-mining)
+  =>
+  (set-goal econ-research-done NO)
+  (set-goal escrow-wood YES)
+  (set-goal escrow-food YES)
+)
+
+(defrule
+  (player-in-game any-ally)
+  (research-available ri-cartography)
+  =>
+  (set-goal econ-research-done NO)
+  (set-goal escrow-food YES)
+  (set-goal escrow-gold YES)
+)
+
+(defrule
+  (player-in-game any-ally)
+  (research-available ri-caravan)
+  =>
+  (set-goal econ-research-done NO)
+  (set-goal escrow-food YES)
+  (set-goal escrow-gold YES)
+)
+
+(defrule
+  (player-in-game any-ally)
+  (research-available ri-coinage)
+  =>
+  (set-goal econ-research-done NO)
+  (set-goal escrow-food YES)
+  (set-goal escrow-gold YES)
+)
+
+(defrule
+  (player-in-game any-ally)
+  (research-available ri-banking)
+  =>
+  (set-goal econ-research-done NO)
+  (set-goal escrow-food YES)
+  (set-goal escrow-gold YES)
+)
+
+; ri-perfusion is defined in the slak_UndocumentedConstants file.
+(defrule
+  (current-age == imperial-age)
+  (research-available ri-perfusion)
+  =>
+  (set-goal mil-research-done NO)
+  (set-goal escrow-gold YES)
+  (set-goal escrow-wood YES)
+)
+
+; GOTHIC my-unique-research resolves to ANARCHY.  A GOTHIC AI
+; will not build huskarls at a barracks unless the barracks-huskarl
+; unit is used.  Tihs is also defined in slak_UndocumentedConstants.
+(defrule
+  (current-age == imperial-age)
+  (research-available my-unique-research)
+  =>
+  (set-goal mil-research-done NO)
+  (set-goal escrow-food YES)
+  (set-goal escrow-gold YES)
+)
+
+;***************************************************************************
+;                            Escrow
+;***************************************************************************
+(defrule
+  (current-age == dark-age)
+  =>
+  (set-escrow-percentage food 0)
+  (set-escrow-percentage wood 0)
+  (set-escrow-percentage gold 0)
+  (set-escrow-percentage stone 0)
+  (disable-self)
+)
+
+(defrule
+  (current-age == feudal-age)
+  (goal escrow-food YES)
+  =>
+  (set-escrow-percentage food 20)
+)
+
+(defrule
+  (current-age == feudal-age)
+  (goal escrow-wood YES)
+  =>
+  (set-escrow-percentage wood 40)  ; skirmishers eat a lot of wood
+)
+
+(defrule
+  (current-age == feudal-age)
+  (goal escrow-gold YES)
+  =>
+  (set-escrow-percentage gold 10)
+)
+
+(defrule
+  (current-age == feudal-age)
+  (goal escrow-stone YES)
+  =>
+  (set-escrow-percentage stone 0)
+)
+
+(defrule
+  (current-age == feudal-age)
+  (escrow-amount food >= 800)
+  =>
+  (set-escrow-percentage food 0)
+)
+
+(defrule
+  (current-age == feudal-age)
+  (escrow-amount wood >= 500)
+  =>
+  (set-escrow-percentage wood 0)
+)
+
+(defrule
+  (current-age == feudal-age)
+  (escrow-amount gold >= 200)
+  =>
+  (set-escrow-percentage gold 0)
+)
+
+(defrule
+  (current-age == castle-age)
+  =>
+  (set-escrow-percentage food 20)
+  (set-escrow-percentage wood 20)
+  (set-escrow-percentage gold 20)
+  (set-escrow-percentage stone 20)
+  (disable-self)
+)
+
+(defrule
+  (current-age == castle-age)
+  (goal escrow-food YES)
+  =>
+  (set-escrow-percentage food 30)
+)
+
+(defrule
+  (current-age == castle-age)
+  (goal escrow-wood YES)
+  =>
+  (set-escrow-percentage wood 50)  ; skirmishers eat a lot of wood
+)
+
+(defrule
+  (current-age == castle-age)
+  (goal escrow-gold YES)
+  =>
+  (set-escrow-percentage gold 30)
+)
+
+(defrule
+  (current-age == castle-age)
+  (goal escrow-stone YES)
+  =>
+  (set-escrow-percentage stone 30)
+)
+
+(defrule
+  (current-age == castle-age)
+  (escrow-amount food >= 1000)
+  =>
+  (set-escrow-percentage food 0)
+)
+
+(defrule
+  (current-age == castle-age)
+  (escrow-amount wood >= 500)
+  =>
+  (set-escrow-percentage wood 0)
+)
+
+(defrule
+  (current-age == castle-age)
+  (escrow-amount gold >= 800)
+  =>
+  (set-escrow-percentage gold 0)
+)
+
+(defrule
+  (current-age == castle-age)
+  (escrow-amount stone >= 650)
+  =>
+  (set-escrow-percentage stone 0)
+)
+
+(defrule
+  (current-age == imperial-age)
+  =>
+  (set-escrow-percentage food 50)
+  (set-escrow-percentage wood 50)
+  (set-escrow-percentage gold 50)
+  (set-escrow-percentage stone 50)
+  (disable-self)
+)
+
+(defrule
+  (current-age == imperial-age)
+  (goal escrow-food YES)
+  =>
+  (set-escrow-percentage food 50)
+)
+
+(defrule
+  (current-age == imperial-age)
+  (goal escrow-wood YES)
+  =>
+  (set-escrow-percentage wood 50) ; not building skirmishers in Imperial
+)
+
+(defrule
+  (current-age == imperial-age)
+  (goal escrow-gold YES)
+  =>
+  (set-escrow-percentage gold 50)
+)
+
+(defrule
+  (current-age == imperial-age)
+  (escrow-amount food >= 1700)
+  =>
+  (release-escrow food)
+  (chat-local-to-self "too much escrowed food")
+)
+
+(defrule
+  (current-age == imperial-age)
+  (escrow-amount wood >= 1100)
+  =>
+  (release-escrow wood)
+  (chat-local-to-self "too much escrowed wood")
+)
+
+(defrule
+  (current-age == imperial-age)
+  (escrow-amount gold >= 900)
+  =>
+  (release-escrow gold)
+  (chat-local-to-self "too much escrowed gold")
+)
+
+(defrule
+  (current-age == imperial-age)
+  (escrow-amount stone >= 400)
+  =>
+  (release-escrow stone)
+  (chat-local-to-self "too much escrowed stone")
+)
+
+(defrule
+  (goal escrow-food NO)
+  =>
+  (set-escrow-percentage food 0)
+  (release-escrow food)
+)
+
+(defrule
+  (goal escrow-wood NO)
+  =>
+  (set-escrow-percentage wood 0)
+  (release-escrow wood)
+)
+
+(defrule
+  (goal escrow-gold NO)
+  =>
+  (set-escrow-percentage gold 0)
+  (release-escrow gold)
+)
+
+(defrule
+  (goal escrow-stone NO)
+  =>
+  (set-escrow-percentage stone 0)
+  (release-escrow stone)
+)
+
+(defrule
+  (escrow-amount stone > 300)
+  =>
+  (set-goal escrow-stone NO)
+)
+
+;***************************************************************************
+;                            Blacksmith Researches    
+;***************************************************************************
+
+; -----------------------------------------------------------------------
+; infantry 
+; -----------------------------------------------------------------------
+(defrule 
+  (goal pri-mil-research-allowed YES)
+  (can-research-with-escrow ri-scale-mail)
+  =>
+  (chat-local-to-self "research ri-scale-mail")
+  (release-escrow food)
+  (research ri-scale-mail)
+  (disable-self)
+)
+
+(defrule 
+  (goal pri-mil-research-allowed YES)
+  (can-research-with-escrow ri-chain-mail)
+  =>
+  (chat-local-to-self "research ri-chain-mail")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-chain-mail)
+  (disable-self)
+)
+
+(defrule 
+  (goal pri-mil-research-allowed YES)
+  (can-research-with-escrow ri-plate-mail)
+  =>
+  (chat-local-to-self "research ri-plate-mail")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-plate-mail)
+  (disable-self)
+)
+
+(defrule 
+  (can-research-with-escrow ri-forging)
+  =>
+  (chat-local-to-self "research ri-forging")
+  (release-escrow food)
+  (research ri-forging)
+  (disable-self)
+)
+
+(defrule 
+  (can-research-with-escrow ri-iron-casting)
+  =>
+  (chat-local-to-self "research ri-iron-casting")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-iron-casting)
+  (disable-self)
+)
+
+(defrule 
+  (can-research-with-escrow ri-blast-furnace)
+  =>
+  (chat-local-to-self "research ri-blast-furnace")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-blast-furnace)
+  (disable-self)
+)
+
+; Always research elite eagles
+(defrule
+  (can-research-with-escrow ri-elite-eagle-warrior)
+  =>
+  (chat-local-to-self "research ri-elite-eagle")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-elite-eagle-warrior)
+  (disable-self)
+)
+
+; -----------------------------------------------------------------------
+; cav
+; -----------------------------------------------------------------------
+
+; -----------------------------------------------------------------------
+; archers
+; -----------------------------------------------------------------------
+(defrule 
+  (goal sec-mil-research-allowed YES)
+  (can-research-with-escrow ri-padded-archer-armor)
+  =>
+  (chat-local-to-self "research ri-padded-archer-armor")
+  (release-escrow food)
+  (research ri-padded-archer-armor)
+  (disable-self)
+)
+
+; Always research fletching, et. al for TC defense.
+(defrule 
+  (goal pri-mil-research-allowed YES)
+  (can-research-with-escrow ri-fletching)
+  =>
+  (chat-local-to-self "research ri-fletching")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-fletching)
+  (disable-self)
+)
+
+(defrule 
+  (goal pri-mil-research-allowed YES)
+  (can-research-with-escrow ri-bodkin-arrow)
+  =>
+  (chat-local-to-self "research ri-bodkin-arrow")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-bodkin-arrow)
+  (disable-self)
+)
+
+(defrule 
+  (goal pri-mil-research-allowed YES)
+  (can-research-with-escrow ri-bracer)
+  =>
+  (chat-local-to-self "research ri-bracer")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-bracer)
+  (disable-self)
+)
+
+(defrule 
+  (goal pri-mil-research-allowed YES)
+  (can-research-with-escrow ri-chemistry)
+  =>
+  (chat-local-to-self "research ri-chemistry")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-chemistry)
+  (disable-self)
+)
+   
+;***************************************************************************
+;                                Unit Researches    
+;***************************************************************************
+
+;----------------------------------------------------------------
+;---------------------------- barracks --------------------------
+;----------------------------------------------------------------
+
+(defrule 
+  (goal pri-mil-research-allowed YES)
+  (can-research-with-escrow ri-tracking)
+  =>
+  (chat-local-to-self "research ri-tracking")
+  (release-escrow food)
+  (research ri-tracking)
+  (disable-self)
+)
+
+(defrule 
+  (goal pri-mil-research-allowed YES)
+  (can-research-with-escrow ri-squires)
+  =>
+  (chat-local-to-self "research ri-squires")
+  (release-escrow food)
+  (research ri-squires)
+  (disable-self)
+)
+
+; ----- militiamen -----
+(defrule 
+  (can-research-with-escrow ri-man-at-arms)
+  =>
+  (chat-local-to-self "research ri-man-at-arms")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-man-at-arms)
+  (disable-self)
+)
+
+(defrule 
+  (can-research-with-escrow ri-long-swordsman)
+  =>
+  (chat-local-to-self "research ri-long-swordsman")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-long-swordsman)
+  (disable-self)
+)
+
+(defrule 
+  (can-research-with-escrow ri-two-handed-swordsman)
+  =>
+  (chat-local-to-self "research ri-two-handed-swordsman")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-two-handed-swordsman)
+  (disable-self)
+)
+
+(defrule 
+  (can-research-with-escrow ri-champion)
+  =>
+  (chat-local-to-self "research ri-champion")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-champion)
+  (disable-self)
+)
+
+;----------------------------------------------------------------
+;---------------------------- stable ----------------------------
+;----------------------------------------------------------------
+
+;----------------------------------------------------------------
+;------------------------- archery range ------------------------
+;----------------------------------------------------------------
+; 6 = skirmisher
+(defrule 
+  (goal sec-mil-research-allowed YES)
+  (can-research-with-escrow ri-elite-skirmisher)
+  =>
+  (chat-local-to-self "research ri-elite-skirmisher")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-elite-skirmisher)
+  (disable-self)
+)
+
+;----------------------------------------------------------------
+;------------------------- siege workshop -----------------------
+;----------------------------------------------------------------
+; 11= battering-ram
+(defrule 
+  (goal sec-mil-research-allowed YES)
+  (can-research-with-escrow ri-capped-ram)
+  =>
+  (chat-local-to-self "research ri-capped-ram")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-capped-ram)
+  (disable-self)
+)
+
+(defrule 
+  (goal sec-mil-research-allowed YES)
+  (can-research-with-escrow ri-siege-ram)
+  =>
+  (chat-local-to-self "research ri-siege-ram")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-siege-ram)
+  (disable-self)
+)
+
+; 12= mangonel
+(defrule 
+  (goal sec-mil-research-allowed YES)
+  (can-research-with-escrow ri-onager)
+  =>
+  (chat-local-to-self "research ri-onager")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-onager)
+  (disable-self)
+)
+
+(defrule 
+  (goal sec-mil-research-allowed YES)
+  (can-research-with-escrow ri-siege-onager)
+  =>
+  (chat-local-to-self "research ri-siege-onager")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-siege-onager)
+  (disable-self)
+)
+
+(defrule 
+  (goal pri-mil-research-allowed YES)
+  (can-research-with-escrow ri-siege-engineers)
+  =>
+  (chat-local-to-self "research ri-siege-engineers")
+  (release-escrow food)
+  (release-escrow wood)
+  (research ri-siege-engineers)
+  (disable-self)
+)
+
+;----------------------------------------------------------------
+;------------------------------ monastery --------------------------
+;----------------------------------------------------------------
+(defrule 
+  (goal sec-mil-research-allowed YES)
+  (can-research-with-escrow ri-fervor)
+  =>
+  (chat-local-to-self "research ri-fervor")
+  (release-escrow gold)
+  (research ri-fervor)
+  (disable-self)
+)
+
+(defrule 
+  (goal sec-mil-research-allowed YES)
+  (can-research-with-escrow ri-redemption)
+  =>
+  (chat-local-to-self "research ri-redemption")
+  (release-escrow gold)
+  (research ri-redemption)
+  (disable-self)
+)
+
+(defrule
+  (goal sec-mil-research-allowed YES)
+  (can-research-with-escrow ri-theocracy)
+  =>
+  (chat-local-to-self "research ri-theocracy")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-theocracy)
+  (disable-self)
+)
+
+(defrule 
+  (goal sec-mil-research-allowed YES)
+  (can-research-with-escrow ri-illumination)
+  =>
+  (chat-local-to-self "research ri-illumination")
+  (release-escrow gold)
+  (research ri-illumination)
+  (disable-self)
+)
+
+(defrule 
+  (goal sec-mil-research-allowed YES)
+  (can-research-with-escrow ri-block-printing)
+  =>
+  (chat-local-to-self "research ri-block-printing")
+  (release-escrow gold)
+  (research ri-block-printing)
+  (disable-self)
+)
+
+(defrule 
+  (goal sec-mil-research-allowed YES)
+  (can-research-with-escrow ri-sanctity)
+  =>
+  (chat-local-to-self "research ri-sanctity")
+  (release-escrow gold)
+  (research ri-sanctity)
+  (disable-self)
+)
+
+(defrule 
+  (goal sec-mil-research-allowed YES)
+  (can-research-with-escrow ri-atonement)
+  =>
+  (chat-local-to-self "research ri-atonement")
+  (release-escrow gold)
+  (research ri-atonement)
+  (disable-self)
+)
+
+(defrule
+  (goal sec-mil-research-allowed YES)
+  (goal enemy-threat MONK)
+  (goal large-enemy-threat YES)
+  (can-research-with-escrow ri-heresy)
+  =>
+  (chat-local-to-self "research heresy")
+  (release-escrow gold)
+  (research ri-heresy)
+  (disable-self)
+)
+
+;----------------------------------------------------------------
+;------------------------------ castle --------------------------
+;----------------------------------------------------------------
+(defrule 
+  (can-research-with-escrow ri-conscription)
+  =>
+  (chat-local-to-self "research ri-conscription")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-conscription)
+  (disable-self)
+)
+
+;***************************************************************************
+;                                    Walls      
+;***************************************************************************
+
+;***************************************************************************
+;                                Towers & Castles    
+;***************************************************************************
+(defrule 
+  (or (building-type-count-total watch-tower-line >= 1)
+      (building-type-count-total castle >= 1))
+  (can-research-with-escrow ri-murder-holes)
+  =>
+  (chat-local-to-self "research ri-murder-holes")
+  (release-escrow food)
+  (release-escrow stone)
+  (research ri-murder-holes)
+  (disable-self)
+)
+
+(defrule 
+  (goal sec-mil-research-allowed YES)
+  (building-type-count-total watch-tower >= 3)
+  (can-research-with-escrow ri-guard-tower)
+  =>
+  (chat-local-to-self "research ri-guard-tower")
+  (release-escrow food)
+  (release-escrow stone)
+  (research ri-guard-tower)
+  (disable-self)
+)
+
+;***************************************************************************
+;                          University     
+;***************************************************************************
+(defrule 
+  (goal sec-mil-research-allowed YES) ; always research ballistics
+  (can-research-with-escrow ri-ballistics)
+  =>
+  (chat-local-to-self "research ri-ballistics")
+  (release-escrow wood)
+  (release-escrow gold)
+  (research ri-ballistics)
+  (disable-self)
+)
+
+;***************************************************************************
+;                       Misc Researches     
+;***************************************************************************
+; ri-wheel-barrow
+(defrule 
+  (unit-type-count-total villager > 20)
+  (can-research-with-escrow ri-wheel-barrow)
+  =>
+  (chat-local-to-self "research ri-wheel-barrow")
+  (release-escrow food)
+  (release-escrow wood)
+  (research ri-wheel-barrow)
+  (disable-self)
+)
+
+; ri-horse-collar
+(defrule
+  (goal eco-research-allowed YES)
+  (can-research-with-escrow ri-horse-collar)
+  =>
+  (chat-local-to-self "research ri-horse-collar")
+  (release-escrow food)
+  (release-escrow wood)
+  (research ri-horse-collar)
+  (disable-self)
+)
+
+; crop rotation
+(defrule
+  (goal eco-research-allowed YES)
+  (not (research-available ri-hand-cart))
+  (can-research-with-escrow ri-crop-rotation)
+  =>
+  (chat-local-to-self "research ri-crop-rotation")
+  (release-escrow food)
+  (release-escrow wood)
+  (research ri-crop-rotation)
+  (disable-self)
+)
+
+(defrule 		
+  (goal eco-research-allowed YES)
+  (or (not (research-available ri-wheel-barrow))
+      (and (food-amount > 300)
+	   (wood-amount > 300)))
+  (can-research-with-escrow ri-double-bit-axe)
+  =>
+  (chat-local-to-self "need wood - research ri-double-bit-axe")
+  (release-escrow food)
+  (release-escrow wood)
+  (research ri-double-bit-axe)
+  (disable-self)
+)
+
+; ri-loom
+(defrule 
+  (unit-type-count-total villager > 6)
+  (can-research ri-loom)
+  =>
+  (chat-local-to-self "research ri-loom")
+  (research ri-loom)
+  (disable-self)
+)
+
+#load-if-defined MAYAN-CIV
+; research loom right away
+(defrule 
+  (can-research ri-loom)
+  =>
+  (chat-local-to-self "research ri-loom")
+  (research ri-loom)
+  (disable-self)
+)
+#end-if
+
+; ri-guilds
+(defrule 
+  (goal eco-research-allowed YES)
+  (can-research-with-escrow ri-guilds)
+  =>
+  (chat-local-to-self "research ri-guilds")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-guilds)
+  (disable-self)
+)
+
+(defrule 
+  (goal eco-research-allowed YES)
+  (can-research-with-escrow ri-bow-saw)
+  =>
+  (chat-local-to-self "need wood - research ri-bow-saw")
+  (release-escrow food)
+  (release-escrow wood)
+  (research ri-bow-saw)
+  (disable-self)
+)
+
+(defrule 
+  (goal eco-research-allowed YES)
+  (can-research-with-escrow ri-two-man-saw)
+  =>
+  (chat-local-to-self "need wood - research ri-two-man-saw")
+  (release-escrow food)
+  (release-escrow wood)
+  (research ri-two-man-saw)
+  (disable-self)
+)
+
+(defrule 
+  (goal eco-research-allowed YES)
+  (can-research-with-escrow ri-heavy-plow)
+  =>
+  (chat-local-to-self "need food - research ri-heavy-plow")
+  (release-escrow food)
+  (release-escrow wood)
+  (research ri-heavy-plow)
+  (disable-self)
+)
+
+(defrule 
+  (goal eco-research-allowed YES)
+  (can-research-with-escrow ri-gold-mining)
+  =>
+  (chat-local-to-self "need gold - research ri-gold-mining")
+  (release-escrow food)
+  (release-escrow wood)
+  (research ri-gold-mining)
+  (disable-self)
+)
+
+(defrule
+  (goal eco-research-allowed YES)
+  (can-research-with-escrow ri-gold-shaft-mining)
+  =>
+  (chat-local-to-self "research gold shaft mining")
+  (release-escrow food)
+  (release-escrow wood)
+  (research ri-gold-shaft-mining)
+  (disable-self)
+) 
+
+(defrule 
+  (goal eco-research-allowed YES)
+  (can-research-with-escrow ri-stone-mining)
+  =>
+  (chat-local-to-self "need stone - research ri-stone-mining")
+  (release-escrow food)
+  (release-escrow wood)
+  (research ri-stone-mining)
+  (disable-self)
+)
+
+(defrule
+  (goal eco-research-allowed YES)
+  (can-research-with-escrow ri-stone-shaft-mining)
+  =>
+  (research ri-stone-shaft-mining)
+  (release-escrow food)
+  (release-escrow wood)
+  (chat-local-to-self "research stone shaft mining")
+  (disable-self)
+) 
+
+(defrule
+  (unit-type-count-total villager > 20)
+  (can-research-with-escrow ri-hand-cart)
+  =>
+  (release-escrow food)
+  (release-escrow wood)
+  (research ri-hand-cart)
+  (disable-self)
+)
+
+(defrule
+  (player-in-game any-ally)
+  (can-research-with-escrow ri-cartography)
+  =>
+  (chat-local-to-self "research ri-cartography")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-cartography)
+  (disable-self)
+)
+
+(defrule
+  (player-in-game any-ally)
+  (can-research-with-escrow ri-caravan)
+  =>
+  (chat-local-to-self "research ri-caravan")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-caravan)
+  (disable-self)
+)
+
+(defrule
+  (goal eco-research-allowed YES)
+  (player-in-game any-ally)
+  (can-research-with-escrow ri-coinage)
+  =>
+  (chat-local-to-self "research ri-coinage")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-coinage)
+  (disable-self)
+)
+
+(defrule
+  (goal eco-research-allowed YES)
+  (player-in-game any-ally)
+  (can-research-with-escrow ri-banking)
+  =>
+  (chat-local-to-self "research ri-banking")
+  (release-escrow food)
+  (release-escrow gold)
+  (research ri-banking)
+  (disable-self)
+)
+
+(defrule
+  (goal eco-research-allowed YES)
+  (can-research-with-escrow ri-stonecutting)
+  =>
+  (chat-local-to-self "research ri-treadmill-crane")
+  (release-escrow wood)
+  (release-escrow stone)
+  (research ri-stonecutting)
+  (disable-self)
+)
+
+(defrule
+  (can-research-with-escrow my-unique-research) ; Anarchy if Goth
+  =>
+  (release-escrow food)
+  (release-escrow gold)
+  (research my-unique-research)
+  (chat-local-to-self "research unique tech/anarchy")
+  (disable-self)
+)
+
+;  ri-perfusion is defined in the slak_UndocumentedConstants file.
+(defrule
+  (can-research-with-escrow ri-perfusion)
+  =>
+  (release-escrow wood)
+  (release-escrow gold)
+  (research ri-perfusion)
+  (chat-local-to-self "research perfusion")
+  (disable-self)
+)

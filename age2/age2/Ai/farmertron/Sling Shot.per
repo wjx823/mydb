@@ -1,0 +1,350 @@
+; sling and shot
+; messy logic
+; boss timer given value dependent upon civilization
+; the first civ whose timer is triggered tells the other civ that it is the shot
+; other civ accepts this and disables timer
+; lower timer value defines which is the best civ for shot role (IMO)
+(defrule
+	(civ-selected viking)
+	;best champs
+=>
+	(enable-timer TIMER-WHO-IS-THE-BOSS 15)
+	(disable-self)
+)
+
+(defrule
+	(civ-selected japanese)
+	;arguably the best champs
+=>
+	(enable-timer TIMER-WHO-IS-THE-BOSS 30)
+	(disable-self)
+)
+
+(defrule
+	(civ-selected gothic)
+	;cheap and fast champs
+=>
+	(enable-timer TIMER-WHO-IS-THE-BOSS 45)
+	(disable-self)
+)
+
+(defrule
+	(civ-selected aztec)
+	;best champs if they get the expensive UT - no guarantee that will come early
+=>
+	(enable-timer TIMER-WHO-IS-THE-BOSS 60)
+	(disable-self)
+)
+
+(defrule
+	(civ-selected celtic)
+	;fastest champs, not that great but slightly better than franks
+=>
+	(enable-timer TIMER-WHO-IS-THE-BOSS 75)
+	(disable-self)
+)
+
+(defrule
+	(civ-selected spanish)
+	;gold free smithy upgrades
+=>
+	(enable-timer TIMER-WHO-IS-THE-BOSS 90)
+	(disable-self)
+)
+
+(defrule
+	(civ-selected chinese)
+	;discounted tech upgrades
+=>
+	(enable-timer TIMER-WHO-IS-THE-BOSS 105)
+	(disable-self)
+)
+
+(defrule
+	(civ-selected frankish)
+	;cheap castles
+=>
+	(enable-timer TIMER-WHO-IS-THE-BOSS 120)
+	(disable-self)
+)
+
+(defrule
+	(civ-selected turkish)
+	;have such bad counter units they have to be made a shot
+=>
+	(enable-timer TIMER-WHO-IS-THE-BOSS 135)
+	(disable-self)
+)
+
+(defrule
+	(civ-selected saracen)
+	;market bonus helps feeble computer ai
+=>
+	(enable-timer TIMER-WHO-IS-THE-BOSS 150)
+	(disable-self)
+)
+
+(defrule
+	(civ-selected briton)
+	;cheap tcs aren't used that much
+=>
+	(enable-timer TIMER-WHO-IS-THE-BOSS 165)
+	(disable-self)
+)
+
+(defrule
+	(civ-selected teutonic)
+	;no worse than brits
+=>
+	(enable-timer TIMER-WHO-IS-THE-BOSS 180)
+	(disable-self)
+)
+
+(defrule
+	(civ-selected mongol)
+	;about the same as toots
+=>
+	(enable-timer TIMER-WHO-IS-THE-BOSS 195)
+	(disable-self)
+)
+
+(defrule
+	(civ-selected korean)
+	;lack blast furnace stone bonus makes them better than byz
+=>
+	(enable-timer TIMER-WHO-IS-THE-BOSS 210)
+	(disable-self)
+)
+
+(defrule
+	(civ-selected byzantine)
+	;lack blast furnace cheap counters make them a good sling
+=>
+	(enable-timer TIMER-WHO-IS-THE-BOSS 225)
+	(disable-self)
+)
+
+(defrule
+	(civ-selected mayan)
+	;no champs but get ews which are almost as good when given eldorado
+=>
+	(enable-timer TIMER-WHO-IS-THE-BOSS 240)
+	(disable-self)
+)
+
+(defrule
+	(civ-selected hun)
+	;no champs, if I get a Hun/Civ combo i shall cry
+=>
+	(enable-timer TIMER-WHO-IS-THE-BOSS 255)
+	(disable-self)
+)
+
+(defrule
+	(civ-selected persian)
+	;no champs, not even two-handers.  this civ will forever be the sling
+=>
+	(enable-timer TIMER-WHO-IS-THE-BOSS 270)
+	(disable-self)
+)
+;if one civs timer triggers first tell the other civ to be sling
+(defrule
+	(timer-triggered TIMER-WHO-IS-THE-BOSS)
+	(goal GOAL-I-AM-THE-SHOT 2)
+=>
+	(chat-to-player any-ally "I am the lord")
+	(chat-to-player-using-id every-ally 22136) 
+
+	(set-goal GOAL-I-AM-THE-SHOT 1)
+	(disable-timer TIMER-WHO-IS-THE-BOSS)
+	(disable-self)
+)
+;receive order to be sling and disable timer
+(defrule
+	(taunt-detected any-ally 17)
+=>
+	(acknowledge-taunt this-any-ally 17)
+	(chat-to-player this-any-ally "I am the serf")
+	(set-goal GOAL-I-AM-THE-SHOT 0)
+	(disable-timer TIMER-WHO-IS-THE-BOSS)
+	(disable-self)
+)
+;tell the world what you are
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+=>
+	(chat-to-all "I am the shot")
+	(disable-self)
+)
+
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+=>
+	(chat-to-all "I am the sling")
+	(disable-self)
+)
+;catch all, also covers not giving random civs
+(defrule
+	(game-time > 300)
+	(goal GOAL-I-AM-THE-SHOT 2)
+=>
+	(chat-to-all "Warning: Logic error or random civilizations not selected")
+)
+
+;communicate to cease/restart sending of resources
+;food
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(food-amount > 1000)
+	(goal GOAL-NO-FOOD-NEEDED 0)
+=>
+	(chat-to-player any-ally "Cease sending food")
+	(chat-to-player-using-id every-ally 22126) 
+	(set-goal GOAL-NO-FOOD-NEEDED 1)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(food-amount < 800)
+	(goal GOAL-NO-FOOD-NEEDED 1)
+=>
+	(chat-to-player any-ally "Restart sending food")
+	(chat-to-player-using-id every-ally 22122)
+	(set-goal GOAL-NO-FOOD-NEEDED 0)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(taunt-detected any-ally 7)
+	(goal GOAL-NO-FOOD-NEEDED 0)
+=>
+	(acknowledge-taunt this-any-ally 7)
+	(chat-to-player this-any-ally "CEASING FOOD TRIBUTES")
+	(taunt 30)
+	(set-goal GOAL-NO-FOOD-NEEDED 1)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(taunt-detected any-ally 3)
+	(goal GOAL-NO-FOOD-NEEDED 1)
+=>
+	(acknowledge-taunt this-any-ally 3)
+	(chat-to-player this-any-ally "RESTARTING FOOD TRIBUTES")
+	(taunt 30)
+	(set-goal GOAL-NO-FOOD-NEEDED 0)
+)
+;wood
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(wood-amount > 500)
+	(goal GOAL-NO-WOOD-NEEDED 0)
+=>
+	(chat-to-player any-ally "Cease sending wood")
+	(chat-to-player-using-id every-ally 22127) 
+	(set-goal GOAL-NO-WOOD-NEEDED 1)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(wood-amount < 300)
+	(goal GOAL-NO-WOOD-NEEDED 1)
+=>
+	(chat-to-player any-ally "Restart sending wood")
+	(chat-to-player-using-id every-ally 22123)
+	(set-goal GOAL-NO-WOOD-NEEDED 0)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(taunt-detected any-ally 8)
+	(goal GOAL-NO-WOOD-NEEDED 0)
+=>
+	(acknowledge-taunt this-any-ally 8)
+	(chat-to-player this-any-ally "CEASING WOOD TRIBUTES")
+	(taunt 30)
+	(set-goal GOAL-NO-WOOD-NEEDED 1)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(taunt-detected any-ally 4)
+	(goal GOAL-NO-WOOD-NEEDED 1)
+=>
+	(acknowledge-taunt this-any-ally 4)
+	(chat-to-player this-any-ally "RESTARTING WOOD TRIBUTES")
+	(taunt 30)
+	(set-goal GOAL-NO-WOOD-NEEDED 0)
+)
+;gold
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(gold-amount > 1000)
+	(goal GOAL-NO-GOLD-NEEDED 0)
+=>
+	(chat-to-player any-ally "Cease sending gold")
+	(chat-to-player-using-id every-ally 22128) 
+	(set-goal GOAL-NO-GOLD-NEEDED 1)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(gold-amount < 800)
+	(goal GOAL-NO-GOLD-NEEDED 1)
+=>
+	(chat-to-player any-ally "Restart sending gold")
+	(chat-to-player-using-id every-ally 22124)
+	(set-goal GOAL-NO-GOLD-NEEDED 0)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(taunt-detected any-ally 9)
+	(goal GOAL-NO-GOLD-NEEDED 0)
+=>
+	(acknowledge-taunt this-any-ally 9)
+	(chat-to-player this-any-ally "CEASING GOLD TRIBUTES")
+	(taunt 30)
+	(set-goal GOAL-NO-GOLD-NEEDED 1)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(taunt-detected any-ally 5)
+	(goal GOAL-NO-GOLD-NEEDED 1)
+=>
+	(acknowledge-taunt this-any-ally 5)
+	(chat-to-player this-any-ally "RESTARTING GOLD TRIBUTES")
+	(taunt 30)
+	(set-goal GOAL-NO-GOLD-NEEDED 0)
+)
+;stone
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(stone-amount > 900)
+	(goal GOAL-NO-STONE-NEEDED 0)
+=>
+	(chat-to-player any-ally "Cease sending stone")
+	(chat-to-player-using-id every-ally 22129) 
+	(set-goal GOAL-NO-STONE-NEEDED 1)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(stone-amount < 700)
+	(goal GOAL-NO-STONE-NEEDED 1)
+=>
+	(chat-to-player any-ally "Restart sending stone")
+	(chat-to-player-using-id every-ally 22125)
+	(set-goal GOAL-NO-STONE-NEEDED 0)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(taunt-detected any-ally 10)
+	(goal GOAL-NO-STONE-NEEDED 0)
+=>
+	(acknowledge-taunt this-any-ally 10)
+	(chat-to-player this-any-ally "CEASING STONE TRIBUTES")
+	(taunt 30)
+	(set-goal GOAL-NO-STONE-NEEDED 1)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(taunt-detected any-ally 6)
+	(goal GOAL-NO-STONE-NEEDED 1)
+=>
+	(acknowledge-taunt this-any-ally 6)
+	(chat-to-player this-any-ally "RESTARTING STONE TRIBUTES")
+	(taunt 30)
+	(set-goal GOAL-NO-STONE-NEEDED 0)
+)

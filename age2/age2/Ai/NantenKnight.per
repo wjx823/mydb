@@ -1,0 +1,3762 @@
+(load "rmresign")
+
+;-------------------------------------------------
+;œApricotKnight(‰¼) Ver 0.90ƒÀ Build:1011.2332
+;	»ìÒF–éˆÇ[m_yoan@hotmail.com]
+;	AI Wars—pAI‚Å‚·B
+
+;œ„§ğŒ
+;	lŒûF125l
+;	“ïˆÕ“xF“ï‚µ‚¢
+;	ƒ}ƒbƒvƒTƒCƒYF•’Ê
+;	ƒ}ƒbƒv‚Ìí—ŞFƒAƒ‰ƒrƒAA[‚¢XA“€Œ‹ŒÎAƒIƒAƒVƒXAƒAƒŠ[ƒiAƒ‚ƒ“ƒSƒŠƒAA‚’nAƒXƒJƒ“ƒWƒfƒBƒiƒrƒAA
+;	              ‘å—¤A‰ˆŠİAƒ†ƒJƒ^ƒ“AŠC•Ó‚ÌÀ’nA—¬ˆæA‚»‚Ì‘¼“G’n‚Æ—¤‘±‚«‚Èƒ}ƒbƒv
+;	•¶–¾F‘S•¶–¾
+;	ƒ`[ƒ€í‘Î‰
+
+;œVer 0.80ƒÀ‚©‚ç‚Ì•ÏX“_
+;	›ŠCŒR‹­‰»BƒoƒOƒtƒBƒbƒNƒX‘¼FX
+;œVer 0.70ƒÀ‚©‚ç‚Ì•ÏX“_
+;	›ƒoƒOƒtƒBƒbƒNƒX‘¼FX
+;œVer 0.60ƒÀ‚©‚ç‚Ì•ÏX“_
+;	›ƒoƒOƒtƒBƒbƒNƒX
+;	›‰×”nÔ“±“ü
+;	›‚»‚Ì‘¼ƒoƒ‰ƒ“ƒX’²®E•Ò¬•ÏX‚È‚Ç
+;-------------------------------------------------
+
+
+(defconst NO 0)
+(defconst YES 1)
+(defconst SINKA 2)
+(defconst TAIKYAKU 3)
+(defconst CONTROL_TOWNSIZE 4)
+(defconst MAP_TYPE 5)
+
+(defconst PALADIN 6)
+(defconst KNIGHT 7)
+(defconst SPEAR 8)
+(defconst SCORP 9)
+(defconst RAM 10)
+(defconst RAKUDA 11)
+(defconst GUN 12)
+(defconst HOHEI 13)
+(defconst UNIQ 14)
+(defconst ENTOU 15)
+(defconst TOUSEKI 16)
+(defconst EAGLE 17)
+(defconst BAKUHA 18)
+(defconst SAKANA 19)
+(defconst GARE 20)
+(defconst CANON 21)
+(defconst MONK 22)
+(defconst ELUNIQ 23)
+(defconst UNIQTECH 24)
+(defconst ARCHER 25)
+(defconst DEL_FARM 26)
+(defconst SANPEI 27)
+(defconst C-ARCHER 31)
+(defconst KIHEI 32)
+
+(defconst ESFOOD 28)
+(defconst ESGOLD 29)
+(defconst ESWOOD 30)
+
+(defconst HELP 33)
+(defconst F_RUSH 34)
+
+;(defconst TIMER_BUILDING 1);—\–ñ
+(defconst TIMER_FR 4)
+(defconst TIMER_ESFOOD 5)
+(defconst TIMER_ESGOLD 6)
+(defconst TIMER_ESWOOD 7)
+(defconst TIMER_BALANCE 8)
+(defconst TIMER_HELP 9)
+
+(defrule
+	(true)
+=>
+	(set-goal CONTROL_TOWNSIZE YES)
+	(disable-self)
+)
+
+;œgoal‰Šú‰»
+(defrule
+	(true)
+=>
+	(set-goal 5 0)
+	(set-goal 7 0)
+	(set-goal 8 0)
+	(set-goal 9 0)
+	(set-goal 10 0)
+	(set-goal 11 0)
+	(set-goal 12 0)
+	(set-goal 13 0)
+	(set-goal 14 0)
+	(set-goal 15 0)
+	(set-goal 16 0)
+	(disable-self)
+)
+(defrule
+	(true)
+=>
+	(set-goal 17 0)
+	(set-goal 18 0)
+	(set-goal 19 0)
+	(set-goal 20 0)
+	(set-goal 21 0)
+	(set-goal 22 0)
+	(set-goal 23 0)
+	(set-goal 24 0)
+	(set-goal 25 0)
+	(set-goal 26 0)
+	(set-goal 27 0)
+	(disable-self)
+)
+(defrule
+	(true)
+=>
+	(set-goal 31 0)
+	(set-goal 32 0)
+	(set-goal 33 0)
+	(set-goal 34 0) ;—Ìåƒ‰ƒbƒVƒ…
+	(disable-self)
+)
+
+;œMAP_TYPE ƒ}ƒbƒv‚Ìƒ^ƒCƒv(0FƒAƒ‰ƒrƒAŒn, 1F‘å—¤Œn)
+(defrule
+	(true)
+=>
+	(set-goal MAP_TYPE 0)
+	(disable-self)
+)
+(defrule
+	(or
+		(map-type continental)					;š‘å—¤
+		(or
+			(map-type baltic)					;ƒoƒ‹ƒgŠC
+			(or
+				(map-type mediterranean)		;’n’†ŠC
+				(or
+					(map-type rivers)			;š—¬ˆæ
+					(or
+						(map-type salt-marsh)	;šó£
+						(or
+							(map-type nomad)	;—V–q
+							(map-type coastal)		;š‰ˆŠİ
+						)
+					)
+				)
+			)
+		)
+	)
+=>
+	(set-goal MAP_TYPE 1)
+	(disable-self)
+)
+(defrule
+	(nor
+		(map-type oasis)					;šƒIƒAƒVƒX
+		(nor
+			(map-type baltic)					;ƒoƒ‹ƒgŠC
+			(nor
+				(map-type mediterranean)		;’n’†ŠC
+				(map-type nomad)			;—V–q
+			)
+		)
+	)
+=>
+	(set-strategic-number sn-gather-idle-soldiers-at-center 1) ;y—¤íƒ†ƒjƒbƒg‚ğƒ}ƒbƒv‚Ì’†‰›‚ÉW‡‚³‚¹‚é‚©z
+	(disable-self)
+)
+(defrule
+	(current-age == imperial-age)
+=>
+	(set-strategic-number sn-gather-idle-soldiers-at-center 0) ;y—¤íƒ†ƒjƒbƒg‚ğƒ}ƒbƒv‚Ì’†‰›‚ÉW‡‚³‚¹‚é‚©z
+	(disable-self)
+)
+
+
+;------------------‹æØ‚è--------------------------------
+
+;œ ’¬‚Ìl
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-percent-civilian-builders 35 ) ;yŒš’z‚ğs‚¤’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-percent-civilian-explorers 65 ) ;y’Tõ‚ğs‚¤’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-percent-civilian-gatherers 0 ) ;yûW‚ğs‚¤’¬‚Ìl‚ÌŠ„‡(“)z
+
+	(set-strategic-number sn-cap-civilian-builders 20 ) ;yŒšİ‚ÉŠ„‚è“–‚Ä‚é’¬‚Ìl‚ÌÅ‘ål”z
+	(set-strategic-number sn-minimum-civilian-explorers 2 ) ;y’Tõ‚ÉŠ„‚è“–‚Ä‚é’¬‚Ìl‚ÌÅ­l”z
+	(set-strategic-number sn-cap-civilian-explorers 2 ) ;y’Tõ‚ÉŠ„‚è“–‚Ä‚é’¬‚Ìl‚ÌÅ‘ål”z
+	(set-strategic-number sn-cap-civilian-gatherers 200 ) ;yûW‚ÉŠ„‚è“–‚Ä‚é’¬‚Ìl‚ÌÅ‘ål”z
+
+	(set-strategic-number sn-maximum-gaia-attack-response 0 ) ;y–ì¶“®•¨‚©‚çUŒ‚‚ğó‚¯‚½ÛA”½Œ‚‚ğs‚¤’¬‚Ìl‚ÌÅ‘ål”z
+	(disable-self)
+)
+
+;œ Œšİ
+(defrule
+	(true)
+=>
+
+	(set-strategic-number sn-max-build-plan-gatherer-percentage 50 ) ;yûWÒ‚ªŒšİ‚ÉŠ„‚è“–‚Ä‚ç‚ê‚éÅ‘å‚ÌŠ„‡(“)z
+	(set-strategic-number sn-minimum-town-size 5 ) ;y’¬‚ÌÅ¬”ÍˆÍz
+	(set-strategic-number sn-maximum-town-size 8 ) ;y’¬‚ÌÅ‘å”ÍˆÍz
+	(set-strategic-number sn-minimum-water-body-size-for-dock 400 ) ;y`‚ğŒš‚Ä‚é…ˆæ‚ÌÅ¬ƒ^ƒCƒ‹”z
+	(set-strategic-number sn-required-forest-tiles 0 ) ;yÅ‰‚Ì”°ÌŠ‚ğŒšİ‚·‚éX‚Æ‚µ‚Ä”F¯‚·‚éX‚Ìƒ^ƒCƒ‹”z
+	(set-strategic-number sn-mill-max-distance 100 ) ;y•²ˆø‚«Š‚Ì’¬‚Ì’†S‚©‚ç‚ÌÅ‘å‹——£z
+	(set-strategic-number sn-camp-max-distance 18 ) ;y”°ÌŠ‹y‚ÑÌŒ@Š‚Ì’¬‚Ì’†S‚©‚ç‚ÌÅ‘å‹——£z
+	(set-strategic-number sn-minimum-dropsite-buffer 50 ) ;yWÏŠ‚ğ“G‚Ì’¬‚Ì’†S‚©‚ç—£‚·‹——£z
+	(set-strategic-number sn-random-placement-factor 10 ) ;yŒš•¨‚ğŒš‚Ä‚éêŠ‚ğA—\’è‚æ‚è‚Ç‚Ì’ö“x‚¸‚ç‚µ‚Ä‚à\‚í‚È‚¢‚©z
+	(disable-self)
+)
+
+;œ ’Tõ
+(defrule
+	(true)
+=>
+
+	(set-strategic-number sn-total-number-explorers 4 ) ;y’Tõ‚ÉŠ„‚è“–‚Ä‚éƒ†ƒjƒbƒg‚Ì‘”z
+	(set-strategic-number sn-percent-exploration-required 5 ) ;yÅ’áŒÀ’B¬‚·‚×‚«ŠJ‘ñ—¦(“)z
+	(set-strategic-number sn-initial-exploration-required 0 ) ;yŒš•¨‚ğŒšİ‚·‚é‘O‚É’Tõ‚·‚éŠ„‡(“)z
+	(set-strategic-number sn-blot-size 2 ) ;y–¢ŠJ‘ñ—Ìˆæ‚Æ‚İ‚È‚µ‚Ä’Tõ‚·‚é—Ìˆæz
+	(set-strategic-number sn-percent-half-exploration 10 ) ;y’Tõ‚·‚é’¬‚Ìl‚ğ”¼•ª‚ÉŒ¸‚ç‚·‘O‚Ü‚Å‚É’Tõ‚µ‚Ä‚¨‚­‚×‚«ƒ}ƒbƒv‚ÌŠJ‘ñ—¦(“)z
+	(set-strategic-number sn-number-enemy-objects-required 10 ) ;y’Tõ‚·‚é’¬‚Ìl‚ğÅ­l”‚ÉŒ¸‚ç‚·‘O‚Ü‚Å‚É”­Œ©‚µ‚Ä‚¨‚­‚×‚«“GƒIƒuƒWƒFƒNƒg”z
+	(set-strategic-number sn-blot-exploration-map 0 ) ;y‚·‚Å‚É’Tõ‚³‚ê‚½—Ìˆæ‚ğÄ‚Ñ’Tõ‚·‚é‚©z
+	(set-strategic-number sn-coop-share-information 1 ) ;y“¯–¿Ò‚ÆŠJ‘ñ—Ìˆæ‚É‚Â‚¢‚Ä‚Ìî•ñ‚ğ‹¤—L‚·‚é‚©z
+	(disable-self)
+)
+
+
+;œ ûW
+(defrule
+	(true)
+=>
+
+	(set-strategic-number sn-food-gatherer-percentage 80 ) ;yH—¿‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-wood-gatherer-percentage 20 ) ;y–Ø‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-gold-gatherer-percentage 0 ) ;y‹à‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-stone-gatherer-percentage 0 ) ;yÎ‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+
+	(set-strategic-number sn-food-dropsite-distance 100 ) ;y’¬‚Ìl‚ªH—¿‚ğ•à‚¢‚Ä‚¿‰^‚ÔÅ‘å‚Ìƒ^ƒCƒ‹”z
+	(set-strategic-number sn-wood-dropsite-distance 100 ) ;y’¬‚Ìl‚ª–Ø‚ğ•à‚¢‚Ä‚¿‰^‚ÔÅ‘å‚Ìƒ^ƒCƒ‹”z
+	(set-strategic-number sn-gold-dropsite-distance 100 ) ;y’¬‚Ìl‚ª‹à‚ğ•à‚¢‚Ä‚¿‰^‚ÔÅ‘å‚Ìƒ^ƒCƒ‹”z
+	(set-strategic-number sn-stone-dropsite-distance 100 ) ;y’¬‚Ìl‚ªÎ‚ğ•à‚¢‚Ä‚¿‰^‚ÔÅ‘å‚Ìƒ^ƒCƒ‹”z
+	(disable-self)
+)
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-maximum-food-drop-distance 18 ) ;y’¬‚Ìl‚ª–Øä•A—r‚ğ”F¯‚·‚éÅ‘å‹——£z
+	(set-strategic-number sn-maximum-hunt-drop-distance 15 ) ;y’¬‚Ìl‚ª­‚ğ”F¯‚·‚éÅ‘å‹——£z
+	(set-strategic-number sn-maximum-fish-boat-drop-distance 100 ) ;y‹™‘D‚ª‹›‚ğ”F¯‚·‚éÅ‘å‹——£z
+	(set-strategic-number sn-maximum-wood-drop-distance 20 ) ;y’¬‚Ìl‚ªX‚ğ”F¯‚·‚éÅ‘å‹——£z
+	(set-strategic-number sn-maximum-gold-drop-distance 35 ) ;y’¬‚Ìl‚ª‹àz‚ğ”F¯‚·‚éÅ‘å‹——£z
+	(set-strategic-number sn-maximum-stone-drop-distance 35 ) ;y’¬‚Ìl‚ªÎ’n‚ğ”F¯‚·‚éÅ‘å‹——£z
+
+	(set-strategic-number sn-retask-gather-amount 0 ) ;y“Á’è‘Œ¹‚ğûW’†‚Ì’¬‚Ìl‚ªAÅ’áŒÀûW‚·‚×‚«‘Œ¹—Êz
+	(set-strategic-number sn-max-retask-gather-amount 40 ) ;y“Á’è‘Œ¹‚ğûW’†‚Ì’¬‚Ìl‚ªAÅ‘åŒÀûW‚·‚×‚«‘Œ¹—Êz
+	(set-strategic-number sn-use-by-type-max-gathering 0 ) ;y(set-strategic-number sn-retask-gather-amount‚Æ(set-strate	gic-number sn-max-retask-gather-amount‚ğ‘Œ¹•Ê‚É“K—p‚·‚é‚©z
+	(set-strategic-number sn-minimum-boar-hunt-group-size 10 ) ;y’–‚ğë‚éÅ­l”z
+	(disable-self)
+)
+(defrule
+	(map-type scandanavia)
+=>
+	(set-strategic-number sn-maximum-hunt-drop-distance 25 ) ;y’¬‚Ìl‚ª­‚ğ”F¯‚·‚éÅ‘å‹——£z
+	(disable-self)
+)
+
+;œ ŒR–ƒ†ƒjƒbƒg
+(defrule
+	(true)
+=>
+
+	(set-strategic-number sn-easier-reaction-percentage 70 ) ;y‹ŠE“à‚Ì“G‚É‘Î‚·‚é”½‰(“)z
+	(set-strategic-number sn-easiest-reaction-percentage 100 ) ;y‹ŠE“à‚Ì“G‚É‘Î‚·‚é”½‰(“)z
+	(set-strategic-number sn-group-commander-selection-method 1 ) ;yƒOƒ‹[ƒv‚Ìi—ßŠ¯‚ğŒˆ‚ß‚é•û–@z
+	(set-strategic-number sn-attack-group-gather-spacing 5 ) ;y‚»‚ÌƒOƒ‹[ƒv‚ªW‡‚µ‚½‚Æ”F‚ß‚ç‚ê‚éAW‡’n“_‚©‚çŠeƒ†ƒjƒbƒg‚Ö‚Ì‘Š‘Î‹——£z
+	(set-strategic-number sn-consecutive-idle-unit-limit 5 ) ;yƒOƒ‹[ƒv‚ğ‘Ò‹@ó‘Ô‚ÆŒ©‚È‚·‚Ü‚Å‚Ì•b”z
+	(set-difficulty-parameter ability-to-dodge-missiles 0);”ò‚Ñ“¹‹ï‚ğ”ğ‚¯‚é“x‡‚¢0(Å‚) ` 100(Å’á)
+	(set-difficulty-parameter ability-to-maintain-distance 20);Ë’ö‚ğ‚Âƒ†ƒjƒbƒg‚ª–Ú•W‚Æ‚Ì‹——£‚ğ•Û‚Â“x‡‚¢0(Å‚) ` 100(Å’á)
+	(disable-self)
+)
+
+;œ —¤í
+(defrule
+	(true)
+=>
+
+	(set-strategic-number sn-number-attack-groups 0 ) ;y—¤íUŒ‚ƒOƒ‹[ƒv‚Ì”z
+	(set-strategic-number sn-minimum-attack-group-size 0 ) ;y—¤íUŒ‚ƒOƒ‹[ƒv‚ÌÅ¬l”z
+	(set-strategic-number sn-maximum-attack-group-size 0 ) ;y—¤íUŒ‚ƒOƒ‹[ƒv‚ÌÅ‘ål”z
+
+	(set-strategic-number sn-number-defend-groups 100 ) ;y—¤í–hŒäƒOƒ‹[ƒv‚Ì”z
+	(set-strategic-number sn-minimum-defend-group-size 4 ) ;y—¤í–hŒäƒOƒ‹[ƒv‚ÌÅ¬l”z
+	(set-strategic-number sn-maximum-defend-group-size 5 ) ;y—¤í–hŒäƒOƒ‹[ƒv‚ÌÅ‘ål”z
+	(disable-self)
+)
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-number-explore-groups 1 ) ;y—¤í’TõƒOƒ‹[ƒv‚Ì”z
+	(set-strategic-number sn-minimum-explore-group-size 1 ) ;y—¤í’TõƒOƒ‹[ƒv‚ÌÅ¬l”z
+	(set-strategic-number sn-maximum-explore-group-size 1 ) ;y—¤í’TõƒOƒ‹[ƒv‚ÌÅ‘ål”z
+	(set-strategic-number sn-percentage-explore-exterminators 0 ) ;y—¤í’TõƒOƒ‹[ƒv‚É”_–¯ë‚è‚ğs‚í‚¹‚éŠ„‡(“)z
+
+	(set-strategic-number sn-percent-attack-soldiers 100 ) ;yattack-now‚ÉQ‰Á‚·‚é—¤íƒ†ƒjƒbƒg‚ÌŠ„‡(“)z
+	(set-strategic-number sn-gather-idle-soldiers-at-center 0) ;y—¤íƒ†ƒjƒbƒg‚ğƒ}ƒbƒv‚Ì’†‰›‚ÉW‡‚³‚¹‚é‚©z
+	(disable-self)
+)
+
+;œ ŠCí
+(defrule
+	(true)
+=>
+
+	(set-strategic-number sn-number-boat-attack-groups 0 ) ;yŠCíUŒ‚ƒOƒ‹[ƒv‚Ì”z
+	(set-strategic-number sn-minimum-boat-attack-group-size 0 ) ;yŠCíUŒ‚ƒOƒ‹[ƒv‚ÌÅ¬l”z
+	(set-strategic-number sn-maximum-boat-attack-group-size 0 ) ;yŠCíUŒ‚ƒOƒ‹[ƒv‚ÌÅ‘ål”z
+
+	(set-strategic-number sn-number-boat-defend-groups 1 ) ;yŠCí–hŒäƒOƒ‹[ƒv‚Ì”z
+	(set-strategic-number sn-minimum-boat-defend-group-size 1 ) ;yŠCí–hŒäƒOƒ‹[ƒv‚ÌÅ¬l”z
+	(set-strategic-number sn-maximum-boat-defend-group-size 30 ) ;yŠCí–hŒäƒOƒ‹[ƒv‚ÌÅ‘ål”z
+	(disable-self)
+)
+(defrule
+	(true)
+=>
+
+	(set-strategic-number sn-number-boat-explore-groups 0 ) ;yŠCí’TõƒOƒ‹[ƒv‚Ì”z
+	(set-strategic-number sn-minimum-boat-explore-group-size 0 ) ;yŠCí’TõƒOƒ‹[ƒv‚ÌÅ¬l”z
+	(set-strategic-number sn-maximum-boat-explore-group-size 0 ) ;yŠCí’TõƒOƒ‹[ƒv‚ÌÅ‘ål”z
+
+	(set-strategic-number sn-percent-attack-boats 100 ) ;yattack-now‚ÉQ‰Á‚·‚éŠCíƒ†ƒjƒbƒg‚ÌŠ„‡(“)z
+	(disable-self)
+)
+
+;œ UŒ‚
+(defrule
+	(true)
+=>
+
+	(set-strategic-number sn-attack-group-size-randomness 0 ) ;yUŒ‚ƒOƒ‹[ƒv‚ÌÅ¬l”‚Ìƒ‰ƒ“ƒ_ƒ€‚³z
+	(set-strategic-number sn-attack-intelligence 1 ) ;yintelligent attack system‚ğg—p‚·‚é‚©z
+	(set-strategic-number sn-initial-attack-delay 0 ) ;y‰‰ñ‚ÌUŒ‚‚Ì‰„Šú•b”z
+	(set-strategic-number sn-initial-attack-delay-type 0 ) ;y‰‰ñ‚ÌUŒ‚‚ğ‰„Šú‚·‚éğŒz
+	(set-strategic-number sn-attack-separation-time-randomness 0 ) ;yUŒ‚‚ÌŠÔŠu‚Ìƒ‰ƒ“ƒ_ƒ€‚³z
+	(set-strategic-number sn-group-leader-defense-distance 5 ) ;yÅ‚àd—v‚ÈUŒ‚ƒOƒ‹[ƒv‚Ìi—ßŠ¯‚ªŒì‰q‚³‚ê‚é‹——£z
+	(disable-self)
+)
+
+;œ –hŒä
+(defrule
+	(true)
+=>
+
+	(set-strategic-number sn-town-defend-priority 1 ) ;y’¬‚ğ–hŒäƒOƒ‹[ƒv‚ªç‚é—Dæ“xz
+	(set-strategic-number sn-forage-defend-priority 2 ) ;yH—¿Œ¹‚ğ–hŒäƒOƒ‹[ƒv‚ªç‚é—Dæ“xz
+	(set-strategic-number sn-gold-defend-priority 3 ) ;y‹àz‚ğ–hŒäƒOƒ‹[ƒv‚ªç‚é—Dæ“xz
+	(set-strategic-number sn-stone-defend-priority 4 ) ;yÎ’n‚ğ–hŒäƒOƒ‹[ƒv‚ªç‚é—Dæ“xz
+	(set-strategic-number sn-relic-defend-priority 5 ) ;y¹‚È‚é” ‚ğ–hŒäƒOƒ‹[ƒv‚ªç‚é—Dæ“xz
+	(set-strategic-number sn-zero-priority-distance 5 ) ;y—Dæ“x0‚Ìê‡‚Ì–h‰q‹——£z
+	(disable-self)
+)
+(defrule
+	(true)
+=>
+
+	(set-strategic-number sn-allow-civilian-defense 0 ) ;y’¬‚Ìl‚ª–h‰q‚ÉQ‰Á‚·‚é‚©z
+	(set-strategic-number sn-dock-defend-priority 1 ) ;y`‚Ì–h‰q‚ğs‚¤‚©z
+	(set-strategic-number sn-task-ungrouped-soldiers 0 ) ;yƒOƒ‹[ƒv‰»‚³‚ê‚Ä‚¢‚È‚¢—¤íƒ†ƒjƒbƒg‚ğUŠJ‚³‚¹AŒÂ•Ê‚É’¬‚Ì—Ìˆæ‚ğŒx”õ‚³‚¹‚é‚©z
+	(set-strategic-number sn-sentry-distance 0 ) ;y–hŒäƒOƒ‹[ƒv‚ª’¬‚ğç‚éÛ‚Ì‹——£z
+	(set-strategic-number sn-defense-distance 0 ) ;y–hŒäƒOƒ‹[ƒv‚ª’¬ˆÈŠO‚Ì‚à‚Ì‚ğç‚éÛ‚ÌA‚»‚Ì‘ÎÛ‚Æ‚Ì‹——£z
+	(set-strategic-number sn-defend-overlap-distance 30 ) ;yŒÂX‚Ì–hŒäƒOƒ‹[ƒv‚ªó‚¯‚Â‰~ó‚Ì–hŒä”ÍˆÍz
+	(set-strategic-number sn-sentry-distance-variation 5 ) ;y‘¼‚ÌƒR[ƒh‚Åİ’è‚µ‚½–hŒä”ÍˆÍ‚ğA‚Ç‚Ì’ö“x•ÏX‚µ‚Ä‚à‚©‚Ü‚í‚È‚¢‚©z
+	(set-strategic-number sn-percent-enemy-sighted-response 100 ) ;y‘¼‚Ìƒ†ƒjƒbƒg‚ªUŒ‚‚ğó‚¯‚½‚Æ‚«‚ÉA‘Ò‹@’†‚ÌŒR‘à‚ª”½Œ‚‚É‰Á‚í‚éŠ„‡(“)z
+	(set-strategic-number sn-enemy-sighted-response-distance 30 ) ;yUŒ‚‚ğó‚¯‚½ÛA‚»‚Ì’n“_‚©‚ç‚Ç‚Ì’ö“x‚Ì”ÍˆÍ‚É‘¶İ‚·‚éƒ†ƒjƒbƒg‚ª”½Œ‚‚ğs‚¤‚©z
+	(disable-self)
+)
+
+;œ UŒ‚–Ú•W
+(defrule
+	(true)
+=>
+
+	(set-strategic-number sn-attack-winning-player 1 ) ;yŒ»İŸ‚Á‚Ä‚¢‚éƒvƒŒƒCƒ„[‚É‘Î‚µ‚ÄUŒ‚‚ğs‚¤‚©‚Ç‚¤‚©z
+	(set-strategic-number sn-attack-winning-player-factor 100 ) ;yŸ—˜‚µ‚Ä‚¢‚éƒvƒŒƒCƒ„[‚É‘Î‚µ‚ÄUŒ‚‚ğs‚¤Š„‡(“)z
+
+	(set-strategic-number sn-target-evaluation-ally-proximity 0 ) ;y–Ú•W‚ğ“¯–¿Ò‚Æ‚Ì‹ß‚³‚É‚æ‚Á‚Ä—Dæ‚·‚é”{—¦z
+	(set-strategic-number sn-target-evaluation-attack-attempts 0 ) ;y–Ú•W‚ğattack-attempts‚É‚æ‚Á‚Ä—Dæ‚·‚é”{—¦z
+	(set-strategic-number sn-target-evaluation-damage-capability 0 ) ;y–Ú•W‚ğdamege-capability‚É‚æ‚Á‚Ä—Dæ‚·‚é”{—¦z
+	(set-strategic-number sn-target-evaluation-distance 50 ) ;y–Ú•W‚ğ‹——£‚É‚æ‚Á‚Ä—Dæ‚·‚é”{—¦z
+	(set-strategic-number sn-target-evaluation-hitpoints 50 ) ;y–Ú•W‚ğ‚g‚o‚É‚æ‚Á‚Ä—Dæ‚·‚é”{—¦z
+	(disable-self)
+)
+(defrule
+	(true)
+=>
+
+	(set-strategic-number sn-target-evaluation-kills 0 ) ;y–Ú•W‚ğ“|‚µ‚½l”‚É‚æ‚Á‚Ä—Dæ‚·‚é”{—¦z
+	(set-strategic-number sn-target-evaluation-range 80 ) ;y–Ú•W‚ğË’ö‚É‚æ‚Á‚Ä—Dæ‚·‚é”{—¦z
+	(set-strategic-number sn-target-evaluation-rof 30 ) ;y–Ú•W‚ğËŒ‚‘¬“x‚É‚æ‚Á‚Ä—Dæ‚·‚é”{—¦z
+	(set-strategic-number sn-target-evaluation-in-progress 50 ) ;yUŒ‚’†‚Ìƒ^[ƒQƒbƒg‚ğ–Ú•W‚Æ‚³‚¹‚éì—pz
+	(set-strategic-number sn-target-evaluation-time-kill-ratio 100 ) ;yƒ^[ƒQƒbƒg‚ğ“|‚·ŠÔ‚É‚æ‚éì—pz
+	(set-strategic-number sn-target-evaluation-continent 0 ) ;y–Ú•W‚ğ“¯‘å—¤‚É‚¢‚é“Gi—ßŠ¯‚É‚æ‚Á‚Ä—Dæ‚·‚é‰Á”z
+	(set-strategic-number sn-target-evaluation-siege-weapon 60 ) ;y–CŒ‚•ºŠí‚É“®‚©‚È‚¢ƒ^[ƒQƒbƒg‚ğ–Ú•W‚Æ‚³‚¹‚é‰Á”z
+	(set-strategic-number sn-target-evaluation-boat 70 ) ;y—¤íƒ†ƒjƒbƒg‚ª“GŠCíƒ†ƒjƒbƒg‚ğ–Ú•W‚Æ‚·‚é‰Á”z
+	(set-strategic-number sn-target-evaluation-randomness 0 ) ;y–Ú•W‚ğŒˆ’è‚·‚éÛ‚Ìƒ‰ƒ“ƒ_ƒ€‚³z
+	(disable-self)
+)
+;(defrule
+;	(true)
+;=>
+;	(set-strategic-number sn-special-attack-type1 villager ) ;yUŒ‚–Ú•W‚Æ‚·‚é‘ÎÛ‚Ìí—Şz
+;	(set-strategic-number sn-special-attack-influence1 100 ) ;y(set-strategic-number sn-special-attack-type1‚Åw’è‚µ‚½‘ÎÛ•¨‚ğUŒ‚‚·‚é—Dæ“xz
+;	(disable-self)
+;)
+(defrule
+	(or
+		(enemy-captured-relics)
+		(players-civ any-enemy aztec)
+	)
+=>
+	(set-strategic-number sn-special-attack-type1 1)
+)
+
+;œ ŠOŒğ
+(defrule
+	(true)
+=>
+	(set-strategic-number sn-coop-share-attacking 1 ) ;y“¯–¿Ò‚ğç‚é‚½‚ß‚ÌUŒ‚‚ğs‚¤‚©z
+	(set-strategic-number sn-coop-share-attacking-interval 5 ) ;y‘¼‚ÌƒRƒ“ƒsƒ…[ƒ^[ƒvƒŒƒCƒ„[‚É‹~‰‡‚ğ‹‚ß‚é‚Ü‚Å‚Ì•b”z
+;	(set-strategic-number sn-minimum-peace-like-level 0 ) ;y“¯–¿‚ğŒ‹‚ÔÛ‚É•K—v‚Æ‚·‚é—FD“x(“)z
+;	(set-strategic-number sn-attack-diplomacy-impact 100 ) ;yUŒ‚‚ğó‚¯‚½Û‚ÌAŠOŒğp¨‚Ö‚Ì‰e‹¿‚Ì“x‡(“)z
+;	(set-strategic-number sn-hits-before-alliance-change 1 ) ;y“¯–¿‚ğ”jŠü‚·‚é‚Ü‚Å‚ÌA“¯–¿Ò‚©‚ç‚ÌUŒ‚‰ñ”z
+	(set-strategic-number sn-minimum-amount-for-trading 0 ) ;y‘Œ¹‚ğ‚Ç‚Ì’ö“x•Û—L‚µ‚½ã‚ÅŒğˆÕ‚ğs‚¤‚©z
+	(disable-self)
+)
+
+;œ –¢–ó
+(defrule
+	(true)
+=>
+;	(set-strategic-number sn-relic-return-distance 10 ) ;y¹EÒ‚ª” ‚ğæ‚è‚És‚­Å‘å‹——£z
+
+;	(set-strategic-number sn-build-frequency 1 ) ;y–¢–óz
+;	(set-strategic-number sn-max-skips-per-attempt 10 ) ;y–¢–óz
+;	(set-strategic-number sn-number-build-attempts-before-skip 25 ) ;y–¢–óz
+;	(set-strategic-number sn-scale-maximum-attack-group-size 0 ) ;y–¢–óz
+;	(set-strategic-number sn-scale-minimum-attack-group-size 1 ) ;y–¢–óz
+;	(set-strategic-number sn-scaling-frequency 10 ) ;y–¢–óz
+	(disable-self)
+)
+
+
+;œ î•ñ–³‚µ
+(defrule
+	(true)
+=>
+
+;	(set-strategic-number sn-do-not-scale-for-difficulty-level  ) ;yî•ñ–³‚µz
+	(set-strategic-number sn-gather-defense-units 1 ) ;yî•ñ–³‚µz
+;	(set-strategic-number sn-group-form-distance  ) ;yî•ñ–³‚µz
+;	(set-strategic-number sn-ignore-attack-group-under-attack  ) ;yî•ñ–³‚µz
+	(set-strategic-number sn-intelligent-gathering 1 ) ;yî•ñ–³‚µz
+;	(set-strategic-number sn-number-forward-builders  ) ;yî•ñ–³‚µz
+;	(set-strategic-number sn-number-max-skip-cycles  ) ;yî•ñ–³‚µz
+	(disable-self)
+)
+
+
+;------------------‹æØ‚è--------------------------------
+
+;œ‰Æ
+(defrule
+	(current-age < castle-age)
+	(housing-headroom < 3)
+	(can-build house)
+=>
+	(build house)
+;	(chat-local-to-self "‰Æ‚ğŒš‚Ä‚Ü‚·B")
+)
+(defrule
+	(or
+		(current-age >= castle-age)
+		(building-type-count-total dock >= 1 )
+	)
+	(housing-headroom < 5)
+	(can-build house)
+=>
+	(build house)
+;	(chat-local-to-self "‰Æ‚ğŒš‚Ä‚Ü‚·B")
+)
+
+
+;œ•²‚Ğ‚«Š
+(defrule
+	(building-type-count-total mill < 1)
+	(or
+		(resource-found food)
+		(or
+			(map-type scandanavia)
+			(map-type nomad)
+		)
+	)
+	(can-build mill)
+=>
+	(build mill)
+	(chat-local-to-self "3)•²ˆø‚«Š‚ğì‚è‚Ü‚·B")
+	(set-strategic-number sn-minimum-civilian-explorers 0 ) ;y’Tõ‚ÉŠ„‚è“–‚Ä‚é’¬‚Ìl‚ÌÅ­l”z
+	(set-strategic-number sn-cap-civilian-explorers 0 ) ;y’Tõ‚ÉŠ„‚è“–‚Ä‚é’¬‚Ìl‚ÌÅ‘ål”z
+	(disable-self)
+)
+(defrule
+	(building-type-count-total mill < 1)
+	(current-age >= feudal-age)
+	(can-build-with-escrow mill)
+=>
+	(release-escrow wood)
+	(build mill)
+	(chat-local-to-self "3)•²ˆø‚«Š‚ğì‚è‚Ü‚·B")
+)
+(defrule
+	(map-type yucatan)
+	(sheep-and-forage-too-far)
+	(building-type-count-total mill < 2)
+	(can-build-with-escrow mill)
+=>
+	(release-escrow wood)
+	(build mill)
+	(chat-local-to-self "3)•²ˆø‚«Š‚ğì‚è‚Ü‚·B")
+)
+;œŒšİêŠ‚Ì§Œä
+(defrule
+	(timer-triggered 1)
+=>
+;   (chat-local-to-self "Œšİ§Œä‚ğ‰ğœ‚µ‚Ü‚·B")
+	(disable-timer 1)
+	(set-goal CONTROL_TOWNSIZE NO)
+)
+(defrule
+	(current-age <= castle-age)
+	(goal CONTROL_TOWNSIZE NO)
+=>
+	(set-strategic-number sn-minimum-town-size 15)
+	(set-strategic-number sn-maximum-town-size 20)
+)
+(defrule
+	(current-age <= imperial-age)
+	(goal CONTROL_TOWNSIZE NO)
+=>
+	(set-strategic-number sn-minimum-town-size 20)
+	(set-strategic-number sn-maximum-town-size 25)
+)
+(defrule
+	(goal SINKA 8)
+	(goal CONTROL_TOWNSIZE NO)
+=>
+	(set-strategic-number sn-minimum-town-size 30)
+	(set-strategic-number sn-maximum-town-size 35)
+)
+(defrule
+	(game-time > 3600)
+	(goal CONTROL_TOWNSIZE NO)
+=>
+	(set-strategic-number sn-minimum-town-size 30)
+	(set-strategic-number sn-maximum-town-size 35)
+)
+
+;œ”°ÌŠ
+(defrule
+	(resource-found wood)
+	(or
+		(dropsite-min-distance wood > 5)
+		(building-type-count-total lumber-camp < 1)
+	)
+	(can-build lumber-camp)
+	(unit-type-count-total villager >= 14)
+=>
+	(chat-local-to-self "4)”°ÌŠ‚ğì‚è‚Ü‚·B")
+	(build lumber-camp)
+)
+(defrule
+	(or
+		(current-age >= castle-age)
+		(goal SINKA 3)
+	)
+	(building-type-count-total lumber-camp < 2)
+	(can-build lumber-camp)
+=>
+	(chat-local-to-self "4)”°ÌŠ‚ğì‚è‚Ü‚·B")
+	(build lumber-camp)
+)
+;œ”¨(ƒAƒ‰ƒrƒA)
+(defrule
+;	(goal MAP_TYPE 0)
+	(unit-type-count-total villager >= 16)
+	(current-age == dark-age)
+	(building-type-count-total farm <= 14)
+;	(idle-farm-count <= 3)
+	(can-build farm)
+=>
+	(build farm)
+	;(chat-local-to-self "”¨‚ğì‚è‚Ü‚·B")
+)
+
+(defrule
+;	(goal MAP_TYPE 0)
+	(current-age == feudal-age)
+	(or
+		(building-type-count-total stable >= 1)
+		(or
+			(building-type-count-total archery-range >= 1)
+			(building-type-count-total market >= 1)
+		)
+	)
+	(building-type-count-total blacksmith >= 1)
+	(idle-farm-count < 2)
+	(can-build farm)
+=>
+	(build farm)
+	;(chat-local-to-self "”¨‚ğì‚è‚Ü‚·B")
+)
+(defrule
+;	(or
+;		(goal MAP_TYPE 0)
+		(wood-amount >= 100)
+;	)
+	(current-age >= castle-age)
+;	(building-type-count-total farm <= 25)
+	(idle-farm-count < 2)
+	(can-build farm)
+=>
+	(build farm)
+	;(chat-local-to-self "”¨‚ğì‚è‚Ü‚·B")
+)
+
+
+;œ”¨(‘å—¤)
+(defrule
+(false)
+	(goal MAP_TYPE 1)
+	(unit-type-count-total villager >= 16)
+	(or
+		(unit-type-count-total fishing-ship >= 4)
+		(wood-amount >= 200)
+	)
+	(current-age <= feudal-age)
+	(building-type-count-total farm <= 8)
+	(idle-farm-count <= 3)
+	(can-build farm)
+=>
+	(build farm)
+	;(chat-local-to-self "”¨‚ğì‚è‚Ü‚·B")
+)
+
+(defrule
+(false)
+	(goal MAP_TYPE 1)
+	(current-age == feudal-age)
+	(or
+		(building-type-count-total stable >= 1)
+		(or
+			(building-type-count-total archery-range >= 1)
+			(building-type-count-total market >= 1)
+		)
+	)
+	(building-type-count-total blacksmith >= 1)
+;	(building-type-count-total farm <= 14)
+	(idle-farm-count <= 3)
+	(can-build farm)
+=>
+	(build farm)
+	;(chat-local-to-self "”¨‚ğì‚è‚Ü‚·B")
+)
+(defrule
+(false)
+	(or
+		(goal MAP_TYPE 1)
+		(wood-amount >= 100)
+	)
+	(current-age >= castle-age)
+;	(building-type-count-total farm <= 25)
+	(idle-farm-count < 2)
+	(can-build farm)
+=>
+	(build farm)
+	;(chat-local-to-self "”¨‚ğì‚è‚Ü‚·B")
+)
+
+;œ”¨íœ
+(defrule
+(false)
+	(not(town-under-attack))
+	(goal DEL_FARM NO)
+	(idle-farm-count >= 5)
+
+=>
+	(set-goal DEL_FARM YES)
+)
+(defrule
+	(goal DEL_FARM YES)
+	(idle-farm-count != 0)
+=>
+	(delete-building farm)
+)
+(defrule
+	(goal DEL_FARM YES)
+	(idle-farm-count == 0)
+=>
+	(set-goal DEL_FARM NO)
+)
+
+;œÌŒ@Š(Î)
+(defrule
+	(can-build mining-camp)
+	(resource-found stone)
+	(dropsite-min-distance stone > 6)
+	(or
+		(current-age == feudal-age)
+		(goal SINKA 1)
+	)
+=>
+	(release-escrow wood)
+	(build mining-camp)
+	(chat-local-to-self "6)ÌŒ@Š‚ğì‚è‚Ü‚·B")
+)
+;œÌŒ@Š(‹à)
+(defrule
+	(or
+		(goal SINKA 1)
+		(current-age == feudal-age)
+	)
+	(dropsite-min-distance gold > 6)
+	(resource-found gold)
+	(can-build mining-camp)
+=>
+	(set-strategic-number sn-camp-max-distance 35 ) ;y”°ÌŠ‹y‚ÑÌŒ@Š‚Ì’¬‚Ì’†S‚©‚ç‚ÌÅ‘å‹——£z
+	(build mining-camp)
+	(chat-local-to-self "5)ÌŒ@Š‚ğì‚è‚Ü‚·B")
+)
+
+;œO‚Â–ÚˆÈ~‚ÌÌŒ@Š
+(defrule
+	(building-type-count-total monastery >= 1 )
+	(current-age >= castle-age)
+	(resource-found gold)
+	(dropsite-min-distance gold > 6)
+	(can-build-with-escrow mining-camp)
+=>
+	(release-escrow wood)
+	(build mining-camp)
+	(chat-local-to-self "5)ÌŒ@Š‚ğì‚è‚Ü‚·B")
+)
+(defrule
+	(building-type-count-total monastery >= 1 )
+	(current-age >= castle-age)
+	(resource-found stone)
+	(dropsite-min-distance stone > 6)
+	(can-build-with-escrow mining-camp)
+=>
+	(release-escrow wood)
+	(build mining-camp)
+	(chat-local-to-self "6)ÌŒ@Š‚ğì‚è‚Ü‚·B")
+)
+;œÌŒ@Š‚ª5‚Â‚ğ’´‚¦‚½‚çÌW‹——£‚ğL‚°‚é
+(defrule
+	(building-type-count-total mining-camp > 3)
+=>
+	(set-strategic-number sn-camp-max-distance 600 ) ;y”°ÌŠ‹y‚ÑÌŒ@Š‚Ì’¬‚Ì’†S‚©‚ç‚ÌÅ‘å‹——£z
+	(set-strategic-number sn-wood-dropsite-distance 600 ) ;y’¬‚Ìl‚ª–Ø‚ğ•à‚¢‚Ä‚¿‰^‚ÔÅ‘å‚Ìƒ^ƒCƒ‹”z
+	(set-strategic-number sn-gold-dropsite-distance 600 ) ;y’¬‚Ìl‚ª‹à‚ğ•à‚¢‚Ä‚¿‰^‚ÔÅ‘å‚Ìƒ^ƒCƒ‹”z
+	(set-strategic-number sn-stone-dropsite-distance 600 ) ;y’¬‚Ìl‚ªÎ‚ğ•à‚¢‚Ä‚¿‰^‚ÔÅ‘å‚Ìƒ^ƒCƒ‹”z
+	(chat-local-to-self "30)ÌW—Ìˆæ‚ğL‚°‚Ü‚·")
+	(disable-self)
+)
+;œËèˆç¬Š
+(defrule
+	(or
+		(civ-selected mayan)
+		(civ-selected chinese)
+	)
+	(goal ELUNIQ YES)
+	(building-type-count-total monastery >= 1 )
+	(building-type-count-total archery-range < 1)
+	(can-build-with-escrow archery-range)
+=>
+	(set-goal CONTROL_TOWNSIZE YES)
+	(set-strategic-number sn-minimum-town-size 18)
+	(set-strategic-number sn-maximum-town-size 22)
+	(enable-timer 1 5)
+	(release-escrow wood)
+	(build archery-range)
+	(chat-local-to-self "7)Ëèˆç¬Š‚ğŒš‚Ä‚Ü‚·B")
+)
+(defrule
+	(or
+		(goal ARCHER YES)
+		(or
+			(goal C-ARCHER YES)
+			(goal SANPEI YES)
+		)
+	)
+	(building-type-count-total monastery >= 1 )
+	(building-type-count-total archery-range < 2)
+	(current-age <= castle-age)
+	(can-build-with-escrow archery-range)
+=>
+	(set-goal CONTROL_TOWNSIZE YES)
+	(set-strategic-number sn-minimum-town-size 18)
+	(set-strategic-number sn-maximum-town-size 22)
+	(enable-timer 1 5)
+	(release-escrow wood)
+	(build archery-range)
+	(chat-local-to-self "7)Ëèˆç¬Š‚ğŒš‚Ä‚Ü‚·B")
+)
+(defrule
+	(or
+		(goal ARCHER YES)
+		(or
+			(goal C-ARCHER YES)
+			(goal SANPEI YES)
+		)
+	)
+	(building-type-count-total monastery >= 1 )
+	(building-type-count-total archery-range < 3)
+	(current-age == imperial-age)
+	(can-build-with-escrow archery-range)
+=>
+	(set-goal CONTROL_TOWNSIZE YES)
+	(set-strategic-number sn-minimum-town-size 18)
+	(set-strategic-number sn-maximum-town-size 22)
+	(enable-timer 1 5)
+	(release-escrow wood)
+	(build archery-range)
+	(chat-local-to-self "7)Ëèˆç¬Š‚ğŒš‚Ä‚Ü‚·B")
+)
+;œ‹R•ºˆç¬Š
+(defrule
+	(or
+		(goal RAKUDA YES)
+		(or
+			(goal KNIGHT YES)
+			(goal PALADIN YES)
+		)
+	)
+	(building-type-count-total monastery >= 1 )
+	(building-type-count-total stable < 2 )
+	(can-build-with-escrow stable)
+=>
+	(set-goal CONTROL_TOWNSIZE YES)
+	(set-strategic-number sn-minimum-town-size 18)
+	(set-strategic-number sn-maximum-town-size 22)
+	(enable-timer 1 5)
+	(release-escrow wood)
+	(build stable)
+	(chat-local-to-self "7)‹R•ºˆç¬Š‚ğŒš‚Ä‚Ü‚·B")
+)
+
+;œímˆç¬Š(ˆê‚Â–Ú)
+(defrule
+	(building-type-count-total barracks == 0 )
+	(or
+		(current-age >= castle-age)
+		(goal SINKA 3)
+	)
+	(can-build-with-escrow barracks)
+=>
+	(set-goal CONTROL_TOWNSIZE YES)
+	(set-strategic-number sn-minimum-town-size 18)
+	(set-strategic-number sn-maximum-town-size 22)
+	(enable-timer 1 5)
+	(release-escrow wood)
+	(build barracks)
+	(chat-local-to-self "7)ímˆç¬Š‚ğŒš‚Ä‚Ü‚·B")
+)
+;œímˆç¬Š(“ñ‚Â–ÚˆÈ~)
+(defrule
+	(or
+		(and
+			(or
+				(goal HOHEI YES)
+				(goal EAGLE YES)
+			)
+			(building-type-count-total barracks < 3 )
+		)
+		(and
+			(goal SPEAR YES)
+			(building-type-count-total barracks < 2 )
+		)
+	)
+	(building-type-count-total monastery >= 1 )
+	(can-build-with-escrow barracks)
+=>
+	(release-escrow wood)
+	(build barracks)
+	(chat-local-to-self "7)ímˆç¬Š‚ğŒš‚Ä‚Ü‚·B")
+)
+
+;œ“SHŠ
+(defrule
+	(current-age >= feudal-age)
+;	(wood-amount >= 180)
+	(can-build-with-escrow blacksmith)
+	(building-type-count-total blacksmith == 0 )
+=>
+	(set-goal CONTROL_TOWNSIZE YES)
+	(set-strategic-number sn-minimum-town-size 20)
+	(set-strategic-number sn-maximum-town-size 25)
+	(enable-timer 1 5)
+	(release-escrow wood)
+	(build blacksmith)
+	(chat-local-to-self "“SHŠ‚ğŒš‚Ä‚Ü‚·B")
+)
+;œsê
+(defrule
+	(can-build-with-escrow market)
+	(building-type-count-total market == 0 )
+=>
+	(release-escrow wood)
+	(set-goal CONTROL_TOWNSIZE YES)
+	(set-strategic-number sn-minimum-town-size 13)
+	(set-strategic-number sn-maximum-town-size 16)
+	(enable-timer 1 5)
+	(build market)
+	(chat-local-to-self "sê‚ğŒš‚Ä‚Ü‚·B")
+)
+
+;œé
+(defrule
+	(can-build castle)
+=>
+	(set-goal CONTROL_TOWNSIZE YES)
+	(set-strategic-number sn-minimum-town-size 5)
+	(set-strategic-number sn-maximum-town-size 16)
+	(enable-timer 1 5)
+	(build castle)
+	(chat-local-to-self "é")
+)
+
+;œ–C‘ä
+(defrule
+	(or
+		(building-type-count-total castle >= 2)
+		(goal ELUNIQ NO)
+	)
+	(can-build bombard-tower)
+=>
+	(set-goal CONTROL_TOWNSIZE YES)
+	(set-strategic-number sn-minimum-town-size 5)
+	(set-strategic-number sn-maximum-town-size 14)
+	(enable-timer 1 5)
+	(build bombard-tower)
+	(chat-local-to-self "–C‘ä")
+)
+;œ“ƒ
+(defrule
+	(goal MAP_TYPE 0)
+	(building-type-count-total watch-tower-line < 2)
+	(can-build watch-tower-line)
+=>
+	(set-goal CONTROL_TOWNSIZE YES)
+	(set-strategic-number sn-minimum-town-size 1)
+	(set-strategic-number sn-maximum-town-size 8)
+	(enable-timer 1 5)
+	(build watch-tower-line)
+	(chat-local-to-self "“ƒ")
+)
+(defrule
+	(goal MAP_TYPE 0)
+	(goal F_RUSH YES)
+	(players-current-age any-enemy <= feudal-age)
+	(can-build watch-tower-line)
+	(building-type-count-total watch-tower-line < 6)
+=>
+	(set-goal CONTROL_TOWNSIZE YES)
+	(set-strategic-number sn-minimum-town-size 1)
+	(set-strategic-number sn-maximum-town-size 8)
+	(enable-timer 1 5)
+	(build watch-tower-line)
+;	(chat-local-to-self "“ƒ")
+)
+(defrule
+	(goal MAP_TYPE 1)
+	(building-type-count-total watch-tower-line < 2)
+	(can-build watch-tower-line)
+=>
+	(set-goal CONTROL_TOWNSIZE YES)
+	(set-strategic-number sn-minimum-town-size 1)
+	(set-strategic-number sn-maximum-town-size 9)
+	(enable-timer 1 5)
+	(build watch-tower-line)
+	(chat-local-to-self "“ƒ")
+)
+(defrule
+	(goal MAP_TYPE 1)
+	(can-build watch-tower-line)
+	(building-type-count-total watch-tower-line < 4)
+=>
+	(set-goal CONTROL_TOWNSIZE YES)
+	(set-strategic-number sn-minimum-town-size 1)
+	(set-strategic-number sn-maximum-town-size 11)
+	(enable-timer 1 5)
+	(build watch-tower-line)
+	(chat-local-to-self "“ƒ")
+)
+
+;œ•ïˆÍUŒ‚ŒP—ûŠ
+(defrule
+	(or
+		(goal RAM YES)
+		(or
+			(goal SCORP YES)
+			(goal TOUSEKI YES)
+		)
+	)
+	(building-type-count-total monastery >= 1 )
+	(building-type-count-total siege-workshop < 1 )
+	(can-build-with-escrow siege-workshop)
+=>
+	(release-escrow wood)
+	(set-goal CONTROL_TOWNSIZE YES)
+	(set-strategic-number sn-minimum-town-size 18)
+	(set-strategic-number sn-maximum-town-size 22)
+	(enable-timer 1 5)
+	(build siege-workshop)
+	(chat-local-to-self "•ïˆÍUŒ‚ŒP—ûŠ")
+)
+
+;œ_“a
+(defrule
+	(building-type-count-total monastery < 1 )
+	(can-build-with-escrow monastery)
+=>
+	(release-escrow wood)
+	(set-goal CONTROL_TOWNSIZE YES)
+	(set-strategic-number sn-minimum-town-size 18)
+	(set-strategic-number sn-maximum-town-size 22)
+	(enable-timer 1 5)
+	(build monastery)
+	(chat-local-to-self "_“a")
+)
+;œŠw–åŠ
+(defrule
+	(building-type-count-total monastery >= 1 )
+	(building-type-count-total university == 0)
+	(can-build-with-escrow university)
+=>
+	(release-escrow wood)
+	(set-goal CONTROL_TOWNSIZE YES)
+	(set-strategic-number sn-minimum-town-size 18)
+	(set-strategic-number sn-maximum-town-size 22)
+	(enable-timer 1 5)
+	(build university)
+	(chat-local-to-self "Šw–åŠ")
+)
+;œ’¬‚Ì’†S
+(defrule
+	(building-type-count-total castle >= 1)
+	(building-type-count-total town-center < 3 )
+	(can-build-with-escrow town-center)
+=>
+	(release-escrow wood)
+	(set-goal CONTROL_TOWNSIZE YES)
+	(set-strategic-number sn-minimum-town-size 10)
+	(set-strategic-number sn-maximum-town-size 15)
+	(enable-timer 1 5)
+	(build town-center)
+	(chat-local-to-self "’¬‚Ì’†S")
+)
+;œ’¬‚Ì’†S(nomad)
+(defrule
+	(building-type-count-total town-center == 0 )
+	(can-build-with-escrow town-center)
+=>
+	(build town-center)
+	(chat-local-to-self "’¬‚Ì’†S")
+)
+
+;œ`
+(defrule
+	(or
+		(goal MAP_TYPE 1)
+		(goal SAKANA YES)
+	)
+	(building-type-count-total lumber-camp >= 1)
+	(building-type-count-total dock < 1 )
+	(can-build dock)
+=>
+	(build dock)
+	(chat-local-to-self "`")
+)
+(defrule
+	(goal MAP_TYPE 1)
+	(or
+		(current-age >= feudal-age)
+		(goal SINKA 1)
+	)
+	(building-type-count-total dock < 3 )
+	(can-build-with-escrow dock)
+=>
+	(release-escrow wood)
+	(build dock)
+	(chat-local-to-self "`")
+)
+
+
+;œ•ÇE–å
+;œ•ÇŒšİ‹–‰Â
+(defrule
+(false)
+	(or
+		(civ-selected mayan)
+		(players-civ any-ally mayan)
+	)
+=>
+	(enable-wall-placement 2)
+	(disable-self)
+)
+
+;œ•ÇŒšİ
+(defrule
+(false)
+	(or
+		(civ-selected mayan)
+		(players-civ any-ally mayan)
+	)
+	(can-build-wall 1 stone-wall-line)
+	(can-afford-complete-wall 1 stone-wall-line)
+=>
+	(build-wall 2 stone-wall-line)
+;	(chat-local-to-self "’¬‚ğ•Ç‚ÅˆÍ‚İ‚Ü‚·B")
+)
+
+;œ–åŒšİ
+(defrule
+(false)
+	(or
+		(civ-selected mayan)
+		(players-civ any-ally mayan)
+	)
+	(can-build-gate 1)
+=>
+	(build-gate 1)
+;	(chat-local-to-self "–å‚ğŒš‚Ä‚Ü‚·B")
+)
+
+;œòŒšİ‹–‰Â
+(defrule
+	(false)
+=>
+	(enable-wall-placement 0)
+	(disable-self)
+)
+
+;œòŒšİ
+(defrule
+	(false)
+	(can-build-wall 0 palisade-wall)
+	(can-afford-complete-wall 0 palisade-wall)
+=>
+	(build-wall 0 palisade-wall)
+;	(chat-local-to-self "’¬‚ğ•Ç‚ÅˆÍ‚İ‚Ü‚·B")
+)
+
+
+;------------------‹æØ‚è--------------------------------
+
+;œ’¬‚Ìl293 ‘Ò‹@’†‚Ìl(—)993 ‘Ò‹@’†‚Ìl(’j)
+
+;œ‹@D‚è
+(defrule
+	(population >= 8)
+	(can-research ri-loom)
+=>
+	(research ri-loom)
+;	(chat-local-to-self "‹@D‚è‚ÌŒ¤‹†‚ğ‚µ‚Ü‚·B")
+)
+;œ—Ìåƒ{ƒ^ƒ“‚o‚t‚r‚g
+(defrule
+	(can-research feudal-age)
+	(unit-type-count-total villager >= 25)
+=>
+	(research feudal-age)
+	(set-goal SINKA 1)
+	(chat-local-to-self "30)—Ìåƒ{ƒ^ƒ“‚o‚t‚r‚g")
+)
+;œ—Ìå“ü‚è
+(defrule
+	(current-age == feudal-age)
+=>
+	(set-goal SINKA 2)
+	(disable-self)
+)
+
+;œéåƒ{ƒ^ƒ“‚o‚t‚r‚g
+(defrule
+	(can-research-with-escrow castle-age)
+=>
+	(set-goal SINKA 3)
+	(release-escrow gold)
+	(release-escrow food)
+	(research castle-age)
+	(chat-local-to-self "30)éåƒ{ƒ^ƒ“‚o‚t‚r‚g")
+)
+;œéå“ü‚è
+(defrule
+	(current-age == castle-age)
+=>
+	(set-goal SINKA 4)
+	(disable-self)
+)
+
+;œ’é‰¤ƒXƒ€[ƒY‰»
+(defrule
+	(false)
+	(current-age == castle-age)
+	(food-amount >= 1000)
+=>
+	(set-escrow-percentage gold 80)
+	(set-escrow-percentage food 0)
+)
+(defrule
+	(false)
+	(current-age == castle-age)
+	(gold-amount >= 800)
+=>
+	(set-escrow-percentage food 80)
+	(set-escrow-percentage gold 0)
+)
+
+;œ’é‰¤ƒ{ƒ^ƒ“‚o‚t‚r‚g
+(defrule
+	(can-research-with-escrow imperial-age)
+=>
+	(set-goal SINKA 5)
+	(release-escrow gold)
+	(release-escrow food)
+	(research imperial-age)
+	(chat-local-to-self "30)’é‰¤ƒ{ƒ^ƒ“‚o‚t‚r‚g")
+)
+;œ’é‰¤“ü‚è
+(defrule
+	(current-age == imperial-age)
+=>
+	(set-goal SINKA 6)
+	(disable-self)
+)
+;œè‰Ÿ‚µÔ
+(defrule
+	(can-research-with-escrow ri-wheel-barrow)
+	(current-age >= feudal-age)
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-wheel-barrow)
+	(chat-local-to-self "è‰Ÿ‚µÔ‚ÌŒ¤‹†‚ğ‚µ‚Ü‚·B")
+)
+;œ‰×Ô
+(defrule
+	(can-research-with-escrow ri-hand-cart )
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-hand-cart)
+	(chat-local-to-self "‰×Ô‚ÌŒ¤‹†‚ğ‚µ‚Ü‚·B")
+)
+;œŒ©’£‚è
+(defrule
+	(or
+		(goal SINKA 3)
+		(current-age >= castle-age)
+	)
+	(can-research ri-town-watch )
+=>
+	(research ri-town-watch )
+	(chat-local-to-self "Œ©’£‚è‚ÌŒ¤‹†‚ğ‚µ‚Ü‚·B")
+)
+;œ„‰ñ
+(defrule
+	(or
+		(current-age == imperial-age)
+		(goal SINKA 5)
+	)
+	(can-research ri-town-patrol )
+=>
+	(research ri-town-patrol)
+	(chat-local-to-self "„‰ñ‚ÌŒ¤‹†‚ğ‚µ‚Ü‚·B")
+)
+;œ’¬‚Ìl¶Y
+(defrule
+	(current-age == dark-age)
+	(unit-type-count-total villager < 28)
+	(can-train villager)
+=>
+	(train villager)
+)
+(defrule
+(false)
+	(current-age == feudal-age)
+	(unit-type-count-total villager < 40)
+	(can-train villager)
+=>
+	(train villager)
+)
+(defrule
+(false)
+	(current-age >= castle-age)
+	(unit-type-count villager < 45 )
+	(can-train villager)
+=>
+	(train villager)
+)
+(defrule
+(false)
+	(research-completed ri-hand-cart )
+	(current-age >= castle-age)
+	(unit-type-count-total villager < 60 )
+	(can-train villager)
+=>
+	(train villager)
+)
+(defrule
+	(current-age > dark-age)
+	(unit-type-count-total villager < 105 )
+	(or
+		(not (goal SINKA 8) )
+		(unit-type-count-total villager < 65 )
+	)
+	(unit-type-count 293 == 0)
+	(unit-type-count 993 == 0)
+	(can-train villager)
+=>
+	(train villager)
+)
+
+;------------------‹æØ‚è--------------------------------
+
+
+;œ–î‰Hª
+(defrule
+	(or
+		(building-type-count castle >= 1)
+		(or
+			(building-type-count watch-tower-line >= 1)
+			(goal GARE YES)
+		)
+	)
+	(can-research-with-escrow ri-fletching)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-fletching)
+	(chat-local-to-self "–î‰Hª")
+)
+;œó–î‚¶‚è
+(defrule
+	(or
+		(building-type-count castle >= 1)
+		(goal GARE YES)
+	)
+	(current-age >= castle-age)
+	(can-research-with-escrow ri-bodkin-arrow)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-bodkin-arrow)
+	(chat-local-to-self "ó–î‚¶‚è")
+)
+;œ¬è
+(defrule
+	(goal GARE YES)
+	(can-research-with-escrow ri-bracer)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-bracer)
+	(chat-local-to-self "¬è")
+)
+
+(defrule
+	(or
+		(building-type-count castle >= 3)
+		(or
+			(goal ARCHER YES)
+			(or
+				(goal C-ARCHER YES)
+				(or
+					(civ-selected chinese)
+					(civ-selected mayan)
+				)
+			)
+		)
+	)
+	(can-research-with-escrow ri-bracer)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-bracer)
+	(chat-local-to-self "¬è")
+)
+;œ’b‘¢
+(defrule
+	(current-age >= castle-age)
+	(can-research-with-escrow ri-forging)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-forging)
+	(chat-local-to-self "’b‘¢")
+)
+;œ’’‘¢
+(defrule
+	(can-research-with-escrow ri-iron-casting)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-iron-casting)
+	(chat-local-to-self "’’‘¢")
+)
+;œ‚‰·—nz˜F
+(defrule
+	(can-research-with-escrow ri-blast-furnace)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-blast-furnace)
+	(chat-local-to-self "‚‰·—nz˜F")
+)
+;œ•à•º—p‚¤‚ë‚±‚ÌŠZ
+(defrule
+	(or
+		(goal HOHEI YES)
+		(or
+			(goal SPEAR YES)
+			(goal EAGLE YES)
+		)
+	)
+	(can-research-with-escrow ri-scale-mail)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-scale-mail)
+	(chat-local-to-self "•à•º—p‚¤‚ë‚±‚ÌŠZ")
+)
+(defrule
+	(or
+		(civ-selected teutonic)
+		(civ-selected aztec)
+	)
+	(current-age >= castle-age)
+	(can-research-with-escrow ri-scale-mail)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-scale-mail)
+	(chat-local-to-self "•à•º—p‚¤‚ë‚±‚ÌŠZ")
+)
+
+;œ•à•º—p½‚©‚½‚Ñ‚ç
+(defrule
+	(can-research-with-escrow ri-chain-mail)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-chain-mail)
+	(chat-local-to-self "•à•º—p½‚©‚½‚Ñ‚ç")
+)
+;œ•à•º—pb™h
+(defrule
+	(can-research-with-escrow ri-plate-mail)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-plate-mail)
+	(chat-local-to-self "•à•º—pb™h")
+)
+
+;œ‹R•º—p‚¤‚ë‚±‚ÌŠZ
+(defrule
+	(current-age >= castle-age)
+;	(or
+		(building-type-count-total stable >= 1)
+;		(civ-selected persian)
+;	)
+	(can-research-with-escrow ri-scale-barding)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-scale-barding)
+	(chat-local-to-self "‹R•º—p‚¤‚ë‚±‚ÌŠZ")
+)
+;œ‹R•º—p½‚©‚½‚Ñ‚ç
+(defrule
+	(can-research-with-escrow ri-chain-barding)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-chain-barding)
+	(chat-local-to-self "‹R•º—p½‚©‚½‚Ñ‚ç")
+)
+;œ‹R•º—pb™h
+(defrule
+	(can-research-with-escrow ri-plate-barding)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-plate-barding)
+	(chat-local-to-self "‹R•º—pb™h")
+)
+;œËè—p‹¹“–‚Ä
+(defrule
+	(current-age >= castle-age)
+	(or
+		(goal ARCHER YES)
+		(or
+			(goal SANPEI YES)
+			(or
+				(goal C-ARCHER YES)
+				(or
+					(civ-selected chinese)
+					(civ-selected mayan)
+				)
+			)
+		)
+	)
+	(can-research-with-escrow ri-padded-archer-armor)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-padded-archer-armor)
+	;(chat-local-to-self "Ëè—p‹¹“–‚Ä")
+)
+;œËè—pŠv‚ÌŠZ
+(defrule
+	(can-research-with-escrow ri-leather-archer-armor)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-leather-archer-armor)
+	(chat-local-to-self "Ëè—pŠv‚ÌŠZ")
+)
+;œ‹|•º—p½‚ÌŠZ
+(defrule
+	(or
+		(goal ARCHER YES)
+		(or
+			(goal C-ARCHER YES)
+			(civ-selected chinese)
+		)
+	)
+	(can-research-with-escrow ri-ring-archer-armor)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-ring-archer-armor)
+	(chat-local-to-self "‹|•º—p½‚ÌŠZ")
+)
+;------------------‹æØ‚è--------------------------------
+
+;-------------------------------------------------------------
+
+;œEL|ƒC[ƒOƒ‹ƒEƒH[ƒŠƒA[‚ÉUP
+(defrule
+	(civ-selected mayan)
+	(can-research ri-elite-eagle-warrior)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-elite-eagle-warrior)
+	(chat-local-to-self "EL|ƒC[ƒOƒ‹ƒEƒH[ƒŠƒA[‚ÉUP")
+)
+
+;œƒC[ƒOƒ‹ƒEƒH[ƒŠƒA[¶Y
+(defrule
+	(unit-type-count-total eagle-warrior-line < 15)
+	(population < 120)
+	(civ-selected mayan)
+	(goal EAGLE YES)
+	(can-train eagle-warrior-line )
+=>
+	(train eagle-warrior-line )
+	;(chat-local-to-self "ƒC[ƒOƒ‹ƒEƒH[ƒŠƒA[‚ğì‚è‚Ü‚·B")
+)
+;œŒR•º‚ÉUP
+(defrule
+	(goal HOHEI YES)
+	(can-research-with-escrow ri-man-at-arms)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-man-at-arms)
+	(chat-local-to-self "ŒR•º‚ÉUP")
+)
+;œ’·Œ•Œ•m‚ÉUP
+(defrule
+	(can-research-with-escrow ri-long-swordsman)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-long-swordsman)
+	(chat-local-to-self "’·Œ•Œ•m‚ÉUP")
+)
+;œdŒ•Œ•m‚ÉUP
+(defrule
+	(can-research-with-escrow ri-two-handed-swordsman)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-two-handed-swordsman)
+	(chat-local-to-self "dŒ•Œ•m‚ÉUP")
+)
+;œ‹ß‰qŒ•m‚ÉUP
+(defrule
+	(can-research-with-escrow ri-champion)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-champion)
+	(chat-local-to-self "‹ß‰qŒ•m‚ÉUP")
+)
+
+;œ•à•º¶Y
+(defrule
+	(population < 120)
+	(goal HOHEI YES)
+	(can-train militiaman-line)
+=>
+	(train militiaman-line)
+	(chat-local-to-self "•à•º‚ğì‚è‚Ü‚·B")
+)
+;œ’·‘„•º‚ÉUP
+(defrule
+	(goal SPEAR YES)
+	(can-research-with-escrow ri-pikeman)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-pikeman)
+	(chat-local-to-self "9)’·‘„•º‚ÉUP")
+)
+;œ–µ‘„•º‚ÉUP
+(defrule
+	(can-research-with-escrow ri-halberdier)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-halberdier)
+	(chat-local-to-self "9)–µ‘„•º‚ÉUP")
+)
+
+;œ‘„•º¶Y
+(defrule
+	(population < 120)
+	(goal SPEAR YES)
+	(or
+		(unit-type-count-total spearman-line < 10)
+		(and
+			(players-unit-type-count any-enemy knight-line >= 12)
+			(unit-type-count-total spearman-line < 20)
+		)
+	)
+	(can-train spearman-line)
+=>
+	(train spearman-line)
+;	(chat-local-to-self "‘„•º‚ğì‚è‚Ü‚·B")
+)
+
+
+;œ’ÇÕp
+(defrule
+	(current-age == imperial-age)
+	(can-research ri-tracking )
+=>
+	(research ri-tracking )
+	(chat-local-to-self "’ÇÕp‚ÌŒ¤‹†")
+)
+
+;œ•ÒCs
+(defrule
+	(can-research ri-squires)
+=>
+	(research ri-squires )
+	(chat-local-to-self "•ÒCs‚ÌŒ¤‹†")
+)
+
+;-------------------------------------------------------------
+
+;œËè¶Y
+(defrule
+	(goal ARCHER YES)
+	(population < 120)
+	(can-train archer-line)
+=>
+	(train archer-line)
+	;(chat-local-to-self "Ëè‚ğì‚è‚Ü‚·B")
+)
+;œÎ‹|Ëè‚ÉUP
+(defrule
+	(goal ARCHER YES)
+	(can-research-with-escrow ri-crossbow)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-crossbow)
+	(chat-local-to-self "Î‹|Ëè‚ÉUP")
+)
+;œdÎ‹|Ëè‚ÉUP
+(defrule
+	(can-research-with-escrow ri-arbalest)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-arbalest)
+	(chat-local-to-self "dÎ‹|Ëè‚ÉUP")
+)
+
+
+;œU•º¶Y
+(defrule
+	(goal SANPEI YES)
+	(current-age <= castle-age)
+	(population < 120)
+	(unit-type-count-total skirmisher-line < 10)
+	(can-train skirmisher-line)
+=>
+	(train skirmisher-line  )
+	;(chat-local-to-self "U•º‚ğì‚è‚Ü‚·B")
+)
+;œ¸‰sU•º‚ÉUP
+(defrule
+	(goal SANPEI YES)
+	(can-research-with-escrow ri-elite-skirmisher )
+=>
+	(release-escrow gold)
+	(research ri-elite-skirmisher )
+	(chat-local-to-self "¸‰sU•º‚ÉUP")
+)
+;œ‹|‹R•º¶Y
+(defrule
+	(goal C-ARCHER YES)
+	(population < 120)
+	(unit-type-count-total cavalry-archer-line < 10)
+	(can-train skirmisher-line)
+=>
+	(train cavalry-archer-line)
+	;(chat-local-to-self "‹|‹R•º‚ğì‚è‚Ü‚·B")
+)
+;œd‹|‹R•º‚ÉUP
+(defrule
+	(goal C-ARCHER YES)
+	(can-research-with-escrow ri-heavy-cavalry-archer)
+=>
+	(release-escrow food)
+	(release-escrow gold)
+	(research ri-heavy-cavalry-archer )
+	(chat-local-to-self "d‹|‹R•º‚ÉUP")
+)
+
+;œ–CŒ‚è¶Y
+(defrule
+	(goal CANON YES)
+	(unit-type-count-total hand-cannoneer < 10)
+	(population < 120)
+	(can-train hand-cannoneer )
+=>
+	(train hand-cannoneer  )
+	(chat-local-to-self "–CŒ‚è‚ğì‚è‚Ü‚·B")
+)
+
+;œ‹|Œœ‚ÌŒ¤‹†
+(defrule
+	(or
+		(goal ARCHER YES)
+		(or
+			(goal SANPEI YES)
+			(or
+				(goal C-ARCHER YES)
+				(or
+					(civ-selected chinese)
+					(civ-selected mayan)
+				)
+			)
+		)
+	)
+	(can-research-with-escrow ri-thumb-ring )
+=>
+	(release-escrow food)
+	(research ri-thumb-ring )
+	(chat-local-to-self "‹|Œœ‚ÌŒ¤‹†")
+)
+;œƒpƒ‹ƒeƒBƒAƒ“íp
+(defrule
+	(goal C-ARCHER YES)
+	(can-research-with-escrow ri-parthian-tactics )
+=>
+	(release-escrow food)
+	(release-escrow gold)
+	(research ri-parthian-tactics )
+	(chat-local-to-self "ƒpƒ‹ƒeƒBƒAƒ“íp‚ÌŒ¤‹†")
+)
+
+
+
+;-------------------------------------------------------------
+
+
+
+;œ‹R•º¶Y
+(defrule
+	(goal KIHEI YES)
+	(unit-type-count-total scout-cavalry-line  < 20)
+	(population < 120)
+	(can-train scout-cavalry-line)
+=>
+	(train scout-cavalry-line )
+	;(chat-local-to-self "‹R•º‚ğì‚è‚Ü‚·B")
+)
+
+;œŒy‹R•º‚ÉUP
+(defrule
+	(goal KIHEI YES)
+	(can-research-with-escrow ri-light-cavalry)
+=>
+	(release-escrow food)
+	(release-escrow gold)
+	(research ri-light-cavalry)
+	(chat-local-to-self "Œy‹R•º‚ÉUP")
+)
+;œ¸‰s‹R•º‚ÉUP
+(defrule
+	(can-research-with-escrow ri-hussar)
+=>
+	(release-escrow food)
+	(release-escrow gold)
+	(research ri-hussar)
+	(chat-local-to-self "ƒnƒT[‚ÉUP")
+)
+
+;œ‹Rm¶Y
+(defrule
+	(goal KNIGHT YES)
+	(unit-type-count-total knight-line  < 10)
+	(population < 120)
+	(can-train knight-line)
+=>
+	(train knight-line)
+;	(chat-local-to-self "‹Rm‚ğì‚è‚Ü‚·B")
+)
+(defrule
+	(goal PALADIN YES)
+	(population < 120)
+	(can-train knight-line)
+=>
+	(train knight-line)
+;	(chat-local-to-self "‹Rm‚ğì‚è‚Ü‚·B")
+)
+
+;œd‹Rm‚ÉUP
+(defrule
+	(or
+		(goal KNIGHT YES)
+		(goal PALADIN YES)
+	)
+	(can-research-with-escrow ri-cavalier)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-cavalier)
+	(chat-local-to-self "30)d‹Rm‚ÉUP")
+;	(enable-timer 2 60)
+)
+;œ‹ß‰q‹Rm‚ÉUP
+(defrule
+	(goal PALADIN YES)
+	(can-research-with-escrow ri-paladin)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-paladin)
+	(chat-local-to-self "30)‹ß‰q‹Rm‚ÉUP")
+)
+
+;œ‚ç‚­‚¾‹R•º¶Y
+(defrule
+	(goal RAKUDA YES)
+	(population < 120)
+	(can-train camel-line )
+=>
+	(train camel-line )
+	;(chat-local-to-self "‚ç‚­‚¾‹R•º‚ğì‚è‚Ü‚·B")
+)
+
+
+;œd‘•‚ç‚­‚¾‹R•º‚ÉUP
+(defrule
+	(goal RAKUDA YES)
+	(can-research-with-escrow ri-heavy-camel)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-heavy-camel)
+	(chat-local-to-self "d‘•‚ç‚­‚¾‹R•º‚ÉUP")
+)
+
+
+;œ”ÉB
+(defrule
+	(can-research-with-escrow ri-husbandry)
+=>
+	(release-escrow food)
+	(research ri-husbandry)
+	(chat-local-to-self "9)”ÉB‚ÌŒ¤‹†‚ğ‚µ‚Ü‚·B")
+)
+;œŒŒ“
+(defrule
+	(current-age >= castle-age)
+	(can-research-with-escrow ri-bloodlines)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-bloodlines)
+	(chat-local-to-self "9)ŒŒ“‚ÌŒ¤‹†‚ğ‚µ‚Ü‚·B")
+)
+
+;-------------------------------------------------------------
+;œƒXƒR[ƒsƒIƒ“¶Y
+(defrule
+	(goal SCORP YES)
+	(population < 120)
+	(unit-type-count-total scorpion-line < 20)
+	(can-train scorpion-line)
+=>
+	(train scorpion-line)
+	(chat-local-to-self "ƒXƒR[ƒsƒIƒ“")
+)
+;œƒwƒr[ƒXƒR[ƒsƒIƒ“‚ÉUP
+(defrule
+	(civ-selected celtic)
+	(can-research-with-escrow ri-heavy-scorpion)
+=>
+	(release-escrow food)
+	(research ri-heavy-scorpion)
+	;(chat-local-to-self "ƒwƒr[ƒXƒR[ƒsƒIƒ“‚ÉUP")
+)
+;œ”jé’Æ¶Y
+(defrule
+	(population < 120)
+	(unit-type-count-total battering-ram-line < 3)
+	(can-train battering-ram-line)
+=>
+	(train battering-ram-line)
+;	(chat-local-to-self "10)”jé’Æ‚ğì‚è‚Ü‚·B")
+)
+(defrule
+	(goal RAM YES)
+	(population < 120)
+	(unit-type-count-total battering-ram-line < 8)
+	(can-train battering-ram-line)
+=>
+	(train battering-ram-line)
+;	(chat-local-to-self "10)”jé’Æ‚ğì‚è‚Ü‚·B")
+)
+;œ‹­‰»”jé’Æ‚ÉUP
+(defrule
+	(goal RAM YES)
+	(can-research ri-capped-ram)
+=>
+	(research ri-capped-ram)
+	(chat-local-to-self "‹­‰»”jé’Æ‚ÉUP")
+)
+;œ‰ü—Ç‹­‰»”jé’Æ‚ÉUP
+(defrule
+	(false)
+	(can-research ri-siege-ram)
+=>
+	(research ri-siege-ram)
+	(chat-local-to-self "‰ü—Ç‹­‰»”jé’Æ‚ÉUP")
+)
+
+;œ“ŠÎŠí¶Y
+(defrule
+	(goal TOUSEKI YES)
+	(unit-type-count-total mangonel-line < 5)
+	(population < 120)
+	(can-train mangonel-line)
+=>
+	(train mangonel-line)
+	(chat-local-to-self "“ŠÎŠí‚ğì‚è‚Ü‚·B")
+)
+;œ‰ü—ÇŒ^“ŠÎŠí‚ÉUP
+(defrule
+	(false)
+	(can-research ri-onager)
+=>
+	(research ri-onager)
+	(chat-local-to-self "‰ü—ÇŒ^“ŠÎŠí‚ÉUP")
+)
+;œ”jé“ŠÎŠí‚ÉUP
+(defrule
+	(false)
+	(can-research ri-siege-onager)
+=>
+	(research ri-siege-onager)
+	(chat-local-to-self "”jé“ŠÎŠí‚ÉUP")
+)
+
+;-------------------------------------------------------------
+;œƒ†ƒj[ƒNƒ†ƒjƒbƒg
+
+(defrule
+	(or
+		(and
+			(goal UNIQ YES)
+			(unit-type-count-total my-unique-unit-line < 15)
+		)
+		(goal ELUNIQ YES)
+	)
+	(current-age == castle-age)
+	(population < 120)
+	(can-train my-unique-unit-line)
+=>
+	(train my-unique-unit-line)
+;	(chat-local-to-self "10)ƒ†ƒj[ƒNƒ†ƒjƒbƒg‚ğì‚è‚Ü‚·B")
+)
+(defrule
+	(goal ELUNIQ YES)
+	(population < 120)
+	(current-age == imperial-age)
+	(can-train my-unique-unit-line)
+=>
+	(train my-unique-unit-line)
+;	(chat-local-to-self "10)ƒ†ƒj[ƒNƒ†ƒjƒbƒg‚ğì‚è‚Ü‚·B")
+)
+
+;œƒGƒŠ[ƒg‚ÉƒAƒbƒv
+(defrule
+	(goal ELUNIQ YES)
+	(can-research-with-escrow my-unique-unit-upgrade)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research my-unique-unit-upgrade)
+	(chat-local-to-self "29)ƒGƒŠ[ƒgƒ†ƒj[ƒNƒ†ƒjƒbƒg‚ÉUP")
+)
+;œ‰““Š“ŠÎ‹@
+(defrule
+	(population >= 120)
+	(unit-type-count-total trebuchet < 6)
+	(unit-type-count-total 42 <= 4)
+	(can-train trebuchet)
+=>
+ 	(chat-local-to-self "7)‰““Š“ŠÎ‹@‚ğì‚è‚Ü‚·B")
+	(train trebuchet)
+)
+(defrule
+	(unit-type-count-total 42 > 0)
+=>
+ 	(chat-to-all "19)•ïˆÍí‚Í‹v‚µ‚Ô‚è‚¾‚º[[[[I")
+	(disable-self)
+)
+(defrule
+	(unit-type-count-total 42 > 4)
+=>
+ 	(chat-to-all "10)ˆÃ•‚Ì‘ã‚É–ß‚µ‚Ä‚â‚é‚º[[I")
+	(disable-self)
+)
+(defrule
+	(unit-type-count-total 42 > 6)
+=>
+ 	(chat-to-all "23)€‚Ë€‚Ë[[[[IIIII")
+	(disable-self)
+)
+(defrule
+	(unit-type-count-total 42 > 8)
+=>
+ 	(chat-to-all "11)‚Æ‚Ç‚ß‚¾[[[[IIII")
+	(disable-self)
+)
+;œ”š”jHìl
+(defrule
+	(false)
+	(goal BAKUHA YES)
+	(population > 110)
+	(or
+		(unit-type-count-total knight-line > 20)
+		(unit-type-count-total militiaman-line > 20)
+	)
+	(unit-type-count-total petard > 8)
+	(goal SINKA 8)
+	(can-train petard)
+=>
+ 	(chat-local-to-self "7)”š”jHìl‚ğì‚è‚Ü‚·B")
+	(train petard)
+)
+
+
+;-------------------------------------------------------------
+
+;œ¹EÒ
+(defrule
+	(gold-amount > 150)
+	(or
+		(and
+			(current-age >= castle-age)
+			(unit-type-count monk < 2 )
+		)
+		(and
+			(goal SINKA 8)
+			(unit-type-count monk < 5 )
+		)
+	)
+	(can-train monk)
+=>
+	(train monk)
+	(chat-local-to-self "18)¹EÒ‚ğì‚è‚Ü‚·B")
+)
+(defrule
+	(population < 120)
+	(gold-amount > 150)
+	(or
+		(and
+			(current-age >= castle-age)
+			(unit-type-count missionary < 4 )
+		)
+		(and
+			(goal SINKA 8)
+			(unit-type-count missionary < 8 )
+		)
+	)
+	(can-train missionary)
+=>
+	(train missionary)
+	(chat-local-to-self "18)é‹³t‚ğì‚è‚Ü‚·B")
+)
+(defrule
+	(goal MONK YES)
+	(current-age == imperial-age)
+	(unit-type-count monk < 10 )
+	(can-train monk)
+=>
+	(train monk)
+	(chat-local-to-self "18)¹EÒ‚ğì‚è‚Ü‚·B")
+)
+
+
+;-------------------------------------------------------------
+
+;------------------‹æØ‚è--------------------------------
+
+;œsêŠÖŒW
+;œ”Ñ”„‹p
+(defrule
+	(current-age >= castle-age)
+	(food-amount > 1500)
+;	(goal SINKA 8)
+=>
+	(sell-commodity food)
+;	(chat-local-to-self "5)”Ñ‚ğ”„‚è‚Ü‚·")
+)
+;œ–Ø”„‹p
+(defrule
+	(current-age >= castle-age)
+	(wood-amount > 1500)
+=>
+	(sell-commodity wood)
+;	(chat-local-to-self "5)–Ø‚ğ”„‚è‚Ü‚·")
+)
+;œÎ”„‹p(Œš•¨Œš‚Ä‚È‚¢•a‘Îô)
+(defrule
+	(current-age == imperial-age)
+	(stone-amount > 1000)
+=>
+	(sell-commodity stone)
+;	(chat-local-to-self "5)Î‚ğ”„‚è‚Ü‚·")
+)
+
+;œ‰İ•¼§“x
+(defrule
+	(false)
+	(goal SINKA 8)
+	(can-research-with-escrow ri-coinage )
+=>
+	(release-escrow food)
+	(release-escrow gold)
+	(research ri-coinage)
+	(chat-local-to-self "‰İ•¼§“x")
+)
+;œ‹âsæˆø
+(defrule
+	(false)
+	(goal SINKA 8)
+	(can-research-with-escrow ri-banking )
+=>
+	(release-escrow food)
+	(release-escrow gold)
+	(research ri-banking)
+	(chat-local-to-self "‹âsæˆø")
+)
+;œ’n}»ì
+(defrule
+	(or
+		(current-age >= castle-age)
+		(goal SINKA 5)
+	)
+	(can-research-with-escrow ri-cartography )
+=>
+	(release-escrow food)
+	(release-escrow gold)
+	(research ri-cartography )
+	(chat-local-to-self "’n}»ì")
+)
+
+;œƒLƒƒƒ‰ƒoƒ“
+(defrule
+	(or
+		(unit-type-count-total trade-cart >= 3)
+		(unit-type-count-total trade-cog >= 3)
+	)
+	(can-research-with-escrow ri-caravan )
+=>
+	(release-escrow food)
+	(release-escrow gold)
+	(research ri-caravan)
+	(chat-local-to-self "ƒLƒƒƒ‰ƒoƒ“")
+)
+
+;œ‘g‡
+(defrule
+	(unit-type-count-total trade-cart >= 3)
+	(can-research-with-escrow ri-guilds)
+=>
+	(release-escrow food)
+	(release-escrow gold)
+	(research ri-guilds )
+	(chat-local-to-self "‘g‡")
+)
+
+
+;œ’†S‚ª‘S‚Ä‰ó‚³‚ê‚½‚Æ‚«
+(defrule
+	(building-type-count-total town-center == 0)
+	(current-age >= feudal-age)
+	(wood-amount < 275)
+=>
+	(buy-commodity wood)
+)
+(defrule
+	(building-type-count-total town-center == 0)
+	(current-age >= castle-age)
+	(stone-amount < 100)
+=>
+	(buy-commodity stone)
+)
+(defrule
+	(building-type-count-total town-center == 0)
+	(current-age >= feudal-age)
+	(food-amount > 200)
+=>
+	(sell-commodity food)
+)
+
+
+
+;œv•¨‚ğ‘—‚é
+(defrule
+	(false)
+	(research-completed ri-banking)
+	(research-completed ri-hand-cart)
+	(wood-amount >= 500)
+=>
+	(tribute-to-player any-ally wood 200)
+)
+(defrule
+	(false)
+	(research-completed ri-banking)
+	(research-completed ri-hand-cart)
+	(food-amount >= 500)
+=>
+	(tribute-to-player any-ally food 200)
+)
+(defrule
+	(false)
+	(research-completed ri-banking)
+	(research-completed ri-hand-cart)
+	(gold-amount >= 500)
+=>
+	(tribute-to-player any-ally gold 200)
+)
+(defrule
+	(false)
+	(research-completed ri-banking)
+	(research-completed ri-hand-cart)
+	(stone-amount >= 500)
+=>
+	(tribute-to-player any-ally stone 200)
+)
+;œ‰×”nÔ
+(defrule
+;	(not (map-type continental) )
+	(current-age >= castle-age)
+	(or
+		(wood-amount > 375)
+		(building-type-count-total town-center >= 3)
+	)
+	(building-type-count-total monastery >= 1)
+	(unit-type-count-total trade-cart < 15)
+	(players-building-type-count any-ally market >= 1)
+	(player-in-game any-ally)
+	(can-train trade-cart)
+=>
+	(train trade-cart)
+)
+
+;------------------‹æØ‚è--------------------------------
+
+;œæÜ‚¢
+(defrule
+	(goal SINKA 8)
+	(gold-amount > 500)
+	(unit-type-count monk >= 2)
+	(can-research ri-redemption)
+=>
+	(research ri-redemption)
+	(chat-local-to-self "æÜ‚¢")
+)
+;œ“ÄM
+(defrule
+	(goal SINKA 8)
+	(gold-amount > 500)
+	(unit-type-count monk >= 2)
+	(can-research ri-fervor)
+=>
+	(research ri-fervor)
+	(chat-local-to-self "“ÄM")
+)
+;œ_¹
+(defrule
+	(goal SINKA 8)
+	(gold-amount > 500)
+	(unit-type-count monk >= 2)
+	(can-research ri-sanctity)
+=>
+	(research ri-sanctity)
+	(chat-local-to-self "_¹")
+)
+;œ‚¢
+(defrule
+	(goal SINKA 8)
+	(gold-amount > 500)
+	(unit-type-count monk >= 2)
+	(can-research ri-atonement)
+=>
+	(research ri-atonement)
+	(chat-local-to-self "‚¢")
+)
+;œŠˆ”Åˆóü
+(defrule
+	(goal SINKA 8)
+	(gold-amount > 500)
+	(unit-type-count monk >= 2)
+	(can-research ri-block-printing)
+=>
+	(research ri-block-printing)
+	(chat-local-to-self "Šˆ”Åˆóü")
+)
+;œŒ[–Ö
+(defrule
+	(goal SINKA 8)
+	(gold-amount > 500)
+	(unit-type-count monk >= 2)
+	(can-research ri-illumination)
+=>
+	(research ri-illumination)
+	(chat-local-to-self "Œ[–Ö")
+)
+;œM‹Â
+(defrule
+	(population > 120)
+	(can-research ri-faith)
+=>
+	(research ri-faith)
+	(chat-local-to-self "M‹Â")
+)
+;œˆÙ’[
+(defrule
+	(goal SINKA 8)
+	(gold-amount > 1500)
+	(can-research ri-heresy)
+=>
+	(research ri-heresy)
+	(chat-local-to-self "ˆÙ’[")
+)
+;œ_­
+(defrule
+	(goal SINKA 8)
+	(gold-amount > 1000)
+	(can-research ri-theocracy)
+=>
+	(research ri-theocracy)
+	(chat-local-to-self "_­")
+)
+
+;œ–ò‘Šw
+(defrule
+	(can-research 441)
+	(civ-selected aztec)
+=>
+	(research 441)
+	(chat-local-to-self "–ò‘Šw")
+)
+
+;------------------‹æØ‚è--------------------------------
+
+;œ‹à‚ÌÌŒ@
+(defrule
+	(can-research-with-escrow ri-gold-mining)
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-gold-mining)
+	(chat-local-to-self "‹à‚ÌÌŒ@")
+)
+;œ‹à‚ÌŒ@í
+(defrule
+	(can-research-with-escrow ri-gold-shaft-mining)
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-gold-shaft-mining)
+	(chat-local-to-self "‹à‚ÌŒ@í")
+)
+;œÎ‚ÌØ‚èo‚µ
+(defrule
+	(can-research-with-escrow ri-stone-mining)
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-stone-mining)
+	(chat-local-to-self "Î‚ÌØ‚èo‚µ")
+)
+;œÎ‚ÌŒ@í
+(defrule
+	(can-research-with-escrow ri-stone-shaft-mining)
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-stone-shaft-mining)
+	(chat-local-to-self "‹à‚ÌŒ@í")
+	(chat-local-to-self "Î‚ÌÌŒ@")
+)
+;œ—¼n•€
+(defrule
+	(can-research-with-escrow ri-double-bit-axe)
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-double-bit-axe)
+	(chat-local-to-self "—¼n•€")
+)
+;œ‚Ì‚±‚¬‚è
+(defrule
+	(can-research-with-escrow ri-bow-saw)
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-bow-saw)
+	(chat-local-to-self "‚Ì‚±‚¬‚è")
+)
+;œ—¼‚Ğ‚«‚Ì‚±‚²‚è
+(defrule
+	(can-research-with-escrow ri-two-man-saw)
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-two-man-saw)
+	(chat-local-to-self "—¼‚Ğ‚«‚Ì‚±‚²‚è")
+)
+;œ”¨ŠÖŒW
+(defrule
+	(can-research-with-escrow ri-horse-collar)
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-horse-collar)
+	(disable-self)
+)
+(defrule
+	(can-research-with-escrow ri-heavy-plow)
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-heavy-plow)
+	(disable-self)
+)
+(defrule
+	(can-research-with-escrow ri-crop-rotation)
+=>
+	(release-escrow food)
+	(release-escrow wood)
+	(research ri-crop-rotation)
+	(disable-self)
+)
+;---------------------------------------------------------------
+;œ’e“¹Šw
+(defrule
+	(can-research ri-ballistics)
+=>
+	(research ri-ballistics)
+	(chat-local-to-self "’e“¹Šw")
+)
+;œ•ïˆÍUŒ‚‹Zp
+(defrule
+	(can-research-with-escrow ri-siege-engineers)
+=>
+	(release-escrow food)
+	(research ri-siege-engineers)
+	(chat-local-to-self "•ïˆÍUŒ‚‹Zp")
+)
+;œ‰»Šw
+(defrule
+	(can-research-with-escrow ri-chemistry)
+=>
+	(release-escrow food)
+	(release-escrow gold)
+	(research ri-chemistry)
+	(chat-local-to-self "‰»Šw")
+)
+;œŒ}Œ‚—p‘‹
+
+(defrule
+	(can-research-with-escrow ri-murder-holes)
+=>
+	(release-escrow food)
+	(research ri-murder-holes)
+)
+;œ–C‘ä‚ÌŒ¤‹†
+
+(defrule
+	(can-research-with-escrow ri-bombard-tower)
+=>
+	(release-escrow food)
+	(research ri-bombard-tower)
+)
+;œ’¥—p
+(defrule
+	(can-research-with-escrow ri-conscription)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-conscription)
+	(chat-local-to-self "’¥—p")
+)
+
+;œƒ†ƒj[ƒNƒeƒNƒmƒƒW[
+(defrule
+	(goal UNIQTECH YES)
+	(can-research-with-escrow my-unique-research)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research my-unique-research)
+	(chat-local-to-self "ƒ†ƒj[ƒNƒeƒNƒmƒƒW[")
+	(set-goal UNIQTECH NO)
+)
+
+;------------------‹æØ‚è--------------------------------
+
+;œ‹™‘D¶Y
+(defrule
+(false)
+	(or
+		(goal MAP_TYPE 1)
+		(map-type scandanavia)
+	)
+=>
+	(set-goal SAKANA YES)
+	(disable-self)
+)
+;œŒR‘D¶Y
+(defrule
+	(goal MAP_TYPE 1)
+;	(building-type-count-total blacksmith >= 1)
+=>
+	(set-goal GARE YES)
+	(disable-self)
+)
+;œ•à•º¶Y
+(defrule
+	(goal SINKA 3)
+	(or
+		(civ-selected celtic)
+		(or
+			(civ-selected turkish)
+			(or
+				(civ-selected viking)
+				(or
+					(civ-selected japanese)
+					(civ-selected saracen)
+				)
+			)
+		)
+	)
+=>
+	(set-goal HOHEI YES)
+	(disable-self)
+)
+;œ‘„•º¶Y
+(defrule
+	(or
+		(goal SINKA 3)
+		(current-age >= castle-age)
+	)
+	(nor
+		(civ-selected turkish)
+		(civ-selected saracen)
+	)
+;	(or
+;		(players-unit-type-count any-enemy knight-line >= 2)
+;		(or
+;			(players-unit-type-count any-enemy camel-line >= 2)
+;			(or
+;				(players-unit-type-count any-enemy mameluke-line >= 2)
+;				(players-unit-type-count any-enemy war-elephant-line >= 2)
+;			)
+;		)
+;	)
+=>
+	(set-goal SPEAR YES)
+;	(chat-local-to-self "11)‘„‚ğì‚è‚Ü‚·B")
+	(disable-self)
+)
+
+;œƒC[ƒOƒ‹¶Y
+(defrule
+	(goal SINKA 3)
+	(civ-selected mayan)
+=>
+	(set-goal EAGLE YES)
+	(disable-self)
+)
+
+;œËè¶Y
+(defrule
+	(goal SINKA 3)
+	(or
+		(civ-selected briton)
+		(civ-selected korean)
+	)
+=>
+	(set-goal ARCHER YES)
+	(disable-self)
+)
+;œU•º¶Y
+(defrule
+	(goal SINKA 3)
+	(or
+		(civ-selected aztec)
+		(civ-selected byzantine)
+	)
+=>
+	(set-goal SANPEI YES)
+	(disable-self)
+)
+;œ‹|‹R•º¶Y
+(defrule
+	(or
+		(and
+			(goal SINKA 3)
+			(civ-selected mongol)
+		)
+		(and
+			(goal SINKA 6)
+			(civ-selected hun)
+		)
+	)
+=>
+	(set-goal C-ARCHER YES)
+	(disable-self)
+)
+
+;œ“S–C¶Y
+(defrule
+	(false)
+=>
+	(set-goal CANON YES)
+	(disable-self)
+)
+
+;œ‹Rm(å—Í)¶Y
+(defrule
+	(or
+		(civ-selected frankish)
+		(or
+			(civ-selected spanish)
+			(or
+				(civ-selected persian)
+				(civ-selected hun)
+			)
+		)
+	)
+=>
+	(set-goal PALADIN YES)
+	(disable-self)
+)
+;œ‹Rm(•â•)¶Y
+(defrule
+	(or
+		(civ-selected gothic)
+		(or
+			(civ-selected chinese)
+			(or
+				(civ-selected korean)
+				(or
+					(civ-selected japanese)
+					(or
+						(civ-selected viking)
+						(or
+							(civ-selected teutonic)
+							(civ-selected briton)
+						)
+					)
+				)
+			)
+		)
+	)
+=>
+	(set-goal KNIGHT YES)
+	(disable-self)
+)
+;œ‚ç‚­‚¾¶Y
+(defrule
+	(goal SINKA 3)
+	(or
+		(civ-selected turkish)
+		(civ-selected saracen)
+	)
+=>
+	(set-goal RAKUDA YES)
+	(disable-self)
+)
+
+;œ‹R•º¶Y
+(defrule
+	(or
+		(and
+			(goal SINKA 3)
+			(civ-selected mongol)
+		)
+		(and
+			(goal SINKA 5)
+			(civ-selected turkish)
+		)
+	)
+=>
+	(set-goal KIHEI YES)
+	(disable-self)
+)
+
+;œƒXƒRƒs¶Y
+(defrule
+	(goal SINKA 4)
+=>
+	(set-goal SCORP YES)
+	(disable-self)
+)
+(defrule
+	(goal SINKA 6)
+	(not(civ-selected celtic))
+=>
+	(set-goal SCORP NO)
+	(disable-self)
+)
+;œ”jé’Æ¶Y
+(defrule
+	(civ-selected celtic)
+=>
+	(set-goal RAM YES)
+	(disable-self)
+)
+
+;œƒ†ƒj[ƒNƒ†ƒjƒbƒg¶Y
+(defrule
+	(or
+		(civ-selected spanish)
+		(or
+			(civ-selected briton)
+			(civ-selected turkish)
+		)
+	)
+=>
+	(set-goal UNIQ YES)
+	(disable-self)
+)
+;œEL-ƒ†ƒj[ƒNƒ†ƒjƒbƒg
+(defrule
+	(or
+		(civ-selected aztec)
+		(or
+			(civ-selected chinese)
+			(or
+				(civ-selected gothic)
+				(or
+					(civ-selected byzantine)
+					(or
+						(civ-selected mayan)
+						(civ-selected teutonic)
+					)
+				)
+			)
+		)
+	)
+=>
+	(set-goal ELUNIQ YES)
+	(disable-self)
+)
+
+;œƒ†ƒj[ƒNƒeƒNƒmƒƒW[
+(defrule
+	(or
+		(civ-selected celtic)
+		(or
+			(civ-selected chinese)
+			(or
+				(civ-selected byzantine)
+				(civ-selected briton)
+			)
+		)
+	)
+=>
+	(set-goal UNIQTECH YES)
+	(disable-self)
+)
+(defrule
+	(or
+		(civ-selected saracen)
+		(or
+			(civ-selected mayan)
+			(civ-selected aztec)
+		)
+	)
+=>
+	(set-goal UNIQTECH YES)
+	(disable-self)
+)
+
+;œ¹EÒ¶Y
+(defrule
+	(civ-selected aztec)
+=>
+	(set-goal MONK YES)
+	(disable-self)
+)
+
+
+;------------------‹æØ‚è--------------------------------
+
+;œ‹™‘D
+(defrule
+	(not (goal SINKA 8) )
+	(goal SAKANA YES)
+	(can-train fishing-ship)
+	(unit-type-count-total fishing-ship < 8)
+	(current-age == dark-age)
+=>
+	(train fishing-ship)
+;	(chat-local-to-self "‹™‘D‚ğì‚è‚Ü‚·B")
+)
+(defrule
+	(not (goal SINKA 8) )
+	(goal SAKANA YES)
+	(can-train fishing-ship)
+	(current-age >= feudal-age)
+	(unit-type-count-total fishing-ship < 15)
+	(current-age >= feudal-age)
+	(unit-type-count-total galley-line >= 10)
+=>
+	(train fishing-ship)
+;	(chat-local-to-self "‹™‘D‚ğì‚è‚Ü‚·B")
+)
+
+;œƒKƒŒ[‘D
+(defrule
+	(population < 120)
+	(goal GARE YES)
+	(warboat-count < 20)
+	(can-train galley-line)
+=>
+	(train galley-line)
+	(chat-local-to-self "ƒKƒŒ[‘D‚ğì‚è‚Ü‚·B")
+)
+;œ‘åŒ^ƒKƒŒ[‘D‚ÉUP
+(defrule
+	(can-research-with-escrow ri-war-galley)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-war-galley)
+	(set-escrow-percentage gold 40)
+	(set-escrow-percentage food 40)
+	(chat-local-to-self "‘åŒ^ƒKƒŒ[‘D‚ÉUP")
+)
+;œƒKƒŠƒIƒ“‘D‚ÉUP
+(defrule
+	(can-research-with-escrow ri-galleon )
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-galleon )
+	(set-escrow-percentage gold 40)
+	(set-escrow-percentage food 40)
+	(chat-local-to-self "ƒKƒŠƒIƒ“‘D‚ÉUP")
+)
+
+
+;œ‰Î‰Š‘D
+(defrule
+	(population < 120)
+	(goal GARE YES)
+	(warboat-count < 20)
+	(can-train fire-ship-line)
+=>
+	(train fire-ship-line)
+	(chat-local-to-self "‰Î‰Š‘D‚ğì‚è‚Ü‚·B")
+)
+
+;œ”š”j‘D
+(defrule
+	(population < 120)
+	(goal GARE YES)
+	(unit-type-count-total demolition-ship-line < 3)
+	(warboat-count < 20)
+	(can-train demolition-ship-line )
+=>
+	(train demolition-ship-line )
+	(chat-local-to-self "”š”j‘D‚ğì‚è‚Ü‚·B")
+)
+
+;œƒLƒƒƒmƒ“ƒKƒŠƒIƒ“‘D‚ÌŒ¤‹†
+(defrule
+	(can-research-with-escrow ri-cannon-galleon)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+	(research ri-cannon-galleon)
+	(set-escrow-percentage gold 40)
+	(set-escrow-percentage food 40)
+	(chat-local-to-self "ƒLƒƒƒmƒ“ƒKƒŠƒIƒ“‘D‚ÌŒ¤‹†")
+)
+
+;œƒLƒƒƒmƒ“ƒKƒŠƒIƒ“‘D
+(defrule
+	(warboat-count < 25)
+	(unit-type-count-total cannon-galleon-line < 5)
+	(can-train cannon-galleon-line )
+=>
+	(train cannon-galleon-line )
+	(chat-local-to-self "23)ƒLƒƒƒmƒ“ƒKƒŠƒIƒ“‘D‚ğì‚è‚Ü‚·B")
+)
+
+;œƒoƒCƒLƒ“ƒO‘D
+(defrule
+	(warboat-count < 30)
+	(population < 120)
+	(goal GARE YES)
+	(unit-type-count-total longboat-line < 10)
+	(can-train longboat-line)
+=>
+	(train longboat-line)
+	(chat-local-to-self "ƒoƒCƒLƒ“ƒO‘D‚ğì‚è‚Ü‚·B")
+)
+
+;œ‹Tb‘D
+(defrule
+	(warboat-count < 30)
+	(goal GARE YES)
+	(unit-type-count-total turtle-ship-line < 5)
+	(can-train turtle-ship-line)
+=>
+	(train turtle-ship-line)
+	(chat-local-to-self "‹Tb‘D‚ğì‚è‚Ü‚·B")
+)
+;œŒğˆÕ‰İ•¨‘D
+(defrule
+(false)
+	(warboat-count > 15)
+	(wood-amount > 300)
+	(goal GARE YES)
+	(unit-type-count-total trade-cog < 10)
+	(can-train trade-cog)
+=>
+	(train trade-cog)
+	(chat-local-to-self "ŒğˆÕ‰İ•¨‘D‚ğì‚è‚Ü‚·B")
+)
+
+
+;œŠCŒR‚ÌNU
+(defrule
+	(warboat-count >= 20)
+=>
+(set-strategic-number sn-number-boat-attack-groups 10 ) ;yŠCíUŒ‚ƒOƒ‹[ƒv‚Ì”z
+(set-strategic-number sn-minimum-boat-attack-group-size 1 ) ;yŠCíUŒ‚ƒOƒ‹[ƒv‚ÌÅ¬l”z
+(set-strategic-number sn-maximum-boat-attack-group-size 10 ) ;yŠCíUŒ‚ƒOƒ‹[ƒv‚ÌÅ‘ål”z
+(set-strategic-number sn-number-boat-defend-groups 0 ) ;yŠCí–hŒäƒOƒ‹[ƒv‚Ì”z
+(set-strategic-number sn-minimum-boat-defend-group-size 0 ) ;yŠCí–hŒäƒOƒ‹[ƒv‚ÌÅ¬l”z
+(set-strategic-number sn-maximum-boat-defend-group-size 0 ) ;yŠCí–hŒäƒOƒ‹[ƒv‚ÌÅ‘ål”z
+(set-strategic-number sn-number-boat-explore-groups 1 ) ;yŠCí’TõƒOƒ‹[ƒv‚Ì”z
+(set-strategic-number sn-minimum-boat-explore-group-size 1 ) ;yŠCí’TõƒOƒ‹[ƒv‚ÌÅ¬l”z
+(set-strategic-number sn-maximum-boat-explore-group-size 1 ) ;yŠCí’TõƒOƒ‹[ƒv‚ÌÅ‘ål”z
+)
+;œŠCŒR‚Ìç”õ
+(defrule
+	(warboat-count < 20)
+=>
+(set-strategic-number sn-number-boat-attack-groups 0 ) ;yŠCíUŒ‚ƒOƒ‹[ƒv‚Ì”z
+(set-strategic-number sn-minimum-boat-attack-group-size 0 ) ;yŠCíUŒ‚ƒOƒ‹[ƒv‚ÌÅ¬l”z
+(set-strategic-number sn-maximum-boat-attack-group-size 0 ) ;yŠCíUŒ‚ƒOƒ‹[ƒv‚ÌÅ‘ål”z
+(set-strategic-number sn-number-boat-defend-groups 1 ) ;yŠCí–hŒäƒOƒ‹[ƒv‚Ì”z
+(set-strategic-number sn-minimum-boat-defend-group-size 1 ) ;yŠCí–hŒäƒOƒ‹[ƒv‚ÌÅ¬l”z
+(set-strategic-number sn-maximum-boat-defend-group-size 100 ) ;yŠCí–hŒäƒOƒ‹[ƒv‚ÌÅ‘ål”z
+(set-strategic-number sn-number-boat-explore-groups 0 ) ;yŠCí’TõƒOƒ‹[ƒv‚Ì”z
+(set-strategic-number sn-minimum-boat-explore-group-size 0 ) ;yŠCí’TõƒOƒ‹[ƒv‚ÌÅ¬l”z
+(set-strategic-number sn-maximum-boat-explore-group-size 0 ) ;yŠCí’TõƒOƒ‹[ƒv‚ÌÅ‘ål”z
+)
+
+;------------------‹æØ‚è--------------------------------
+
+;œˆÃ•(‹¤’Ê)
+(defrule
+	(false)
+	(unit-type-count-total villager >= 10)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 75 ) ;yH—¿‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-wood-gatherer-percentage 25 ) ;y–Ø‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-gold-gatherer-percentage 0 ) ;y‹à‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-stone-gatherer-percentage 0 ) ;yÎ‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(disable-self)
+)
+
+;œˆÃ•’†”Õ
+(defrule
+	(goal MAP_TYPE 0)
+	(unit-type-count-total villager >= 16)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 60 ) ;yH—¿‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-wood-gatherer-percentage 40 ) ;y–Ø‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-gold-gatherer-percentage 0 ) ;y‹à‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-stone-gatherer-percentage 0 ) ;yÎ‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(disable-self)
+)
+
+;œ—Ìåƒ{ƒ^ƒ“‚o‚t‚r‚g
+(defrule
+	(goal MAP_TYPE 0)
+	(goal SINKA 1)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 50 ) ;yH—¿‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-wood-gatherer-percentage 50 ) ;y–Ø‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-gold-gatherer-percentage 0 ) ;y‹à‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-stone-gatherer-percentage 0 ) ;yÎ‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(disable-self)
+)
+;œ—Ìå“ü‚è
+(defrule
+	(goal MAP_TYPE 0)
+	(goal SINKA 2)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 47 ) ;yH—¿‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-wood-gatherer-percentage 33 ) ;y–Ø‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-gold-gatherer-percentage 10 ) ;y‹à‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-stone-gatherer-percentage 10 ) ;yÎ‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(disable-self)
+)
+;œéåƒ{ƒ^ƒ“‚o‚t‚r‚g
+(defrule
+	(goal MAP_TYPE 0)
+	(goal SINKA 3)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 35 ) ;yH—¿‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-wood-gatherer-percentage 45 ) ;y–Ø‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-gold-gatherer-percentage 10 ) ;y‹à‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-stone-gatherer-percentage 10 ) ;yÎ‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(disable-self)
+)
+;œéå“ü‚è
+(defrule
+	(current-age >= castle-age)
+=>
+	(set-goal ESFOOD 20)
+	(set-goal ESGOLD 20)
+	(enable-timer TIMER_BALANCE 5)
+	(disable-self)
+)
+;-------------------------------------------------------------------------------------------------------------------
+;œˆÃ•’†”Õ(ŠCƒ}ƒbƒv)
+(defrule
+	(goal MAP_TYPE 1)
+	(unit-type-count-total villager >= 16)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 60 ) ;yH—¿‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-wood-gatherer-percentage 40 ) ;y–Ø‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-gold-gatherer-percentage 0 ) ;y‹à‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-stone-gatherer-percentage 0 ) ;yÎ‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(disable-self)
+)
+
+;œ—Ìåƒ{ƒ^ƒ“‚o‚t‚r‚g(ŠCƒ}ƒbƒv)
+(defrule
+	(goal SINKA 1)
+	(goal MAP_TYPE 1)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 20 ) ;yH—¿‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-wood-gatherer-percentage 75 ) ;y–Ø‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-gold-gatherer-percentage 5 ) ;y‹à‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-stone-gatherer-percentage 0 ) ;yÎ‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-goal ESWOOD 10)
+	(disable-self)
+)
+
+;œ—Ìå“ü‚è(ŠCƒ}ƒbƒv)
+(defrule
+	(goal SINKA 2)
+	(goal MAP_TYPE 1)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 15 ) ;yH—¿‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-wood-gatherer-percentage 65 ) ;y–Ø‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-gold-gatherer-percentage 10 ) ;y‹à‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-stone-gatherer-percentage 10 ) ;yÎ‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(disable-self)
+)
+;œ—Ìå’†”Õ(ŠCƒ}ƒbƒv)
+(defrule
+	(goal MAP_TYPE 1)
+	(building-type-count-total market >= 1)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 30 ) ;yH—¿‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-wood-gatherer-percentage 45 ) ;y–Ø‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-gold-gatherer-percentage 15 ) ;y‹à‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-stone-gatherer-percentage 10 ) ;yÎ‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(disable-self)
+)
+;œéåƒ{ƒ^ƒ“PUSH(ŠCƒ}ƒbƒv)
+(defrule
+	(goal SINKA 3)
+	(goal MAP_TYPE 1)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 30 ) ;yH—¿‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-wood-gatherer-percentage 35 ) ;y–Ø‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-gold-gatherer-percentage 20 ) ;y‹à‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-stone-gatherer-percentage 15 ) ;yÎ‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(disable-self)
+)
+;œéå“ü‚è(ŠCƒ}ƒbƒv)
+(defrule
+	(goal SINKA 4)
+	(goal MAP_TYPE 1)
+=>
+	(set-goal ESFOOD 20)
+	(set-goal ESGOLD 20)
+	(enable-timer TIMER_BALANCE 5)
+	(disable-self)
+)
+
+;œƒoƒ‰ƒ“ƒX”÷’²®--------------------------------------------------------------------
+;œ‘S‘Œ¹­‚È‚¢
+(defrule
+	(timer-triggered TIMER_BALANCE)
+	(food-amount < 300)
+	(gold-amount < 300)
+	(wood-amount < 200)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 40 ) ;yH—¿‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-gold-gatherer-percentage 15 ) ;y‹à‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-wood-gatherer-percentage 35 ) ;y–Ø‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-stone-gatherer-percentage 10 ) ;yÎ‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(enable-timer TIMER_BALANCE 40)
+	(chat-local-to-self "ƒoƒ‰ƒ“ƒX’²®F‘S‘Œ¹‚ª­‚È‚¢")
+)
+;œ‘S‘Œ¹‘½‚¢
+(defrule
+	(timer-triggered TIMER_BALANCE)
+	(food-amount > 500)
+	(gold-amount > 500)
+	(wood-amount > 400)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 40 ) ;yH—¿‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-gold-gatherer-percentage 15 ) ;y‹à‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-wood-gatherer-percentage 35 ) ;y–Ø‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-stone-gatherer-percentage 10 ) ;yÎ‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(enable-timer TIMER_BALANCE 40)
+	(chat-local-to-self "ƒoƒ‰ƒ“ƒX’²®F‘S‘Œ¹‚ª‘½‚¢")
+)
+;œ”Ñ‚ª‘½‚¢
+(defrule
+	(timer-triggered TIMER_BALANCE)
+	(food-amount > 500)
+	(gold-amount < 300)
+	(wood-amount < 200)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 30 ) ;yH—¿‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-gold-gatherer-percentage 20 ) ;y‹à‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-wood-gatherer-percentage 40 ) ;y–Ø‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-stone-gatherer-percentage 10 ) ;yÎ‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(enable-timer TIMER_BALANCE 40)
+	(chat-local-to-self "ƒoƒ‰ƒ“ƒX’²®FH—¿‚ª‘½‚¢")
+)
+;œ‹à‚ª‘½‚¢
+(defrule
+	(timer-triggered TIMER_BALANCE)
+	(food-amount < 300)
+	(gold-amount > 500)
+	(wood-amount < 200)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 45 ) ;yH—¿‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-gold-gatherer-percentage 5 ) ;y‹à‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-wood-gatherer-percentage 40 ) ;y–Ø‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-stone-gatherer-percentage 10 ) ;yÎ‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(enable-timer TIMER_BALANCE 40)
+	(chat-local-to-self "ƒoƒ‰ƒ“ƒX’²®F‹à‚ª‘½‚¢")
+)
+;œ–Ø‚ª‘½‚¢
+(defrule
+	(timer-triggered TIMER_BALANCE)
+	(food-amount < 300)
+	(gold-amount < 300)
+	(wood-amount > 400)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 45 ) ;yH—¿‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-gold-gatherer-percentage 20 ) ;y‹à‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-wood-gatherer-percentage 25 ) ;y–Ø‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-stone-gatherer-percentage 10 ) ;yÎ‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(enable-timer TIMER_BALANCE 40)
+	(chat-local-to-self "ƒoƒ‰ƒ“ƒX’²®F–Ø‚ª‘½‚¢")
+)
+;œ”Ñ‚ª­‚È‚¢
+(defrule
+	(timer-triggered TIMER_BALANCE)
+	(food-amount < 300)
+	(gold-amount > 500)
+	(wood-amount > 400)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 50 ) ;yH—¿‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-gold-gatherer-percentage 10 ) ;y‹à‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-wood-gatherer-percentage 30 ) ;y–Ø‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-stone-gatherer-percentage 10 ) ;yÎ‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(enable-timer TIMER_BALANCE 40)
+	(chat-local-to-self "ƒoƒ‰ƒ“ƒX’²®FH—¿‚ª­‚È‚¢")
+)
+;œ‹à‚ª­‚È‚¢
+(defrule
+	(timer-triggered TIMER_BALANCE)
+	(food-amount > 500)
+	(gold-amount < 300)
+	(wood-amount > 400)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 35 ) ;yH—¿‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-gold-gatherer-percentage 25 ) ;y‹à‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-wood-gatherer-percentage 20 ) ;y–Ø‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-stone-gatherer-percentage 10 ) ;yÎ‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(enable-timer TIMER_BALANCE 40)
+	(chat-local-to-self "ƒoƒ‰ƒ“ƒX’²®F‹à‚ª­‚È‚¢")
+)
+;œ–Ø‚ª­‚È‚¢
+(defrule
+	(timer-triggered TIMER_BALANCE)
+	(food-amount > 500)
+	(gold-amount > 500)
+	(wood-amount < 200)
+=>
+	(set-strategic-number sn-food-gatherer-percentage 35 ) ;yH—¿‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-gold-gatherer-percentage 10 ) ;y‹à‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-wood-gatherer-percentage 45 ) ;y–Ø‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(set-strategic-number sn-stone-gatherer-percentage 10 ) ;yÎ‚ğûW‚·‚é’¬‚Ìl‚ÌŠ„‡(“)z
+	(enable-timer TIMER_BALANCE 40)
+	(chat-local-to-self "ƒoƒ‰ƒ“ƒX’²®F–Ø‚ª­‚È‚¢")
+)
+
+;------------------‹æØ‚è--------------------------------
+
+;œi‰»ƒŒƒxƒ‹‚W(¸‰s‰»I—¹ğŒ)
+
+;œ‹ß‰q‹Rm•¶–¾(ƒtƒ‰ƒ“ƒNEƒtƒ“EƒXƒyƒCƒ“)‚Ìê‡
+(defrule
+	(goal PALADIN YES)
+	(research-completed ri-paladin)
+	(goal UNIQTECH NO)
+=>
+	(set-goal SINKA 8)
+	(disable-self)
+)
+
+;œ‹ß‰qŒ•m•¶–¾(ƒPƒ‹ƒgEƒoƒCƒLƒ“ƒOE“ú–{)‚Ìê‡
+(defrule
+	(goal HOHEI YES)
+	(nor
+		(civ-selected saracen)
+		(civ-selected turkish)
+	)
+	(research-completed ri-champion)
+	(goal UNIQTECH NO)
+=>
+	(set-goal SINKA 8)
+	(disable-self)
+)
+
+;œËè•¶–¾(ƒuƒŠƒgƒ“E’©‘N)‚Ìê‡
+(defrule
+	(goal ARCHER YES)
+	(research-completed ri-arbalest)
+	(goal UNIQTECH NO)
+=>
+	(set-goal SINKA 8)
+	(disable-self)
+)
+
+;œ‹|‹R•º•¶–¾(ƒ‚ƒ“ƒSƒ‹)‚Ìê‡
+(defrule
+	(civ-selected mongol)
+	(research-completed ri-heavy-cavalry-archer)
+	(research-completed ri-hussar)
+	(goal UNIQTECH NO)
+=>
+	(set-goal SINKA 8)
+	(disable-self)
+)
+
+;œ‚ç‚­‚¾‹R•º•¶–¾(ƒTƒ‰ƒZƒ“Eƒgƒ‹ƒR)‚Ìê‡
+(defrule
+	(or
+		(civ-selected saracen)
+		(civ-selected turkish)
+	)
+	(research-completed ri-heavy-camel)
+	(research-completed ri-champion)
+	(goal UNIQTECH NO)
+=>
+	(set-goal SINKA 8)
+	(disable-self)
+)
+
+;œELƒ†ƒj[ƒN•¶–¾(ƒ`ƒ…[ƒgƒ“E’†‘EƒS[ƒgEƒAƒXƒeƒJEƒrƒUƒ“ƒeƒBƒ“Eƒ}ƒ„)‚Ìê‡
+(defrule
+	(goal ELUNIQ YES)
+	(research-completed my-unique-unit-upgrade)
+	(or
+		(not (civ-selected mayan))
+		(research-completed ri-elite-eagle-warrior)
+	)
+	(goal UNIQTECH NO)
+=>
+	(set-goal SINKA 8)
+	(disable-self)
+)
+
+;œescrow‰ğœ
+(defrule
+	(goal SINKA 8)
+=>
+	(release-escrow gold)
+	(release-escrow food)
+)
+(defrule
+	(building-type-count-total town-center >= 2 )
+=>
+	(release-escrow wood)
+)
+
+
+;------------------‹æØ‚è--------------------------------
+
+;œ•Ò¬
+(defrule
+	(goal TAIKYAKU NO)
+=>
+	(set-strategic-number sn-number-attack-groups 100)
+	(set-strategic-number sn-minimum-attack-group-size 9)
+	(set-strategic-number sn-maximum-attack-group-size 10)
+	(set-strategic-number sn-number-defend-groups 0 ) ;y—¤í–hŒäƒOƒ‹[ƒv‚Ì”z
+	(set-strategic-number sn-minimum-defend-group-size 0 ) ;y—¤í–hŒäƒOƒ‹[ƒv‚ÌÅ¬l”z
+	(set-strategic-number sn-maximum-defend-group-size 0 ) ;y—¤í–hŒäƒOƒ‹[ƒv‚ÌÅ‘ål”z
+	(set-strategic-number sn-enemy-sighted-response-distance 2 ) ;yUŒ‚‚ğó‚¯‚½ÛA‚»‚Ì’n“_‚©‚ç‚Ç‚Ì’ö“x‚Ì”ÍˆÍ‚É‘¶İ‚·‚éƒ†ƒjƒbƒg‚ª”½Œ‚‚ğs‚¤‚©z
+	(set-strategic-number sn-task-ungrouped-soldiers 0 ) ;yƒOƒ‹[ƒv‰»‚³‚ê‚Ä‚¢‚È‚¢—¤íƒ†ƒjƒbƒg‚ğUŠJ‚³‚¹AŒÂ•Ê‚É’¬‚Ì—Ìˆæ‚ğŒx”õ‚³‚¹‚é‚©z
+	(set-goal CONTROL_TOWNSIZE YES)
+	(set-strategic-number sn-minimum-town-size 15 ) ;y’¬‚ÌÅ¬”ÍˆÍz
+	(set-strategic-number sn-maximum-town-size 100 ) ;y’¬‚ÌÅ‘å”ÍˆÍz
+;	(attack-now)
+)
+;œ‘SŒR‘Ş‹p
+(defrule
+	(goal TAIKYAKU YES)
+=>
+	(set-strategic-number sn-number-attack-groups 0)
+	(set-strategic-number sn-minimum-attack-group-size 0)
+	(set-strategic-number sn-maximum-attack-group-size 0)
+	(set-strategic-number sn-number-defend-groups 100 ) ;y—¤í–hŒäƒOƒ‹[ƒv‚Ì”z
+	(set-strategic-number sn-minimum-defend-group-size 15 ) ;y—¤í–hŒäƒOƒ‹[ƒv‚ÌÅ¬l”z
+	(set-strategic-number sn-maximum-defend-group-size 18 ) ;y—¤í–hŒäƒOƒ‹[ƒv‚ÌÅ‘ål”z
+	(set-strategic-number sn-enemy-sighted-response-distance 20 ) ;yUŒ‚‚ğó‚¯‚½ÛA‚»‚Ì’n“_‚©‚ç‚Ç‚Ì’ö“x‚Ì”ÍˆÍ‚É‘¶İ‚·‚éƒ†ƒjƒbƒg‚ª”½Œ‚‚ğs‚¤‚©z
+	(set-strategic-number sn-task-ungrouped-soldiers 0 ) ;yƒOƒ‹[ƒv‰»‚³‚ê‚Ä‚¢‚È‚¢—¤íƒ†ƒjƒbƒg‚ğUŠJ‚³‚¹AŒÂ•Ê‚É’¬‚Ì—Ìˆæ‚ğŒx”õ‚³‚¹‚é‚©z
+	(set-goal CONTROL_TOWNSIZE NO)
+)
+
+
+;œ‘SŒR“ËŒ‚
+(defrule
+	(goal SINKA 8)
+	(population > 120)
+	(unit-type-count-total villager < 70)
+	(not(town-under-attack))
+	(goal TAIKYAKU YES)
+=>
+	(set-goal TAIKYAKU NO)
+;	(chat-to-allies "23)‘UŒ‚‚ğ‚©‚¯‚é‚Ì‚Å‰‡ŒR‚ğ—v¿‚µ‚Ü‚·B")
+)
+
+
+;œ‰‡ŒR
+(defrule
+(false)
+	(or
+		(taunt-detected any-ally 23)
+		(taunt-detected any-ally 12)
+	)
+	(soldier-count >= 20)
+	(not (town-under-attack))
+;	(population >= 110)
+=>
+	(set-goal TAIKYAKU NO)
+	(chat-to-allies "1)‰‡ŒR‚ğ‘—‚è‚Ü‚·B")
+	(acknowledge-taunt this-any-ally 23)
+	(acknowledge-taunt this-any-ally 12)
+)
+(defrule
+(false)
+	(taunt-detected any-ally 23)
+	(nor
+		(soldier-count >= 20)
+		(nor
+			(not (town-under-attack))
+			(population >= 110)
+		)
+	)
+=>
+	(set-goal TAIKYAKU NO)
+	(chat-to-allies "2)–³—‚Å‚·[[[[")
+	(acknowledge-taunt this-any-ally 23)
+)
+;œ•º‘à‚ªŒ¸‚Á‚½‚ç
+(defrule
+	(population < 95 )
+=>
+	(set-goal TAIKYAKU YES)
+)
+
+
+;œ‹™‘DE”_–¯íœ
+(defrule
+	(goal SINKA 8)
+	(population > 118)
+	(food-amount > 500)
+=>
+	(delete-unit fishing-ship)
+)
+(defrule
+	(goal SINKA 8)
+	(food-amount > 1000)
+	(wood-amount > 1000)
+	(gold-amount > 1000)
+	(population > 118)
+	(unit-type-count-total villager > 65)
+	(unit-type-count-total fishing-ship == 0)
+=>
+	(delete-unit villager)
+)
+
+
+;œŠX‚ªUŒ‚‚³‚ê‚Ä‚é‚Æ‚«
+(defrule
+	(town-under-attack)
+	(current-age == castle-age)
+=>
+	(release-escrow food)
+	(release-escrow gold)
+)
+(defrule
+	(town-under-attack)
+	(players-military-population any-enemy >= 3)
+	(current-age == feudal-age)
+=>
+	(set-goal F_RUSH YES)
+	(disable-self)
+)
+
+
+
+;------------------‹æØ‚è--------------------------------
+
+;œ”Ñ
+(defrule
+	(goal ESFOOD 10)
+=>
+	(enable-timer TIMER_ESFOOD 5)
+	(disable-self)
+)
+(defrule
+	(goal ESFOOD 10)
+	(timer-triggered TIMER_ESFOOD)
+=>
+	(set-escrow-percentage food 10)
+	(enable-timer TIMER_ESFOOD 5)
+)
+(defrule
+	(goal ESFOOD 20)
+=>
+	(enable-timer TIMER_ESFOOD 5)
+	(disable-self)
+)
+(defrule
+	(goal ESFOOD 20)
+	(timer-triggered TIMER_ESFOOD)
+=>
+	(set-escrow-percentage food 20)
+	(enable-timer TIMER_ESFOOD 5)
+)
+(defrule
+	(goal ESFOOD 30)
+=>
+	(enable-timer TIMER_ESFOOD 5)
+	(disable-self)
+)
+(defrule
+	(goal ESFOOD 30)
+	(timer-triggered TIMER_ESFOOD)
+=>
+	(set-escrow-percentage food 30)
+	(enable-timer TIMER_ESFOOD 5)
+)
+(defrule
+	(goal ESFOOD 40)
+=>
+	(enable-timer TIMER_ESFOOD 5)
+	(disable-self)
+)
+(defrule
+	(goal ESFOOD 40)
+	(timer-triggered TIMER_ESFOOD)
+=>
+	(set-escrow-percentage food 40)
+	(enable-timer TIMER_ESFOOD 5)
+)
+
+;œ‹à
+(defrule
+	(goal ESGOLD 10)
+=>
+	(enable-timer TIMER_ESGOLD 5)
+	(disable-self)
+)
+(defrule
+	(goal ESGOLD 10)
+	(timer-triggered TIMER_ESGOLD)
+=>
+	(set-escrow-percentage gold 10)
+	(enable-timer TIMER_ESGOLD 5)
+)
+(defrule
+	(goal ESGOLD 20)
+=>
+	(enable-timer TIMER_ESGOLD 5)
+	(disable-self)
+)
+(defrule
+	(goal ESGOLD 20)
+	(timer-triggered TIMER_ESGOLD)
+=>
+	(set-escrow-percentage gold 20)
+	(enable-timer TIMER_ESGOLD 5)
+)
+(defrule
+	(goal ESGOLD 30)
+=>
+	(enable-timer TIMER_ESGOLD 5)
+	(disable-self)
+)
+(defrule
+	(goal ESGOLD 30)
+	(timer-triggered TIMER_ESGOLD)
+=>
+	(set-escrow-percentage gold 30)
+	(enable-timer TIMER_ESGOLD 5)
+)
+(defrule
+	(goal ESGOLD 40)
+=>
+	(enable-timer TIMER_ESGOLD 5)
+	(disable-self)
+)
+(defrule
+	(goal ESGOLD 40)
+	(timer-triggered TIMER_ESGOLD)
+=>
+	(set-escrow-percentage gold 40)
+	(enable-timer TIMER_ESGOLD 5)
+)
+
+;œ–Ø
+(defrule
+	(goal ESWOOD 10)
+=>
+	(enable-timer TIMER_ESWOOD 5)
+	(disable-self)
+)
+(defrule
+	(goal ESWOOD 10)
+	(timer-triggered TIMER_ESWOOD)
+=>
+	(set-escrow-percentage wood 10)
+	(enable-timer TIMER_ESWOOD 5)
+)
+(defrule
+	(goal ESWOOD 20)
+=>
+	(enable-timer TIMER_ESWOOD 5)
+	(disable-self)
+)
+(defrule
+	(goal ESWOOD 20)
+	(timer-triggered TIMER_ESWOOD)
+=>
+	(set-escrow-percentage wood 20)
+	(enable-timer TIMER_ESWOOD 5)
+)
+(defrule
+	(goal ESWOOD 30)
+=>
+	(enable-timer TIMER_ESWOOD 5)
+	(disable-self)
+)
+(defrule
+	(goal ESWOOD 30)
+	(timer-triggered TIMER_ESWOOD)
+=>
+	(set-escrow-percentage wood 30)
+	(enable-timer TIMER_ESWOOD 5)
+)
+(defrule
+	(goal ESWOOD 40)
+=>
+	(enable-timer TIMER_ESWOOD 5)
+	(disable-self)
+)
+(defrule
+	(goal ESWOOD 40)
+	(timer-triggered TIMER_ESWOOD)
+=>
+	(set-escrow-percentage wood 40)
+	(enable-timer TIMER_ESWOOD 5)
+)
+
+
+;œ’˜ìî•ñ
+(defrule
+	(true)
+=>
+	(set-author-name "–éˆÇ")
+	(set-author-email "m_yoan@hotmail.com")
+	(set-author-version "2.02")
+	(disable-self)
+)
+
+;œH‚×•¨”­Œ©
+(defrule
+	(or
+		(resource-found food)
+		(and
+			(game-time > 90)
+			(not(map-type nomad))
+		)
+;		(unit-type-count-total 594 >= 6)
+	)
+=>
+	(set-strategic-number sn-percent-civilian-explorers 0)
+	(set-strategic-number sn-percent-civilian-gatherers 65)
+	(set-strategic-number sn-total-number-explorers 1)
+	(set-strategic-number sn-minimum-civilian-explorers 0)
+	(set-strategic-number sn-cap-civilian-explorers 0)
+	(disable-self)
+)
+
+;œ’Tõ¸“x•ÏX
+(defrule
+	(game-time > 480)
+=>
+	(set-strategic-number sn-blot-size 40 ) ;y–¢ŠJ‘ñ—Ìˆæ‚Æ‚İ‚È‚µ‚Ä’Tõ‚·‚é—Ìˆæz
+	(disable-self)
+)
+
+;œ“G’†S”­Œ©
+(defrule
+	(players-building-type-count any-enemy town-center == 1 )
+=>
+	(chat-local-to-self "21) ‚¢‚¢’¬‚¾B‚¢‚½‚¾‚­‚ºI")
+	(disable-self)
+)
+
+;œ“G”­Œ©
+(defrule
+	(players-building-count any-enemy > 0)
+=>
+	(chat-local-to-self "16) “G‚ğ”­Œ©II")
+	(disable-self)
+)
+
+;œ”s–k”»’è----------------------------------------
+
+(defrule
+	(game-time > 1000)
+	(current-age >= feudal-age)
+	(population < 15)
+=>
+	(chat-to-all "8) ƒoƒ“ƒU[[[ƒCII ”sŒR‚Ì«‚Ì‚¨’Ê‚è‚¾‚º[[[[[[")
+	(disable-self)
+)
+
+(defrule
+	(false)
+	(population == 0)
+	(building-type-count-total town-center == 0)
+	(building-type-count-total castle == 0)
+	(building-type-count-total bombard-tower == 0)
+	(building-type-count-total watch-tower-line == 0)
+	(building-type-count-total market == 0)
+=>
+	(chat-to-all "•‰‚¯‚Ü‚µ‚½EEEEB")
+	(resign)
+	(disable-self)
+)
+
+;œ‚QŠÔ‚à‚â‚Á‚½‹“‹å‚É‚±‚Ì‚´‚Ü‚©I
+(defrule
+	(game-time > 7200)
+=>
+	(chat-to-all "27) ‚QŠÔ‚à‚â‚Á‚½‹“‹å‚É‚±‚Ì‚´‚Ü‚©I")
+	(disable-self)
+)
+
+;œ‰¤—l‚É‚È‚é‚Ì‚Í‚¢‚¢‹C•ª‚¾‚ºI
+(defrule
+	(building-type-count castle == 1)
+=>
+	(chat-to-all "17) ‰¤—l‚É‚È‚é‚Ì‚Í‚¢‚¢‹C•ª‚¾‚ºI")
+	(disable-self)
+)
+
+;œ‰´‚ÉG‚é‚Ì‚Í‚æ‚¹
+(defrule
+	(unit-type-count-total -66 > 0)
+=>
+	(chat-local-to-self "22) ‰´‚ÉG‚é‚Ì‚Í‚æ‚¹")
+	(disable-self)
+)

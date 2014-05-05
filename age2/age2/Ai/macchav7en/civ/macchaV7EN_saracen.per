@@ -1,0 +1,93 @@
+;*Strategy decision
+(defrule
+   (true)
+=>
+   (generate-random-number 10)
+   (disable-self)
+)
+(defrule
+   (random-number <= 5)
+=>
+   (chat-local-to-self "[strategy] normal")
+   (set-goal ATTACK_MODE NORMAL)
+   (disable-self)
+)
+(defrule
+   (random-number > 5)
+   (random-number <= 8)
+=>
+   (chat-local-to-self "[strategy] unique-mania")
+   (set-goal ATTACK_MODE UNIQUE_MANIA)
+   (disable-self)
+)
+(defrule
+   (random-number > 8)
+=>
+   (chat-local-to-self "[strategy] rush-horse")
+   (set-goal ATTACK_MODE RUSH_HORSE)
+   (disable-self)
+)
+;*normal
+(defrule
+   (goal ATTACK_MODE NORMAL)
+   (or
+      (goal ENEMY_RUSH YES)
+      (and(current-age == castle-age)(players-current-age every-enemy < castle-age))
+   )
+=>
+;   (chat-local-to-self "[strategy] normal")
+   (set-goal FORWARD_BUILDING 1)
+   (set-goal SUPPLY_PLAN 1)
+   (set-goal MAX_UNIQUE 4)
+   (set-goal MAX_CAMEL 4)
+   (set-goal MAX_MILITIAMAN 4)
+   (set-goal MAX_SPEARMAN 4)
+   (set-goal MAX_KNIGHT 99)
+)
+;*rush-horse
+(defrule
+   (current-age == castle-age)
+   (goal ATTACK_MODE RUSH_HORSE)
+   (or
+      (goal ENEMY_RUSH YES)
+      (and(current-age == castle-age)(players-current-age every-enemy < castle-age))
+   )
+=>
+   (chat-local-to-self "[strategy] rush-horse")
+   (set-goal SUPPLY_PLAN 1)
+   (set-goal MAX_LIGHTCAVALRY 5)
+   (set-goal MAX_CAMEL 5)
+   (set-goal MAX_UNIQUE 5)
+   (disable-self)
+)
+;*unique-mania
+(defrule
+   (current-age == castle-age)
+   (goal ATTACK_MODE UNIQUE_MANIA)
+   (building-type-count-total castle <= 2)
+   (goal ENEMY_RUSH YES)
+=>
+   (chat-local-to-self "[strategy] unique-mania")
+   (set-goal SUPPLY_PLAN 3)
+   (set-goal MAX_KNIGHT 99)
+   (set-goal MAX_UNIQUE 5)
+   (disable-self)
+)
+(defrule
+   (goal ATTACK_MODE UNIQUE_MANIA)
+   (building-type-count-total castle > 2)
+   (goal ENEMY_RUSH YES)
+=>
+   (chat-local-to-self "[strategy] unique-mania 2nd")
+   (set-goal SUPPLY_PLAN 1)
+   (set-goal MAX_KNIGHT 99)
+   (set-goal MAX_UNIQUE 5)
+   (disable-self)
+)
+(defrule
+   (goal ATTACK_MODE UNIQUE_MANIA)
+   (can-research my-unique-research)
+=>
+   (chat-local-to-self "research my-unique-research /[strategy] unique-mania ")
+   (research my-unique-research)
+)

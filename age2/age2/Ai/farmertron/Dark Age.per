@@ -1,0 +1,182 @@
+; dark age
+
+;search for food
+(defrule
+	(current-age == dark-age)
+	(not (resource-found food))
+	(unit-type-count-total villager < 10)
+=>
+	(chat-to-all "search for food")
+	(set-strategic-number sn-percent-civilian-gatherers 0)
+	(set-strategic-number sn-percent-civilian-builders 10)
+	(set-strategic-number sn-percent-civilian-explorers 90)
+	(disable-self)
+)
+;stop searching for food when found or timed out
+(defrule
+	(current-age == dark-age)
+	(or
+		(resource-found food)
+		(game-time > TIME-OUT-FOR-MILL) ;fail-safe for scandanavia - deer aren't food duh!
+	)
+=>
+	(set-strategic-number sn-percent-civilian-gatherers 90)
+	(set-strategic-number sn-percent-civilian-builders 10)
+	(set-strategic-number sn-percent-civilian-explorers 0)
+	(chat-to-all "terminate search for food")
+	(disable-self)
+)
+
+; increase woodies 1
+(defrule
+	(current-age == dark-age)
+	(unit-type-count-total villager == 10)
+=>
+	(chat-to-all "wood % = 15")
+	(set-strategic-number sn-wood-gatherer-percentage 15)
+	(set-strategic-number sn-food-gatherer-percentage 85)
+	(disable-self)
+)
+
+; increase woodies 2
+(defrule
+	(current-age == dark-age)
+	(unit-type-count-total villager == 15)
+=>
+	(chat-to-all "wood % = 20")
+	(set-strategic-number sn-wood-gatherer-percentage 20)
+	(set-strategic-number sn-food-gatherer-percentage 80)
+	(disable-self)
+)
+
+; Villager training
+(defrule
+	(current-age == dark-age)
+	(unit-type-count-total villager <= 100)
+	(or
+		(food-amount < 500)
+		(unit-type-count-total villager < 24)
+	)
+	(can-train villager)
+=>
+;	(chat-to-all "train villager dda")
+	(train villager)
+)
+
+; House building
+(defrule
+	(current-age == dark-age)
+	(housing-headroom < 3)
+	(building-type-count-total house < 500)
+	(can-build house)
+=>
+;	(chat-to-all "build house")
+	(build house)
+)
+
+; loom
+(defrule
+	(not (can-train villager))
+	(can-research ri-loom)
+=>
+	(research ri-loom)
+	(chat-to-all "research loom")
+	(disable-self)
+)
+
+; build first mill
+(defrule
+	(current-age == dark-age)
+	(building-type-count-total mill == 0)
+	(or
+		(resource-found food)
+		(unit-type-count-total villager > 9)
+	)
+	(can-build mill)
+=>
+	(chat-to-all "build mill")
+	(build mill)
+)
+
+; build lumber camp
+(defrule
+	(current-age == dark-age)
+	(unit-type-count-total villager > 10)
+	(building-type-count-total mill > 0)
+	(building-type-count-total lumber-camp == 0)
+	(resource-found wood)
+	(can-build lumber-camp)
+=>
+	(chat-to-all "build lumber camp")
+	(build lumber-camp)
+)
+;rebuild destroyed lumber camps
+(defrule
+	(current-age != dark-age)
+	(building-type-count-total lumber-camp == 0)
+	(can-build lumber-camp)
+=>
+	(chat-to-all "rebuilding lumber camp")
+	(build lumber-camp)
+)
+; Farm building
+(defrule
+	(goal GOAL-RESEARCHING-FEUDAL 0)
+	(current-age == dark-age)
+	(building-type-count-total lumber-camp > 0)
+	(building-type-count-total mill > 1)
+	(idle-farm-count < 1)
+	(can-build farm)
+=>
+;	(chat-to-all "build farm dda")
+	(build farm)
+)
+
+; research feudal
+(defrule
+	(current-age == dark-age)
+	(can-research feudal-age)
+	(unit-type-count-total villager > 23)
+=>
+	(chat-to-all "research feudal-age")
+	(research feudal-age)
+	(set-strategic-number sn-food-gatherer-percentage 55)
+	(set-strategic-number sn-wood-gatherer-percentage 38)
+	(set-strategic-number sn-gold-gatherer-percentage 7)
+	(set-strategic-number sn-camp-max-distance 30)
+	(set-goal GOAL-RESEARCHING-FEUDAL 1)
+	(set-goal GOAL-DISABLE-MILL-BUILDING 1)
+)
+
+; build gold mine
+(defrule
+	(current-age == dark-age)
+	(resource-found gold)
+	(can-build mining-camp)
+	(building-type-count-total lumber-camp > 0)
+	(building-type-count-total mining-camp == 0)
+	(goal GOAL-RESEARCHING-FEUDAL 1)
+=>
+	(chat-to-all "build mining-camp ; gold")
+	(build mining-camp)
+	(set-goal GOAL-DISABLE-MILL-BUILDING 0)
+)
+
+; inter age farm building
+(defrule
+	(goal GOAL-RESEARCHING-FEUDAL 1)
+	(current-age == dark-age)
+	(building-type-count-total lumber-camp > 0)
+	(building-type-count-total mill > 0)
+	(building-type-count-total mining-camp > 0)
+	(idle-farm-count < 1)
+	;(or
+	;	(sheep-and-forage-too-far)
+	;	(game-time > 500)
+	;)
+	(wood-amount >= 150)
+	(can-build farm)
+=>
+;	(chat-to-all "build farm dfu")
+	(build farm)
+)

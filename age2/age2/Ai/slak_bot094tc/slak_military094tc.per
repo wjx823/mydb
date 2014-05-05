@@ -1,0 +1,2146 @@
+; --------------------------------------------------------------------------
+; File: Slak_Military.per
+; Author: SlakTheEldar
+; Date: 2000-10-25
+;
+; Available under BSD-like license; see accompanying Copying.txt file
+;
+; --------------------------------------------------------------------------
+
+(defrule
+  (true)
+  =>
+  (set-goal main-or-response-unit NONE)
+  (disable-self)
+)
+
+;*********************************************************
+; Feudal-age defensive military
+;*********************************************************
+(defrule
+  (or (goal main-or-response-unit FEUDAL-DEF)
+      (goal main-or-response-unit FEUDAL-OFF))
+  (military-population == 0)
+  (town-under-attack)
+  =>
+  (release-escrow food)
+  (release-escrow wood)
+  (release-escrow gold)
+)
+      
+(defrule
+  (goal main-or-response-unit FEUDAL-DEF)
+  (unit-type-count spearman-line < ten-percent-pop)
+  (can-train spearman-line)
+  =>
+  (train spearman-line)
+  (chat-local-to-self "FEUDAL-DEF spearman")
+)
+
+(defrule
+  (goal main-or-response-unit FEUDAL-DEF)
+  (unit-type-count skirmisher-line < ten-percent-pop)
+  (can-train skirmisher-line)
+  =>
+  (train skirmisher-line)
+  (chat-local-to-self "FEUDAL-DEF skirmisher")
+)
+
+(defrule
+  (goal main-or-response-unit FEUDAL-DEF)
+  (unit-type-count militiaman-line < ten-percent-pop)
+  (players-building-type-count any-enemy watch-tower-line > 0)
+  (can-train militiaman-line)
+  =>
+  (train militiaman-line)
+  (chat-local-to-self "FEUDAL-DEF infantry")
+)
+
+(defrule
+  (goal main-or-response-unit FEUDAL-DEF)
+  (unit-type-count archer-line < ten-percent-pop)
+  (players-unit-type-count any-enemy militiaman-line > 0)
+  (can-train archer-line)
+  =>
+  (train archer-line)
+  (chat-local-to-self "FEUDAL-DEF archer")
+)
+
+;*********************************************************
+; Feudal-age offensive military
+;*********************************************************
+(defrule
+  (goal main-or-response-unit FEUDAL-OFF)
+  (unit-type-count spearman-line < five-percent-pop)
+  (can-train spearman-line)
+  =>
+  (train spearman-line)
+  (chat-local-to-self "FEUDAL-OFF spearman")
+)
+
+(defrule
+  (goal main-or-response-unit FEUDAL-OFF)
+  (unit-type-count skirmisher-line < ten-percent-pop)
+  (can-train skirmisher-line)
+  =>
+  (train skirmisher-line)
+  (chat-local-to-self "FEUDAL-OFF skirmisher")
+)
+
+(defrule
+  (goal main-or-response-unit FEUDAL-OFF)
+  (unit-type-count militiaman-line < ten-percent-pop)
+  (can-train militiaman-line)
+  =>
+  (train militiaman-line)
+  (chat-local-to-self "FEUDAL-OFF infantry")
+)
+
+(defrule
+  (goal main-or-response-unit FEUDAL-OFF)
+  (unit-type-count archer-line < ten-percent-pop)
+  (can-train archer-line)
+  =>
+  (train archer-line)
+  (chat-local-to-self "FEUDAL-OFF archer")
+)
+
+;*********************************************************
+; Castle-age defensive military
+;*********************************************************
+(defrule
+  (current-age == castle-age)
+  (goal main-or-response-unit FEUDAL-DEF)
+  =>
+  (set-goal main-or-response-unit CASTLE-DEF)
+  (chat-local-to-self "moving from FEUDAL-DEF to CASTLE-DEF")
+  (disable-self)
+)
+
+(defrule
+  (current-age == castle-age)
+  (or (or (goal main-or-response-unit CASTLE-DEF)
+	  (goal main-or-response-unit CASTLE-OFF))
+      (goal main-or-response-unit NONE))
+  (research-completed ri-hand-cart)
+  =>
+  (set-goal main-or-response-unit MAIN)
+)
+
+(defrule
+  (goal main-or-response-unit CASTLE-DEF)
+  (unit-type-count spearman-line < five-percent-pop)
+  (can-train spearman-line)
+  =>
+  (train spearman-line)
+  (chat-local-to-self "CASTLE-DEF spearman")
+)
+
+(defrule
+  (goal main-or-response-unit CASTLE-DEF)
+  (unit-type-count skirmisher-line < five-percent-pop)
+  (can-train skirmisher-line)
+  =>
+  (train skirmisher-line)
+  (chat-local-to-self "CASTLE-DEF skirmisher")
+)
+
+(defrule
+  (goal main-or-response-unit CASTLE-DEF)
+  (unit-type-count scout-cavalry-line < ten-percent-pop)
+  (can-train scout-cavalry-line)
+  =>
+  (train scout-cavalry-line)
+  (chat-local-to-self "CASTLE-DEF lt cav")
+)
+
+(defrule
+  (goal main-or-response-unit CASTLE-DEF)
+  (unit-type-count eagle-warrior-line < ten-percent-pop)
+  (can-train eagle-warrior-line)
+  =>
+  (train eagle-warrior-line)
+  (chat-local-to-self "CASTLE-DEF eagle")
+)
+
+(defrule
+  (goal main-or-response-unit CASTLE-DEF)
+  (unit-type-count militiaman-line < ten-percent-pop)
+  (can-train militiaman-line)
+  =>
+  (train militiaman-line)
+  (chat-local-to-self "CASTLE-DEF infantry")
+)
+
+(defrule
+  (goal main-or-response-unit CASTLE-DEF)
+  (unit-type-count archer-line < ten-percent-pop)
+  (can-train archer-line)
+  =>
+  (train archer-line)
+  (chat-local-to-self "CASTLE-DEF archer")
+)
+
+;*********************************************************
+; Castle age offensive military
+;*********************************************************
+(defrule
+  (current-age == castle-age)
+  (goal main-or-response-unit FEUDAL-OFF)
+  =>
+  (set-goal main-or-response-unit CASTLE-OFF)
+  (chat-local-to-self "moving from FEUDAL-OFF to CASTLE-OFF")
+  (disable-self)
+)
+
+(defrule
+  (goal main-or-response-unit CASTLE-OFF)
+  (unit-type-count spearman-line < five-percent-pop)
+  (can-train spearman-line)
+  =>
+  (train spearman-line)
+  (chat-local-to-self "CASTLE-OFF spearman")
+)
+
+(defrule
+  (goal main-or-response-unit CASTLE-OFF)
+  (unit-type-count skirmisher-line < five-percent-pop)
+  (can-train skirmisher-line)
+  =>
+  (train skirmisher-line)
+  (chat-local-to-self "CASTLE-DEF skirmisher")
+)
+
+(defrule
+  (goal main-or-response-unit CASTLE-OFF)
+  (military-population > ten-percent-pop)
+  (unit-type-count battering-ram-line <= 3)
+  (can-train battering-ram-line)
+  =>
+  (train battering-ram-line)
+  (chat-local-to-self "CASTLE-OFF ram")
+)
+
+(defrule
+  (goal main-or-response-unit CASTLE-OFF)
+  (unit-type-count militiaman-line < ten-percent-pop)
+  (can-train militiaman-line)
+  =>
+  (train militiaman-line)
+  (chat-local-to-self "CASTLE-OFF infantry")
+)
+
+(defrule
+  (goal main-or-response-unit CASTLE-OFF)
+  (unit-type-count archer-line < ten-percent-pop)
+  (can-train archer-line)
+  =>
+  (train archer-line)
+  (chat-local-to-self "CASTLE-OFF archer")
+)
+
+;*********************************************************
+; Low-gold (IMPERIAL-PANIC) army
+;*********************************************************
+(defrule
+  (goal main-or-response-unit IMPERIAL-PANIC)
+  (can-train spearman-line)
+  =>
+  (train spearman-line)
+  (chat-local-to-self "imperial-panic spearman")
+)
+
+(defrule
+  (goal main-or-response-unit IMPERIAL-PANIC)
+  (can-train skirmisher-line)
+  =>
+  (train skirmisher-line)
+  (chat-local-to-self "imperial-panic skirmisher")
+)
+
+(defrule
+  (goal main-or-response-unit IMPERIAL-PANIC)
+  (can-train scout-cavalry-line)
+  =>
+  (train scout-cavalry-line)
+  (chat-local-to-self "imperial-panic lt cav")
+)
+
+; MesoAmerican civs need another unit.
+
+; Other civs can afford a gold unit.
+
+; Panic units are mangonels and monks
+(defrule
+  (goal main-or-response-unit IMPERIAL-PANIC)
+  (can-train-with-escrow monk)
+  =>
+  (release-escrow gold)
+  (train monk)
+  (chat-local-to-self "imperial-panic monk")
+)
+
+(defrule
+  (goal main-or-response-unit IMPERIAL-PANIC)
+  (can-train-with-escrow mangonel-line)
+  =>
+  (release-escrow gold)
+  (train mangonel-line)
+  (chat-local-to-self "imperial-panic mangonel")
+)
+
+; --------------------------------------------------
+; Decide if we want main unit or response unit
+; If there is a large or medium threat, then the
+; goal responding-to-threat will be YES.
+;
+; Do not start building units until we have a
+; barracks established.  This prevents uniques
+; and siege weapons building too soon.
+; --------------------------------------------------
+(defrule
+  (current-age == imperial-age)
+  (building-type-count-total barracks > 0)
+  =>
+  (set-goal main-or-response-unit MAIN)
+  (chat-local-to-self "main-or-response set to MAIN #1")
+  (disable-self)
+)
+
+(defrule
+  (current-age == imperial-age)
+  (goal enemy-threat NO)
+  =>
+  (set-goal main-or-response-unit MAIN)
+)
+
+(defrule
+  (current-age == imperial-age)
+  (goal main-or-response-unit BOAT)
+  (goal boats-needed CONTROL)
+  =>
+  (set-goal main-or-response-unit MAIN)
+)
+
+(defrule
+  (current-age == castle-age)
+  (military-population >= large-easy-unit-threat)
+  =>
+  (set-goal main-or-response-unit MAIN)
+)
+
+(defrule
+  (current-age == imperial-age)
+  (goal main-or-response-unit NONE)
+  =>
+  (set-goal main-or-response-unit MAIN)
+)
+
+(defrule
+  (not (goal enemy-threat NO))
+  (goal responding-to-threat YES)
+  (goal main-or-response-unit MAIN)
+  =>
+  (generate-random-number 100)
+)
+
+(defrule
+  (goal boat-strategy MANYBOATS) ; Water maps
+  (not (goal boats-needed CONTROL)) ; we do not control seas
+  (goal main-or-response-unit MAIN)
+  (warboat-count < twenty-percent-pop)
+  (random-number > 50)
+  (random-number <= 70)         ; 20% of time build boats
+  =>
+  (set-goal main-or-response-unit BOAT)
+  (chat-local-to-self "main-or-response set to BOAT")
+)
+
+(defrule
+  (goal boat-strategy SOMEBOATS) ; Water maps
+  (warboat-count < fifteen-percent-pop)
+  (not (goal boats-needed CONTROL)) ; we do not control seas
+  (goal main-or-response-unit MAIN)
+  (random-number > 65)
+  (random-number <= 70)         ; 5% of time build boats
+  =>
+  (set-goal main-or-response-unit BOAT)
+  (chat-local-to-self "main-or-response set to BOAT")
+)
+
+(defrule
+  (goal responding-to-threat YES)
+  (not (goal enemy-threat NO))
+  (goal main-or-response-unit MAIN)
+  (random-number > 70)
+  (random-number <= 100) ; 30% of time build a response unit
+  =>
+  (set-goal main-or-response-unit RESPONSE)
+  (chat-local-to-self "a 30% main-or-response set to RESPONSE")
+)
+
+(defrule
+  (goal responding-to-threat YES)
+  (goal large-enemy-threat YES)
+  (not (goal enemy-threat NO))
+  (goal main-or-response-unit MAIN)
+  (random-number <= 20) ; 50% of time build a response unit for large threats
+  =>
+  (set-goal main-or-response-unit RESPONSE)
+  (chat-local-to-self "a 20% m-o-r set to RESPONSE for large threat")
+)
+
+; Navies are uniform (except VIKINGS, who get no fire-ships,
+; but have longboats).
+
+(defrule
+  (goal main-or-response-unit BOAT)
+  =>
+  (generate-random-number 100)
+)
+
+; Navy will be 35% galley, 30% fireship (longboat), 
+; 30% cannon-galleon, 5% demo
+(defrule
+  (goal main-or-response-unit BOAT)
+  (random-number > 0)
+  (random-number <= 35)
+  (can-train galley-line)
+  =>
+  (train galley-line)
+  (chat-local-to-self "build galley")
+  (set-goal main-or-response-unit MAIN)
+)
+
+#load-if-defined VIKING-CIV
+(defrule
+  (goal main-or-response-unit BOAT)
+  (random-number > 35)
+  (random-number <= 65)
+  (can-train longboat-line)
+  =>
+  (train longboat-line)
+  (chat-local-to-self "build longboat")
+  (set-goal main-or-response-unit MAIN)
+)
+#else
+
+(defrule
+  (goal main-or-response-unit BOAT)
+  (random-number > 35)
+  (random-number <= 65)
+  (can-train fire-ship-line)
+  =>
+  (train fire-ship-line)
+  (chat-local-to-self "build fire-ship")
+  (set-goal main-or-response-unit MAIN)
+)
+
+#end-if
+
+(defrule
+  (goal main-or-response-unit BOAT)
+  (random-number > 65)
+  (random-number <= 100)
+  (can-train cannon-galleon-line)
+  =>
+  (train cannon-galleon-line)
+  (chat-local-to-self "build cannon-galleon")
+  (set-goal main-or-response-unit MAIN)
+)
+
+; Responding to large threats...
+(defrule
+  (goal main-or-response-unit RESPONSE)
+  (goal large-enemy-threat YES)
+  (unit-type-count-total mangonel-line < 4)
+  (military-population >= medium-easy-unit-threat)
+  (can-train mangonel-line)
+  =>
+  (train mangonel-line)
+  (chat-local-to-self "large threat, mangonel")
+  (set-goal main-or-response-unit MAIN)
+)
+
+; castle/tower
+(defrule 
+  (or (players-building-type-count any-enemy watch-tower-line >= 1)
+      (players-building-type-count any-enemy castle >= 1))
+  (unit-type-count-total battering-ram-line < 3)
+  (military-population > medium-easy-unit-threat)
+  (can-train battering-ram-line)
+  =>		
+  (train battering-ram-line)
+  (chat-local-to-self "found castle/tower threat")
+)
+
+(defrule
+  (goal large-enemy-threat YES)
+  =>
+  (set-goal large-enemy-threat NO)
+)
+
+;*********************************************************
+; Many thanks to Michael D. Eschner.  Most of the 
+; civ-specific main combat arms are from his code.  I
+; have modified a few of them, however.  Also, I added
+; support for response units (which get built 20% of the
+; time).
+;*********************************************************
+#load-if-defined AZTEC-CIV
+;train eagles, champs, mangs, priests
+(defrule
+  (true)
+  =>
+  (set-goal infantry-upgrades HI-PRIORITY)
+  (set-goal archer-upgrades MED-PRIORITY)
+  (set-goal cav-upgrades LOW-PRIORITY)
+  (disable-self)
+)
+
+(defconst primary-mil-research my-unique-research)
+(defconst secondary-mil-research ri-champion)
+(defconst tertiary-mil-research ri-elite-eagle-warrior)
+
+(defconst num-barracks    7)
+(defconst num-archeries   3)
+(defconst num-stables     0)
+(defconst num-workshops   4)
+(defconst num-monastaries 5)
+
+; --------------------------------------------------
+; Aztec Combat Arm
+; --------------------------------------------------
+(defconst mil-unit1-mix 30)
+(defconst mil-unit2-mix 50)
+(defconst mil-unit3-mix 70)
+(defconst mil-unit4-mix 80)
+(defconst mil-unit1 militiaman-line)
+(defconst mil-unit2 eagle-warrior-line)
+(defconst mil-unit3 monk)
+(defconst mil-unit4 mangonel-line)
+
+(defconst MONKRESPONSE eagle-warrior-line)
+(defconst WARWAGONRESPONSE eagle-warrior-line)
+(defconst EAGLERESPONSE militiaman-line)
+(defconst HUSKARLRESPONSE militiaman-line)
+(defconst INFANTRYRESPONSE archer-line)
+(defconst TKRESPONSE archer-line)
+(defconst CAMELRESPONSE spearman-line)
+(defconst CAVALRYRESPONSE spearman-line)
+(defconst ELEPHANTRESPONSE spearman-line)
+(defconst CAVARCHERRESPONSE archer-line)
+(defconst SKIRMISHERRESPONSE eagle-warrior-line)
+(defconst ARCHERRESPONSE eagle-warrior-line)
+(defconst SIEGERESPONSE eagle-warrior-line)
+(defconst PIKERESPONSE archer-line)
+
+#end-if ; AZTEC
+
+#load-if-defined BRITON-CIV
+;train longbows, pike, infantry
+(defrule
+  (true)
+  =>
+  (set-goal infantry-upgrades MED-PRIORITY)
+  (set-goal archer-upgrades HI-PRIORITY)
+  (set-goal cav-upgrades LOW-PRIORITY)
+  (disable-self)
+)
+
+(defconst primary-mil-research my-unique-research)
+(defconst secondary-mil-research my-unique-unit-upgrade)
+(defconst tertiary-mil-research ri-halberdier)
+
+(defconst num-barracks    5)
+(defconst num-archeries   5)
+(defconst num-stables     3)
+(defconst num-workshops   2)
+(defconst num-monastaries 2)
+
+; --------------------------------------------------
+; British Combat Arm (MAIN)
+; --------------------------------------------------
+(defconst mil-unit1-mix 30)
+(defconst mil-unit2-mix 50)
+(defconst mil-unit3-mix 70)
+(defconst mil-unit4-mix 80)
+(defconst mil-unit1 my-unique-unit-line)
+(defconst mil-unit2 militiaman-line)
+(defconst mil-unit3 knight-line)
+(defconst mil-unit4 archer-line)
+
+(defconst MONKRESPONSE scout-cavalry-line)
+(defconst WARWAGONRESPONSE my-unique-unit-line)
+(defconst EAGLERESPONSE knight-line)
+(defconst HUSKARLRESPONSE militiaman-line)
+(defconst INFANTRYRESPONSE archer-line)
+(defconst TKRESPONSE archer-line)
+(defconst CAMELRESPONSE spearman-line)
+(defconst CAVALRYRESPONSE spearman-line)
+(defconst ELEPHANTRESPONSE spearman-line)
+(defconst CAVARCHERRESPONSE archer-line)
+(defconst SKIRMISHERRESPONSE knight-line)
+(defconst ARCHERRESPONSE skirmisher-line)
+(defconst SIEGERESPONSE knight-line)
+(defconst PIKERESPONSE archer-line)
+
+#end-if ; end BRITONS
+
+#load-if-defined BYZANTINE-CIV
+; cats. camel, infantry, knight
+(defrule
+  (true)
+  =>
+  (set-goal infantry-upgrades LOW-PRIORITY)
+  (set-goal archer-upgrades MED-PRIORITY)
+  (set-goal cav-upgrades HI-PRIORITY)
+  (disable-self)
+)
+
+(defconst primary-mil-research my-unique-research)
+(defconst secondary-mil-research my-unique-unit-upgrade)
+(defconst tertiary-mil-research ri-theocracy)
+
+(defconst num-barracks    3)
+(defconst num-archeries   2)
+(defconst num-stables     5)
+(defconst num-workshops   2)
+(defconst num-monastaries 3)
+
+; --------------------------------------------------
+; Byz Combat Arm (MAIN)
+; --------------------------------------------------
+(defconst mil-unit1-mix 20)
+(defconst mil-unit2-mix 40)
+(defconst mil-unit3-mix 60)
+(defconst mil-unit4-mix 80)
+(defconst mil-unit1 my-unique-unit-line)
+(defconst mil-unit2 camel-line)
+(defconst mil-unit3 knight-line)
+(defconst mil-unit4 militiaman-line)
+
+(defconst MONKRESPONSE scout-cavalry-line)
+(defconst WARWAGONRESPONSE camel-line)
+(defconst EAGLERESPONSE knight-line)
+(defconst HUSKARLRESPONSE militiaman-line)
+(defconst INFANTRYRESPONSE archer-line)
+(defconst TKRESPONSE cavalry-archer-line)
+(defconst CAMELRESPONSE camel-line)
+(defconst CAVALRYRESPONSE camel-line)
+(defconst ELEPHANTRESPONSE spearman-line)
+(defconst CAVARCHERRESPONSE archer-line)
+(defconst SKIRMISHERRESPONSE knight-line)
+(defconst ARCHERRESPONSE skirmisher-line)
+(defconst SIEGERESPONSE knight-line)
+(defconst PIKERESPONSE archer-line)
+
+#end-if ; end BYZ
+
+#load-if-defined CELTIC-CIV
+; train woad raiders, paladins, horse archers, scorps
+(defrule
+  (true)
+  =>
+  (set-goal infantry-upgrades HI-PRIORITY)
+  (set-goal archer-upgrades LOW-PRIORITY)
+  (set-goal cav-upgrades MED-PRIORITY)
+  (disable-self)
+)
+
+(defconst primary-mil-research my-unique-research)
+(defconst secondary-mil-research my-unique-unit-upgrade)
+(defconst tertiary-mil-research ri-paladin)
+
+(defconst num-barracks    2)
+(defconst num-archeries   2)
+(defconst num-stables     5)
+(defconst num-workshops   4)
+(defconst num-monastaries 2)
+
+; --------------------------------------------------
+; Celt Combat Arm (MAIN)
+; --------------------------------------------------
+(defconst mil-unit1-mix 30)
+(defconst mil-unit2-mix 50)
+(defconst mil-unit3-mix 70)
+(defconst mil-unit4-mix 80)
+(defconst mil-unit1 my-unique-unit-line)
+(defconst mil-unit2 knight-line)
+(defconst mil-unit3 scorpion-line)
+(defconst mil-unit4 mangonel-line)
+
+(defconst MONKRESPONSE scout-cavalry-line)
+(defconst WARWAGONRESPONSE scout-cavalry-line)
+(defconst EAGLERESPONSE knight-line)
+(defconst HUSKARLRESPONSE militiaman-line)
+(defconst INFANTRYRESPONSE archer-line)
+(defconst TKRESPONSE archer-line)
+(defconst CAMELRESPONSE spearman-line)
+(defconst CAVALRYRESPONSE spearman-line)
+(defconst ELEPHANTRESPONSE spearman-line)
+(defconst CAVARCHERRESPONSE archer-line)
+(defconst SKIRMISHERRESPONSE knight-line)
+(defconst ARCHERRESPONSE skirmisher-line)
+(defconst SIEGERESPONSE knight-line)
+(defconst PIKERESPONSE archer-line)
+
+#end-if ; end CELTS
+
+#load-if-defined CHINESE-CIV
+; train cho-ko-nu, champs, knight/lt cav, scorps
+(defrule
+  (true)
+  =>
+  (set-goal infantry-upgrades MED-PRIORITY)
+  (set-goal archer-upgrades HI-PRIORITY)
+  (set-goal cav-upgrades LOW-PRIORITY)
+  (disable-self)
+)
+
+(defconst primary-mil-research ri-champion)
+(defconst secondary-mil-research ri-theocracy)
+(defconst tertiary-mil-research ri-thumb-ring)
+
+(defconst num-barracks    5)
+(defconst num-archeries   2)
+(defconst num-stables     2)
+(defconst num-workshops   2)
+(defconst num-monastaries 4)
+
+; --------------------------------------------------
+; Chinese Combat Arm (MAIN)
+; --------------------------------------------------
+(defconst mil-unit1-mix 30)
+(defconst mil-unit2-mix 50)
+(defconst mil-unit3-mix 70)
+(defconst mil-unit4-mix 80)
+(defconst mil-unit1 my-unique-unit-line)
+(defconst mil-unit2 militiaman-line)
+(defconst mil-unit3 spearman-line)
+(defconst mil-unit4 monk)
+
+(defconst MONKRESPONSE scout-cavalry-line)
+(defconst WARWAGONRESPONSE scout-cavalry-line)
+(defconst EAGLERESPONSE knight-line)
+(defconst HUSKARLRESPONSE militiaman-line)
+(defconst INFANTRYRESPONSE archer-line)
+(defconst TKRESPONSE archer-line)
+(defconst CAMELRESPONSE camel-line)
+(defconst CAVALRYRESPONSE camel-line)
+(defconst ELEPHANTRESPONSE spearman-line)
+(defconst CAVARCHERRESPONSE archer-line)
+(defconst SKIRMISHERRESPONSE knight-line)
+(defconst ARCHERRESPONSE skirmisher-line)
+(defconst SIEGERESPONSE knight-line)
+(defconst PIKERESPONSE archer-line)
+
+#end-if ; end CHINESE
+
+#load-if-defined FRANKISH-CIV
+; Ax-thrower, knight, bombard-cannon
+(defrule
+  (true)
+  =>
+  (set-goal infantry-upgrades MED-PRIORITY)
+  (set-goal archer-upgrades LOW-PRIORITY)
+  (set-goal cav-upgrades HI-PRIORITY)
+  (disable-self)
+)
+
+(defconst primary-mil-research ri-paladin)
+(defconst secondary-mil-research my-unique-unit-upgrade)
+(defconst tertiary-mil-research my-unique-research)
+
+(defconst num-barracks    5)
+(defconst num-archeries   2)
+(defconst num-stables     5)
+(defconst num-workshops   2)
+(defconst num-monastaries 4)
+
+; --------------------------------------------------
+; Frank Combat Arm (MAIN)
+; --------------------------------------------------
+(defconst mil-unit1-mix 20)
+(defconst mil-unit2-mix 60)
+(defconst mil-unit3-mix 70)
+(defconst mil-unit4-mix 80)
+(defconst mil-unit1 my-unique-unit-line)
+(defconst mil-unit2 knight-line)
+(defconst mil-unit3 militiaman-line)
+(defconst mil-unit4 monk)
+
+(defconst MONKRESPONSE scout-cavalry-line)
+(defconst WARWAGONRESPONSE scout-cavalry-line)
+(defconst EAGLERESPONSE knight-line)
+(defconst HUSKARLRESPONSE my-unique-unit-line)
+(defconst INFANTRYRESPONSE hand-cannoneer)
+(defconst TKRESPONSE hand-cannoneer)
+(defconst CAMELRESPONSE spearman-line)
+(defconst CAVALRYRESPONSE spearman-line)
+(defconst ELEPHANTRESPONSE spearman-line)
+(defconst CAVARCHERRESPONSE archer-line)
+(defconst SKIRMISHERRESPONSE knight-line)
+(defconst ARCHERRESPONSE skirmisher-line)
+(defconst SIEGERESPONSE knight-line)
+(defconst PIKERESPONSE my-unique-unit-line)
+
+#end-if ; end FRANKS
+
+#load-if-defined GOTHIC-CIV
+; train huskarls, champs, archers, pike
+(defrule
+  (true)
+  =>
+  (set-goal infantry-upgrades HI-PRIORITY)
+  (set-goal archer-upgrades MED-PRIORITY)
+  (set-goal cav-upgrades LOW-PRIORITY)
+  (disable-self)
+)
+
+(defconst primary-mil-research my-unique-unit-upgrade)
+(defconst secondary-mil-research ri-champion)
+(defconst tertiary-mil-research ri-perfusion)
+
+(defconst num-barracks    7)
+(defconst num-archeries   3)
+(defconst num-stables     2)
+(defconst num-workshops   2)
+(defconst num-monastaries 2)
+
+; --------------------------------------------------
+; Goth Combat Arm (MAIN)
+; --------------------------------------------------
+(defconst mil-unit1-mix 25)
+(defconst mil-unit2-mix 50)
+(defconst mil-unit3-mix 70)
+(defconst mil-unit4-mix 80)
+(defconst mil-unit1 my-unique-unit-line)
+(defconst mil-unit2 militiaman-line)
+(defconst mil-unit3 archer-line)
+(defconst mil-unit4 spearman-line)
+
+; --------------------------------------------------
+; Goth Response Units
+; --------------------------------------------------
+(defconst MONKRESPONSE scout-cavalry-line)
+(defconst WARWAGONRESPONSE my-unique-unit-line)
+(defconst EAGLERESPONSE knight-line)
+(defconst HUSKARLRESPONSE militiaman-line)
+(defconst INFANTRYRESPONSE hand-cannoneer)
+(defconst TKRESPONSE hand-cannoneer)
+(defconst CAMELRESPONSE spearman-line)
+(defconst CAVALRYRESPONSE spearman-line)
+(defconst ELEPHANTRESPONSE spearman-line)
+(defconst CAVARCHERRESPONSE archer-line)
+(defconst SKIRMISHERRESPONSE knight-line)
+(defconst ARCHERRESPONSE skirmisher-line)
+(defconst SIEGERESPONSE knight-line)
+(defconst PIKERESPONSE archer-line)
+
+#end-if ; end GOTHS
+
+#load-if-defined HUN-CIV
+; train knight, cav-arch, lt cav, tark
+(defrule
+  (true)
+  =>
+  (set-goal infantry-upgrades LOW-PRIORITY)
+  (set-goal archer-upgrades MED-PRIORITY)
+  (set-goal cav-upgrades HI-PRIORITY)
+  (disable-self)
+)
+
+(defconst primary-mil-research ri-paladin)
+(defconst secondary-mil-research ri-heavy-cavalry-archer)
+(defconst tertiary-mil-research my-unique-unit-upgrade)
+
+(defconst num-barracks    2)
+(defconst num-archeries   4)
+(defconst num-stables     5)
+(defconst num-workshops   2)
+(defconst num-monastaries 2)
+
+; --------------------------------------------------
+; HUN Combat Arm (MAIN)
+; --------------------------------------------------
+(defconst mil-unit1-mix 10)
+(defconst mil-unit2-mix 40)
+(defconst mil-unit3-mix 60)
+(defconst mil-unit4-mix 80)
+(defconst mil-unit1 my-unique-unit-line)
+(defconst mil-unit2 knight-line)
+(defconst mil-unit3 scout-cavalry-line)
+(defconst mil-unit4 cavalry-archer-line)
+
+(defconst MONKRESPONSE scout-cavalry-line)
+(defconst WARWAGONRESPONSE scout-cavalry-line)
+(defconst EAGLERESPONSE knight-line)
+(defconst HUSKARLRESPONSE militiaman-line)
+(defconst INFANTRYRESPONSE archer-line)
+(defconst TKRESPONSE archer-line)
+(defconst CAMELRESPONSE spearman-line)
+(defconst CAVALRYRESPONSE spearman-line)
+(defconst ELEPHANTRESPONSE spearman-line)
+(defconst CAVARCHERRESPONSE archer-line)
+(defconst SKIRMISHERRESPONSE knight-line)
+(defconst ARCHERRESPONSE skirmisher-line)
+(defconst SIEGERESPONSE knight-line)
+(defconst PIKERESPONSE archer-line)
+
+#end-if ; end HUNS
+
+#load-if-defined JAPANESE-CIV
+; train samuri, archers/hand-cannoneer, monks, scorps, bombard-cannon
+(defrule
+  (true)
+  =>
+  (set-goal infantry-upgrades HI-PRIORITY)
+  (set-goal archer-upgrades MED-PRIORITY)
+  (set-goal cav-upgrades LOW-PRIORITY)
+  (disable-self)
+)
+
+(defconst primary-mil-research my-unique-unit-upgrade)
+(defconst secondary-mil-research ri-champion)
+(defconst tertiary-mil-research ri-theocracy)
+
+(defconst num-barracks    5)
+(defconst num-archeries   2)
+(defconst num-stables     3)
+(defconst num-workshops   2)
+(defconst num-monastaries 4)
+
+; --------------------------------------------------
+; Japanese Combat Arm (MAIN)
+; --------------------------------------------------
+(defconst mil-unit1-mix 40)
+(defconst mil-unit2-mix 60)
+(defconst mil-unit3-mix 70)
+(defconst mil-unit4-mix 80)
+(defconst mil-unit1 my-unique-unit-line)
+(defconst mil-unit2 militiaman-line)
+(defconst mil-unit3 monk)
+(defconst mil-unit4 knight-line)
+
+(defconst MONKRESPONSE scout-cavalry-line)
+(defconst WARWAGONRESPONSE spearman-line)
+(defconst EAGLERESPONSE knight-line)
+(defconst HUSKARLRESPONSE my-unique-unit-line)
+(defconst INFANTRYRESPONSE archer-line)
+(defconst TKRESPONSE archer-line)
+(defconst CAMELRESPONSE spearman-line)
+(defconst CAVALRYRESPONSE spearman-line)
+(defconst ELEPHANTRESPONSE spearman-line)
+(defconst CAVARCHERRESPONSE archer-line)
+(defconst SKIRMISHERRESPONSE knight-line)
+(defconst ARCHERRESPONSE skirmisher-line)
+(defconst SIEGERESPONSE knight-line)
+(defconst PIKERESPONSE archer-line)
+
+#end-if ; end JAPANESE
+
+#load-if-defined KOREAN-CIV
+; train pike, war-wagon, mangonels
+(defrule
+  (true)
+  =>
+  (set-goal infantry-upgrades MED-PRIORITY)
+  (set-goal archer-upgrades HI-PRIORITY)
+  (set-goal cav-upgrades LOW-PRIORITY)
+  (disable-self)
+)
+
+(defconst primary-mil-research my-unique-unit-upgrade)
+(defconst secondary-mil-research my-unique-research)
+(defconst tertiary-mil-research ri-halberdier)
+
+(defconst num-barracks    5)
+(defconst num-archeries   2)
+(defconst num-stables     2)
+(defconst num-workshops   4)
+(defconst num-monastaries 4)
+
+; --------------------------------------------------
+; KOREAN Combat Arm (MAIN)
+; --------------------------------------------------
+(defconst mil-unit1-mix 40)
+(defconst mil-unit2-mix 60)
+(defconst mil-unit3-mix 70)
+(defconst mil-unit4-mix 80)
+(defconst mil-unit1 my-unique-unit-line)
+(defconst mil-unit2 spearman-line)
+(defconst mil-unit3 monk)
+(defconst mil-unit4 mangonel-line)
+
+(defconst MONKRESPONSE scout-cavalry-line)
+(defconst WARWAGONRESPONSE war-wagon-line)
+(defconst EAGLERESPONSE knight-line)
+(defconst HUSKARLRESPONSE militiaman-line)
+(defconst INFANTRYRESPONSE archer-line)
+(defconst TKRESPONSE archer-line)
+(defconst CAMELRESPONSE spearman-line)
+(defconst CAVALRYRESPONSE spearman-line)
+(defconst ELEPHANTRESPONSE spearman-line)
+(defconst CAVARCHERRESPONSE archer-line)
+(defconst SKIRMISHERRESPONSE knight-line)
+(defconst ARCHERRESPONSE skirmisher-line)
+(defconst SIEGERESPONSE knight-line)
+(defconst PIKERESPONSE archer-line)
+
+#end-if ; end KOREAN
+
+#load-if-defined MAYAN-CIV
+;train eagles, plumed archers, archers
+(defrule
+  (true)
+  =>
+  (set-goal infantry-upgrades MED-PRIORITY)
+  (set-goal archer-upgrades HI-PRIORITY)
+  (set-goal cav-upgrades LOW-PRIORITY)
+  (disable-self)
+)
+
+(defconst primary-mil-research my-unique-unit-upgrade)
+(defconst secondary-mil-research my-unique-research)
+(defconst tertiary-mil-research ri-elite-eagle-warrior)
+
+(defconst num-barracks    4)
+(defconst num-archeries   4)
+(defconst num-stables     0)
+(defconst num-workshops   2)
+(defconst num-monastaries 2)
+
+; --------------------------------------------------
+; Mayan Combat Arm (MAIN)
+; --------------------------------------------------
+(defconst mil-unit1-mix 30)
+(defconst mil-unit2-mix 55)
+(defconst mil-unit3-mix 70)
+(defconst mil-unit4-mix 80)
+(defconst mil-unit1 my-unique-unit-line)
+(defconst mil-unit2 eagle-warrior-line)
+(defconst mil-unit3 archer-line)
+(defconst mil-unit4 monk)
+
+(defconst MONKRESPONSE eagle-warrior-line)
+(defconst WARWAGONRESPONSE eagle-warrior-line)
+(defconst EAGLERESPONSE militiaman-line)
+(defconst HUSKARLRESPONSE militiaman-line)
+(defconst INFANTRYRESPONSE archer-line)
+(defconst TKRESPONSE archer-line)
+(defconst CAMELRESPONSE spearman-line)
+(defconst CAVALRYRESPONSE spearman-line)
+(defconst ELEPHANTRESPONSE spearman-line)
+(defconst CAVARCHERRESPONSE archer-line)
+(defconst SKIRMISHERRESPONSE eagle-warrior-line)
+(defconst ARCHERRESPONSE eagle-warrior-line)
+(defconst SIEGERESPONSE eagle-warrior-line)
+(defconst PIKERESPONSE archer-line)
+
+#end-if ; MAYAN
+
+#load-if-defined MONGOL-CIV
+;train mangudai, cav-archer, lt-cav, infantry, scorp
+(defrule
+  (true)
+  =>
+  (set-goal infantry-upgrades LOW-PRIORITY)
+  (set-goal archer-upgrades HI-PRIORITY)
+  (set-goal cav-upgrades MED-PRIORITY)
+  (disable-self)
+)
+
+(defconst primary-mil-research my-unique-unit-upgrade)
+(defconst secondary-mil-research ri-champion)
+(defconst tertiary-mil-research ri-parthian-tactics)
+
+(defconst num-barracks    3)
+(defconst num-archeries   3)
+(defconst num-stables     3)
+(defconst num-workshops   3)
+(defconst num-monastaries 2)
+
+; --------------------------------------------------
+; Mongol Combat Arm (MAIN)
+; --------------------------------------------------
+(defconst mil-unit1-mix 30)
+(defconst mil-unit2-mix 50)
+(defconst mil-unit3-mix 70)
+(defconst mil-unit4-mix 80)
+(defconst mil-unit1 my-unique-unit-line)
+(defconst mil-unit2 scout-cavalry-line)
+(defconst mil-unit3 militiaman-line)
+(defconst mil-unit4 cavalry-archer-line)
+
+(defconst MONKRESPONSE scout-cavalry-line)
+(defconst WARWAGONRESPONSE camel-line)
+(defconst EAGLERESPONSE knight-line)
+(defconst HUSKARLRESPONSE militiaman-line)
+(defconst INFANTRYRESPONSE archer-line)
+(defconst TKRESPONSE cavalry-archer-line)
+(defconst CAMELRESPONSE camel-line)
+(defconst CAVALRYRESPONSE camel-line)
+(defconst ELEPHANTRESPONSE spearman-line)
+(defconst CAVARCHERRESPONSE archer-line)
+(defconst SKIRMISHERRESPONSE knight-line)
+(defconst ARCHERRESPONSE skirmisher-line)
+(defconst SIEGERESPONSE knight-line)
+(defconst PIKERESPONSE archer-line)
+
+#end-if ; end MONGOL
+
+#load-if-defined PERSIAN-CIV
+;train cav, archer/hand-cannon, ele, monk, scorp
+(defrule
+  (true)
+  =>
+  (set-goal infantry-upgrades LOW-PRIORITY)
+  (set-goal archer-upgrades MED-PRIORITY)
+  (set-goal cav-upgrades HI-PRIORITY)
+  (disable-self)
+)
+
+(defconst primary-mil-research my-unique-research)
+(defconst secondary-mil-research ri-paladin)
+(defconst tertiary-mil-research my-unique-unit-upgrade)
+
+(defconst num-barracks    2)
+(defconst num-archeries   5)
+(defconst num-stables     5)
+(defconst num-workshops   2)
+(defconst num-monastaries 2)
+
+; --------------------------------------------------
+; Persian Combat Arm (MAIN)
+; --------------------------------------------------
+(defconst mil-unit1-mix 10)
+(defconst mil-unit2-mix 50)
+(defconst mil-unit3-mix 70)
+(defconst mil-unit4-mix 80)
+(defconst mil-unit1 my-unique-unit-line)
+(defconst mil-unit2 knight-line)
+(defconst mil-unit3 hand-cannoneer)
+(defconst mil-unit4 archer-line)
+
+(defconst MONKRESPONSE scout-cavalry-line)
+(defconst WARWAGONRESPONSE camel-line)
+(defconst EAGLERESPONSE knight-line)
+(defconst HUSKARLRESPONSE militiaman-line)
+(defconst INFANTRYRESPONSE archer-line)
+(defconst TKRESPONSE cavalry-archer-line)
+(defconst CAMELRESPONSE camel-line)
+(defconst CAVALRYRESPONSE camel-line)
+(defconst ELEPHANTRESPONSE spearman-line)
+(defconst CAVARCHERRESPONSE archer-line)
+(defconst SKIRMISHERRESPONSE knight-line)
+(defconst ARCHERRESPONSE skirmisher-line)
+(defconst SIEGERESPONSE knight-line)
+(defconst PIKERESPONSE archer-line)
+
+#end-if  ; end PERSIAN
+
+#load-if-defined SARACEN-CIV
+; train mamelukes, champs, archer/hand-cannon
+(defrule
+  (true)
+  =>
+  (set-goal infantry-upgrades MED-PRIORITY)
+  (set-goal archer-upgrades HI-PRIORITY)
+  (set-goal cav-upgrades LOW-PRIORITY)
+  (disable-self)
+)
+
+(defconst primary-mil-research my-unique-research)
+(defconst secondary-mil-research my-unique-unit-upgrade)
+(defconst tertiary-mil-research ri-champion)
+
+(defconst num-barracks    4)
+(defconst num-archeries   3)
+(defconst num-stables     2)
+(defconst num-workshops   2)
+(defconst num-monastaries 3)
+
+; --------------------------------------------------
+; Saracen Combat Arm (MAIN)
+; --------------------------------------------------
+(defconst mil-unit1-mix 30)
+(defconst mil-unit2-mix 50)
+(defconst mil-unit3-mix 70)
+(defconst mil-unit4-mix 80)
+(defconst mil-unit1 my-unique-unit-line)
+(defconst mil-unit2 militiaman-line)
+(defconst mil-unit3 hand-cannoneer)
+(defconst mil-unit4 monk)
+
+(defconst MONKRESPONSE scout-cavalry-line)
+(defconst WARWAGONRESPONSE camel-line)
+(defconst EAGLERESPONSE knight-line)
+(defconst HUSKARLRESPONSE militiaman-line)
+(defconst INFANTRYRESPONSE archer-line)
+(defconst TKRESPONSE cavalry-archer-line)
+(defconst CAMELRESPONSE camel-line)
+(defconst CAVALRYRESPONSE camel-line)
+(defconst ELEPHANTRESPONSE spearman-line)
+(defconst CAVARCHERRESPONSE archer-line)
+(defconst SKIRMISHERRESPONSE knight-line)
+(defconst ARCHERRESPONSE skirmisher-line)
+(defconst SIEGERESPONSE knight-line)
+(defconst PIKERESPONSE archer-line)
+
+#end-if ; end SARACEN
+
+#load-if-defined SPANISH-CIV
+; train conqs, paladins, monks, scorps
+(defrule
+  (true)
+  =>
+  (set-goal infantry-upgrades MED-PRIORITY)
+  (set-goal archer-upgrades LOW-PRIORITY)
+  (set-goal cav-upgrades HI-PRIORITY)
+  (disable-self)
+)
+
+(defconst primary-mil-research ri-paladin)
+(defconst secondary-mil-research my-unique-unit-upgrade)
+(defconst tertiary-mil-research ri-theocracy)
+
+(defconst num-barracks    3)
+(defconst num-archeries   2)
+(defconst num-stables     4)
+(defconst num-workshops   2)
+(defconst num-monastaries 3)
+
+; --------------------------------------------------
+; Spanish Combat Arm (MAIN)
+; --------------------------------------------------
+(defconst mil-unit1-mix 20)
+(defconst mil-unit2-mix 60)
+(defconst mil-unit3-mix 70)
+(defconst mil-unit4-mix 80)
+(defconst mil-unit1 my-unique-unit-line)
+(defconst mil-unit2 knight-line)
+(defconst mil-unit3 missionary)
+(defconst mil-unit4 militiaman-line)
+
+(defconst MONKRESPONSE scout-cavalry-line)
+(defconst WARWAGONRESPONSE scout-cavalry-line)
+(defconst EAGLERESPONSE knight-line)
+(defconst HUSKARLRESPONSE militiaman-line)
+(defconst INFANTRYRESPONSE my-unique-unit-line)
+(defconst TKRESPONSE my-unique-unit-line)
+(defconst CAMELRESPONSE spearman-line)
+(defconst CAVALRYRESPONSE spearman-line)
+(defconst ELEPHANTRESPONSE spearman-line)
+(defconst CAVARCHERRESPONSE skirmisher-line)
+(defconst SKIRMISHERRESPONSE knight-line)
+(defconst ARCHERRESPONSE skirmisher-line)
+(defconst SIEGERESPONSE knight-line)
+(defconst PIKERESPONSE militiaman-line)
+
+#end-if ; end SPANISH
+
+#load-if-defined TEUTONIC-CIV
+; train tks, paladins, monks, scorps, bombard-cannon
+(defrule
+  (true)
+  =>
+  (set-goal infantry-upgrades HI-PRIORITY)
+  (set-goal archer-upgrades LOW-PRIORITY)
+  (set-goal cav-upgrades MED-PRIORITY)
+  (disable-self)
+)
+
+(defconst primary-mil-research ri-paladin)
+(defconst secondary-mil-research my-unique-unit-upgrade)
+(defconst tertiary-mil-research ri-theocracy)
+
+(defconst num-barracks    3)
+(defconst num-archeries   2)
+(defconst num-stables     4)
+(defconst num-workshops   2)
+(defconst num-monastaries 3)
+
+; --------------------------------------------------
+; Teuton Combat Arm (MAIN)
+; --------------------------------------------------
+(defconst mil-unit1-mix 30)
+(defconst mil-unit2-mix 60)
+(defconst mil-unit3-mix 70)
+(defconst mil-unit4-mix 80)
+(defconst mil-unit1 my-unique-unit-line)
+(defconst mil-unit2 knight-line)
+(defconst mil-unit3 monk)
+(defconst mil-unit4 militiaman-line)
+
+(defconst MONKRESPONSE scout-cavalry-line)
+(defconst WARWAGONRESPONSE scout-cavalry-line)
+(defconst EAGLERESPONSE knight-line)
+(defconst HUSKARLRESPONSE militiaman-line)
+(defconst INFANTRYRESPONSE archer-line)
+(defconst TKRESPONSE archer-line)
+(defconst CAMELRESPONSE spearman-line)
+(defconst CAVALRYRESPONSE spearman-line)
+(defconst ELEPHANTRESPONSE spearman-line)
+(defconst CAVARCHERRESPONSE archer-line)
+(defconst SKIRMISHERRESPONSE knight-line)
+(defconst ARCHERRESPONSE skirmisher-line)
+(defconst SIEGERESPONSE knight-line)
+(defconst PIKERESPONSE archer-line)
+
+#end-if ; end TEUTONS
+
+#load-if-defined TURKISH-CIV
+;train janissary, lt cav, infantry, scorpions, bombard-cannon
+(defrule
+  (true)
+  =>
+  (set-goal infantry-upgrades MED-PRIORITY)
+  (set-goal archer-upgrades HI-PRIORITY)
+  (set-goal cav-upgrades HI-PRIORITY)
+  (disable-self)
+)
+
+(defconst primary-mil-research my-unique-unit-upgrade)
+(defconst secondary-mil-research ri-champion)
+(defconst tertiary-mil-research ri-theocracy)
+
+(defconst num-barracks    4)
+(defconst num-archeries   2)
+(defconst num-stables     4)
+(defconst num-workshops   2)
+(defconst num-monastaries 3)
+
+; --------------------------------------------------
+; Turk Combat Arm (MAIN)
+; --------------------------------------------------
+(defconst mil-unit1-mix 40)
+(defconst mil-unit2-mix 60)
+(defconst mil-unit3-mix 70)
+(defconst mil-unit4-mix 80)
+(defconst mil-unit1 my-unique-unit-line)
+(defconst mil-unit2 scout-cavalry-line)
+(defconst mil-unit3 monk)
+(defconst mil-unit4 militiaman-line)
+
+(defconst MONKRESPONSE scout-cavalry-line)
+(defconst WARWAGONRESPONSE camel-line)
+(defconst EAGLERESPONSE knight-line)
+(defconst HUSKARLRESPONSE militiaman-line)
+(defconst INFANTRYRESPONSE archer-line)
+(defconst TKRESPONSE cavalry-archer-line)
+(defconst CAMELRESPONSE camel-line)
+(defconst CAVALRYRESPONSE camel-line)
+(defconst ELEPHANTRESPONSE camel-line)
+(defconst CAVARCHERRESPONSE archer-line)
+(defconst SKIRMISHERRESPONSE knight-line)
+(defconst ARCHERRESPONSE scout-cavalry-line)
+(defconst SIEGERESPONSE knight-line)
+(defconst PIKERESPONSE archer-line)
+
+#end-if ; end TURK
+
+#load-if-defined VIKING-CIV
+; train berserk, archers, lt cav, monks, scorps, bombard-cannon
+(defrule
+  (true)
+  =>
+  (set-goal infantry-upgrades HI-PRIORITY)
+  (set-goal archer-upgrades MED-PRIORITY)
+  (set-goal cav-upgrades LOW-PRIORITY)
+  (disable-self)
+)
+
+(defconst primary-mil-research ri-elite-berserk)
+(defconst secondary-mil-research ri-arbalest)
+(defconst tertiary-mil-research ri-thumb-ring)
+
+(defconst num-barracks    4)
+(defconst num-archeries   3)
+(defconst num-stables     3)
+(defconst num-workshops   2)
+(defconst num-monastaries 2)
+
+; --------------------------------------------------
+; Viking Combat Arm (MAIN)
+; --------------------------------------------------
+(defconst mil-unit1-mix 30)
+(defconst mil-unit2-mix 50)
+(defconst mil-unit3-mix 70)
+(defconst mil-unit4-mix 80)
+(defconst mil-unit1 berserk-line)
+(defconst mil-unit2 archer-line)
+(defconst mil-unit3 militiaman-line)
+(defconst mil-unit4 knight-line)
+
+(defconst MONKRESPONSE scout-cavalry-line)
+(defconst WARWAGONRESPONSE scout-cavalry-line)
+(defconst EAGLERESPONSE knight-line)
+(defconst HUSKARLRESPONSE militiaman-line)
+(defconst INFANTRYRESPONSE archer-line)
+(defconst TKRESPONSE archer-line)
+(defconst CAMELRESPONSE spearman-line)
+(defconst CAVALRYRESPONSE spearman-line)
+(defconst ELEPHANTRESPONSE spearman-line)
+(defconst CAVARCHERRESPONSE archer-line)
+(defconst SKIRMISHERRESPONSE knight-line)
+(defconst ARCHERRESPONSE skirmisher-line)
+(defconst SIEGERESPONSE knight-line)
+(defconst PIKERESPONSE archer-line)
+
+#end-if ; end VIKING
+
+; ***********************************************************************
+; Build main military
+; ***********************************************************************
+(defrule
+  (goal main-or-response-unit MAIN)
+  =>
+  (generate-random-number 100)
+)
+
+#load-if-not-defined GOTHIC-CIV
+(defrule
+  (goal main-or-response-unit MAIN)
+  (random-number > 0)
+  (random-number <= mil-unit1-mix)
+  (can-train mil-unit1)
+  =>
+  (train mil-unit1)
+  (chat-local-to-self "Main mil unit")
+)
+#else
+; Goths are special; if my-unique-research (Anarchy) is researched, 
+; try to flood from barracks using barracks-huskarl and 
+; barracks-elite-huskarl (defined in slak_UndocumentedConstants)
+(defrule
+  (goal main-or-response-unit MAIN)
+  (random-number > 0)
+  (random-number <= mil-unit1-mix)
+  (not (research-completed my-unique-research)) ; Anarchy
+  (can-train mil-unit1)
+  =>
+  (train mil-unit1)
+  (chat-local-to-self "Main mil unit")
+)
+
+(defrule
+  (goal main-or-response-unit MAIN)
+  (random-number > 0)
+  (random-number <= mil-unit1-mix)
+  (research-completed my-unique-research)       ; Anarchy
+  (can-train barracks-huskarl)
+  =>
+  (train barracks-huskarl)
+  (chat-local-to-self "Main mil unit (barracks-huskarl)")
+)
+
+(defrule
+  (goal main-or-response-unit MAIN)
+  (random-number > 0)
+  (random-number <= mil-unit1-mix)
+  (research-completed my-unique-research)       ; Anarchy
+  (can-train barracks-elite-huskarl)
+  =>
+  (train barracks-elite-huskarl)
+  (chat-local-to-self "Main mil unit (barracks-elite-huskarl)")
+)
+#end-if
+
+(defrule
+  (goal main-or-response-unit MAIN)
+  (random-number > mil-unit1-mix)
+  (random-number <= mil-unit2-mix)
+  (can-train mil-unit2)
+  =>
+  (train mil-unit2)
+  (chat-local-to-self "Second mil unit")
+)
+
+(defrule
+  (goal main-or-response-unit MAIN)
+  (random-number > mil-unit2-mix)
+  (random-number <= mil-unit3-mix)
+  (can-train mil-unit3)
+  =>
+  (train mil-unit3)
+  (chat-local-to-self "Third mil unit")
+) 
+
+(defrule
+  (goal main-or-response-unit MAIN)
+  (random-number > mil-unit3-mix)
+  (random-number <= mil-unit4-mix)
+  (can-train mil-unit4)
+  =>
+  (train mil-unit4)
+  (chat-local-to-self "Fourth mil unit")
+)
+
+(defrule
+  (not (town-under-attack))
+  (goal main-or-response-unit MAIN)
+  (random-number > mil-unit4-mix)
+  (random-number <= 100)
+  (not (can-train trebuchet))
+  (players-building-type-count any-enemy castle > 0)
+  (unit-type-count-total petard < 6)
+  (military-population > medium-easy-unit-threat)
+  (can-train petard)
+  =>
+  (train petard)
+  (chat-local-to-self "petard")
+)
+
+(defrule
+  (not (town-under-attack))
+  (goal main-or-response-unit MAIN)
+  (random-number > mil-unit4-mix)
+  (random-number <= 100)
+  (military-population > medium-easy-unit-threat)
+  (can-train trebuchet)
+  =>
+  (train trebuchet)
+  (chat-local-to-self "treb")
+)
+
+; ***********************************************************************
+; Response Control
+; ***********************************************************************
+(defrule
+  (goal main-or-response-unit RESPONSE)
+  (goal enemy-threat MONK)
+  (can-train MONKRESPONSE)
+  =>
+  (train MONKRESPONSE)
+  (chat-local-to-self "Responding to enemy MONKS")
+  (set-goal main-or-response-unit MAIN)
+  (set-goal responding-to-threat NO)
+)
+
+(defrule
+  (goal main-or-response-unit RESPONSE)
+  (goal enemy-threat WARWAGON)
+  (can-train WARWAGONRESPONSE)
+  =>
+  (train WARWAGONRESPONSE)
+  (chat-local-to-self "Responding to enemy WARWAGON")
+  (set-goal main-or-response-unit MAIN)
+  (set-goal responding-to-threat NO)
+)
+
+(defrule
+  (goal main-or-response-unit RESPONSE)
+  (goal enemy-threat EAGLE)
+  (can-train EAGLERESPONSE)
+  =>
+  (train EAGLERESPONSE)
+  (chat-local-to-self "Responding to enemy EAGLES.")
+  (set-goal main-or-response-unit MAIN)
+  (set-goal responding-to-threat NO)
+)
+
+(defrule
+  (goal main-or-response-unit RESPONSE)
+  (goal enemy-threat HUSKARL)
+  (can-train HUSKARLRESPONSE)
+  =>
+  (train HUSKARLRESPONSE)
+  (chat-local-to-self "Responding to enemy HUSKARL")
+  (set-goal main-or-response-unit MAIN)
+  (set-goal responding-to-threat NO)
+)
+
+(defrule
+  (goal main-or-response-unit RESPONSE)
+  (goal enemy-threat INFANTRY)
+  (can-train INFANTRYRESPONSE)
+  =>
+  (train INFANTRYRESPONSE)
+  (chat-local-to-self "Responding to enemy INFANTRY")
+  (set-goal main-or-response-unit MAIN)
+  (set-goal responding-to-threat NO)
+)
+
+(defrule
+  (goal main-or-response-unit RESPONSE)
+  (goal enemy-threat TK)
+  (can-train TKRESPONSE)
+  =>
+  (train TKRESPONSE)
+  (chat-local-to-self "Responding to enemy TK")
+  (set-goal main-or-response-unit MAIN)
+  (set-goal responding-to-threat NO)
+)
+
+(defrule
+  (goal main-or-response-unit RESPONSE)
+  (goal enemy-threat CAMEL)
+  (can-train CAMELRESPONSE)
+  =>
+  (train CAMELRESPONSE)
+  (chat-local-to-self "Responding to enemy camel")
+  (set-goal main-or-response-unit MAIN)
+  (set-goal responding-to-threat NO)
+)
+
+(defrule
+  (goal main-or-response-unit RESPONSE)
+  (goal enemy-threat CAVALRY)
+  (can-train CAVALRYRESPONSE)
+  =>
+  (train CAVALRYRESPONSE)
+  (chat-local-to-self "Responding to enemy cavalry")
+  (set-goal main-or-response-unit MAIN)
+  (set-goal responding-to-threat NO)
+)
+
+(defrule
+  (goal main-or-response-unit RESPONSE)
+  (goal enemy-threat ELEPHANT)
+  (can-train ELEPHANTRESPONSE)
+  =>
+  (train ELEPHANTRESPONSE)
+  (chat-local-to-self "Responding to enemy elephants")
+  (set-goal main-or-response-unit MAIN)
+  (set-goal responding-to-threat NO)
+)
+(defrule
+  (goal main-or-response-unit RESPONSE)
+  (or (goal enemy-threat CAVARCHER)
+      (goal enemy-threat MAMELUKE))
+  (can-train CAVARCHERRESPONSE)
+  =>
+  (train CAVARCHERRESPONSE)
+  (chat-local-to-self "Responding to enemy CAVARCHER/MAMELUKE")
+  (set-goal main-or-response-unit MAIN)
+  (set-goal responding-to-threat NO)
+)
+
+(defrule
+  (goal main-or-response-unit RESPONSE)
+  (goal enemy-threat SKIRMISHER)
+  (can-train SKIRMISHERRESPONSE)
+  =>
+  (train SKIRMISHERRESPONSE)
+  (chat-local-to-self "Responding to enemy SKIRMISHERS")
+  (set-goal main-or-response-unit MAIN)
+  (set-goal responding-to-threat NO)
+)
+
+(defrule
+  (goal main-or-response-unit RESPONSE)
+  (goal enemy-threat ARCHER)
+  (can-train ARCHERRESPONSE)
+  =>
+  (train ARCHERRESPONSE)
+  (chat-local-to-self "Responding to enemy ARCHERS")
+  (set-goal main-or-response-unit MAIN)
+  (set-goal responding-to-threat NO)
+)
+
+(defrule
+  (goal main-or-response-unit RESPONSE)
+  (goal enemy-threat PIKE)
+  (can-train PIKERESPONSE)
+  =>
+  (train PIKERESPONSE)
+  (chat-local-to-self "Responding to enemy PIKE")
+  (set-goal main-or-response-unit MAIN)
+  (set-goal responding-to-threat NO)
+)
+
+(defrule
+  (goal main-or-response-unit RESPONSE)
+  (goal enemy-threat SIEGE)
+  (can-train SIEGERESPONSE)
+  =>
+  (train SIEGERESPONSE)
+  (chat-local-to-self "Responding to SIEGE")
+  (set-goal main-or-response-unit MAIN)
+  (set-goal responding-to-threat NO)
+)
+
+; ***********************************************************************
+; Experimental rush detection code
+; ***********************************************************************
+; archers, pike and skirmishers indicate early attack coming
+(defrule
+  (current-age == feudal-age)
+  (goal main-or-response-unit NONE)
+  (unit-type-count-total enemy-units-attacking-me > 0)
+  =>
+  (chat-to-player every-ally "12")
+  (set-goal main-or-response-unit FEUDAL-DEF)
+  (chat-local-to-self "Going FEUDAL-DEF!!!")
+  (disable-self)
+)
+
+(defrule
+  (current-age == feudal-age)
+  (goal main-or-response-unit FEUDAL-DEF)
+  (town-under-attack)
+  =>
+  (chat-to-player every-ally "12")
+  (set-goal main-or-response-unit FEUDAL-DEF)
+  (chat-local-to-self "Going FEUDAL-DEF!!!")
+  (disable-self)
+)
+
+(defrule
+  (current-age == feudal-age)
+  (goal main-or-response-unit NONE)
+  (town-under-attack)
+  =>
+  (chat-to-player every-ally "12")
+  (set-goal main-or-response-unit FEUDAL-DEF)
+  (chat-local-to-self "Going FEUDAL-DEF!!!")
+  (disable-self)
+)
+
+(defrule
+  (current-age == feudal-age)
+  (goal main-or-response-unit NONE)
+  (enemy-buildings-in-town)
+  =>
+  (chat-to-player every-ally "12")
+  (set-goal main-or-response-unit FEUDAL-DEF)
+  (chat-local-to-self "Going FEUDAL-DEF!!!")
+  (disable-self)
+)
+
+(defrule
+  (taunt-detected any-ally 12)
+  (current-age == feudal-age)
+  (not (enemy-buildings-in-town))
+  =>
+  (acknowledge-taunt this-any-ally 12)
+  (chat-to-player this-any-ally "Will go FEUDAL-OFF")
+  (chat-local-to-self "Going FEUDAL-OFF to help ally")
+  (set-goal main-or-response-unit FEUDAL-OFF)
+)
+
+(defrule
+  (taunt-detected any-ally 12)
+  (current-age == feudal-age)
+  (enemy-buildings-in-town)
+  =>
+  (acknowledge-taunt this-any-ally 12)
+  (chat-to-player this-any-ally "Will go FEUDAL-DEF")
+  (chat-local-to-self "Going FEUDAL-DEF to help ally - enemy buildings")
+  (set-goal main-or-response-unit FEUDAL-DEF)
+)
+
+(defrule
+  (taunt-detected any-ally 12)
+  (current-age == castle-age)
+  (not (enemy-buildings-in-town))
+  =>
+  (acknowledge-taunt this-any-ally 12)
+  (chat-to-player this-any-ally "Already castled will go CASTLE-OFF")
+  (chat-local-to-self "Going CASTLE-OFF to help ally")
+  (set-goal main-or-response-unit CASTLE-OFF)
+)
+
+(defrule
+  (taunt-detected any-ally 12)
+  (current-age == castle-age)
+  (enemy-buildings-in-town)
+  =>
+  (acknowledge-taunt this-any-ally 12)
+  (chat-to-player this-any-ally "Already castled will go CASTLE-DEF")
+  (chat-local-to-self "Going CASTLE-DEF to help ally")
+  (set-goal main-or-response-unit CASTLE-DEF)
+)
+
+(defrule
+  (taunt-detected any-ally 12)
+  (current-age == imperial-age)
+  (military-population >= ten-percent-pop)
+  =>
+  (acknowledge-taunt this-any-ally 12)
+  (chat-to-player this-any-ally "Already imperial will attack")
+  (chat-local-to-self "Already imperial - will attack to help ally")
+  (set-goal attack-control ATTACK-OK)
+)
+
+(defrule
+  (taunt-detected any-ally 12)
+  (current-age == imperial-age)
+  (military-population < ten-percent-pop)
+  =>
+  (acknowledge-taunt this-any-ally 12)
+  (chat-to-player this-any-ally "Already imperial will attack")
+  (chat-local-to-self "Already imperial - will build troops...")
+  (set-goal main-or-response-unit MAIN)
+)
+
+(defrule
+  (goal main-or-response-unit FEUDAL-DEF)
+  =>
+  (disable-timer t-rush-check)
+  (enable-timer t-rush-check 45)
+  (disable-self)
+)
+
+(defrule
+  (timer-triggered t-rush-check)
+  (goal main-or-response-unit FEUDAL-DEF)
+  (or (town-under-attack)
+      (or (enemy-buildings-in-town)
+	  (unit-type-count-total enemy-units-attacking-me > 5)))
+  =>
+  (chat-to-player every-ally "31")
+)
+
+(defrule
+  (timer-triggered t-rush-check)
+  =>
+  (disable-timer t-rush-check)
+  (enable-timer t-rush-check 45)
+)
+
+(defrule
+  (taunt-detected any-ally 31)
+  (or (goal main-or-response-unit FEUDAL-OFF)
+      (goal main-or-response-unit FEUDAL-DEF))
+  (military-population < feudal-off-min-mil)
+  =>
+  (acknowledge-taunt this-any-ally 31)
+  (chat-to-player this-any-ally "I have insufficient military to help")
+)
+
+(defrule
+  (taunt-detected any-ally 31)
+  (or (goal main-or-response-unit CASTLE-OFF)
+      (goal main-or-response-unit CASTLE-DEF))
+  (military-population < castle-off-min-mil)
+  =>
+  (acknowledge-taunt this-any-ally 31)
+  (chat-to-player this-any-ally "I have insufficient military to help")
+)
+
+(defrule
+  (taunt-detected any-ally 31)
+  (or (goal main-or-response-unit FEUDAL-OFF)
+      (goal main-or-response-unit FEUDAL-DEF))
+  (military-population >= feudal-off-min-mil)
+  =>
+  (acknowledge-taunt this-any-ally 31)
+  (chat-to-player this-any-ally "I have insufficient military to help")
+  (set-goal attack-control AM-ATTACKING)
+)
+
+(defrule
+  (taunt-detected any-ally 31)
+  (or (goal main-or-response-unit CASTLE-OFF)
+      (goal main-or-response-unit CASTLE-DEF))
+  (military-population >= castle-off-min-mil)
+  =>
+  (acknowledge-taunt this-any-ally 31)
+  (chat-to-player this-any-ally "I have insufficient military to help")
+  (set-goal attack-control AM-ATTACKING)
+)
+
+; Duplicating attack now rule from bottom of file to make sure it executes
+(defrule
+  (goal attack-control AM-ATTACKING)
+  =>
+  (set-strategic-number sn-minimum-attack-group-size 1)
+  (set-strategic-number sn-maximum-attack-group-size 1)
+  (set-strategic-number sn-number-attack-groups 200)
+  (set-strategic-number sn-minimum-defend-group-size 0)
+  (set-strategic-number sn-maximum-defend-group-size 0)
+  (set-strategic-number sn-number-defend-groups 0)
+  (set-strategic-number sn-number-boat-defend-groups 0)
+  (chat-local-to-self "attack now!")
+  (attack-now)
+  (set-goal attack-control ATTACK-WAIT)
+)
+
+; ***********************************************************************
+; Attack control.
+;
+; Process flow:
+;
+;         ATTACK-WAIT -> ATTACK-PENDING -> ATTACK-OK -> AM-ATTACKING
+;              ^                                            V
+;              | <------------------------------------------<
+;
+; Several other conditions trigger the AM-ATTACKING state.  Under the
+; "normal" progression they are:
+;
+;   * In Castle age, once military population exceeds large-easy-unit
+;     an attack will be made 70% of the time.
+;   * In Imperial age, if military population exceeds large-easy-unit
+;     an attack will be made.
+;
+; There are other conditions which trigger AM-ATTACKING:
+;
+;   * Enemy control of relics and more than large-easy-unit military
+;   * Population hits maximum - has several other conditions
+;   * Enemy controls relics and in Imperial age.
+;   * Ally requests aid and are almost ready to attack.
+;   * Enemy has no towers or castle and military bigger than large-normal
+; ***********************************************************************
+; Normal progression
+(defrule
+  (current-age < castle-age)
+  =>
+  (set-goal attack-control ATTACK-WAIT)
+  (disable-self) ; NEW
+)
+
+(defrule
+  (current-age == castle-age)
+  (current-age-time > 180)
+  (current-age-time < 300)
+  (not (town-under-attack))          ; waiting to attack
+  (goal attack-control ATTACK-WAIT)
+  =>
+  (disable-timer t-attack)
+  (enable-timer t-attack 60)
+  (set-goal attack-control ATTACK-PENDING)
+)
+
+(defrule
+  (current-age == imperial-age)
+  (not (town-under-attack))          ; waiting to attack
+  (goal attack-control ATTACK-WAIT)
+  =>
+  (disable-timer t-attack)
+  (enable-timer t-attack 300)
+  (set-goal attack-control ATTACK-PENDING)
+)
+
+(defrule
+  (goal attack-control ATTACK-PENDING)
+  (timer-triggered t-attack)     ; attack
+  (not (town-under-attack))
+  =>
+  (set-goal attack-control ATTACK-OK)
+)
+
+(defrule
+  (town-under-attack)                ; We are under attack
+  =>
+  (set-goal attack-control UNDER-ATTACK)
+)
+
+(defrule
+  (town-under-attack)                ; We are under attack
+  (military-population >= large-easy-unit-threat)
+  =>
+  (set-goal research-allowed NO)
+)
+
+(defrule
+  (goal attack-control UNDER-ATTACK)
+  =>
+  (disable-timer t-attack)
+)
+
+(defrule
+  (goal attack-control UNDER-ATTACK)
+  (current-age == castle-age)
+  (goal main-or-response-unit CASTLE-DEF)
+  =>
+  (set-goal main-or-response-unit CASTLE-DEF)
+)
+
+(defrule
+  (goal attack-control UNDER-ATTACK)
+  (current-age == imperial-age)
+  (nor (goal main-or-response-unit MAIN)
+       (goal main-or-response-unit RESPONSE))
+  =>
+  (set-goal main-or-response-unit MAIN)
+)
+
+(defrule
+  (goal attack-control UNDER-ATTACK)
+  (not (town-under-attack))          ; No longer under attack
+  =>
+  (set-goal attack-control ATTACK-WAIT)
+  (set-goal research-allowed YES)
+)
+
+; if the enemy has control of relics, attack
+(defrule
+  (current-age == imperial-age)
+  (not (goal attack-control AM-ATTACKING))
+  (enemy-captured-relics)
+  (military-population >= large-easy-unit-threat)
+  =>
+  (chat-to-player every-ally "31")
+  (set-goal attack-control AM-ATTACKING)
+  (chat-local-to-self "relic attack")
+)
+
+(defrule
+  (goal attack-control ATTACK-OK)
+  (current-age == imperial-age)
+  (military-population >= large-easy-unit-threat)
+  =>
+  (chat-to-player every-ally "31")
+  (chat-local-to-self "attack now!")
+  (set-goal attack-control AM-ATTACKING)
+)
+
+(defrule
+  (goal attack-control ATTACK-OK)
+  (current-age == imperial-age)
+  (military-population < large-easy-unit-threat)
+  =>
+  (set-goal attack-control ATTACK-WAIT)
+  (chat-local-to-self "building up")
+)
+
+(defrule
+  (current-age == castle-age)
+  (goal attack-control ATTACK-OK)
+  =>
+  (generate-random-number 100)
+)
+
+(defrule
+  (goal attack-control ATTACK-OK)
+  (current-age == castle-age)
+  (military-population >= large-easy-unit-threat)
+  (random-number > 30)
+  =>
+  (chat-to-player every-ally "31")
+  (set-goal attack-control AM-ATTACKING)
+  (chat-local-to-self "attack now!")
+)
+
+(defrule
+  (goal attack-control ATTACK-OK)
+  (current-age == castle-age)
+  (or (military-population < large-easy-unit-threat)
+      (random-number <= 30))
+  =>
+  (set-goal attack-control ATTACK-WAIT)
+  (chat-local-to-self "building up")
+)
+
+(defrule
+  (current-age == imperial-age)
+  (game-time < panic-time)
+  (population >= pop-cap)            ; Clear population attack
+  (goal econ-research-done YES)      ; Finish Econ research
+  (not (goal attack-control AM-ATTACKING))
+  (not (research-available primary-mil-research))
+  (wood-amount > 300)                ; Make sure we can rebuild after attack
+  (food-amount > 200)
+  (gold-amount > 200)
+  =>
+  (chat-to-player every-ally "31")
+  (set-goal attack-control AM-ATTACKING)
+  (chat-local-to-self "pop-cap: attack now")
+)
+
+(defrule
+  (game-time >= panic-time)          ; panic time pop cap attack
+  (population >= pop-cap)            ; Clear population attack
+  (not (goal attack-control AM-ATTACKING)) ; wait for all research to complete
+  (not (research-available primary-mil-research))
+  (not (research-available secondary-mil-research))
+  (not (research-available tertiary-mil-research))
+  (gold-amount > 350)
+  =>
+  (chat-to-player every-ally "31")
+  (set-goal attack-control AM-ATTACKING)
+  (chat-local-to-self "pop-cap: attack now")
+)
+
+;(defrule  ; Newly commented out
+;  (goal attack-control AM-ATTACKING)
+;  (not (town-under-attack))          ; Reset attack
+;  =>
+;  (set-goal attack-control ATTACK-WAIT)
+;)
+
+(defrule
+  (taunt-detected any-ally 31)        ; Ally is requesting attack
+  (goal attack-control AM-ATTACKING)  ; Already attacking
+  =>
+  (acknowledge-taunt this-any-ally 31)
+  (chat-to-player this-any-ally "I am already on the offensive!")
+)
+
+(defrule
+  (taunt-detected any-ally 31)        ; Ally is requesting attack
+  (goal attack-control UNDER-ATTACK)  ; Have my own problems...
+  =>
+  (acknowledge-taunt this-any-ally 31)
+  (chat-to-player this-any-ally "I have problems of my own!")
+)
+
+(defrule
+  (taunt-detected any-ally 31)        ; Ally is requesting attack
+  (goal attack-control ATTACK-WAIT)   ; Not ready yet...
+  =>
+  (acknowledge-taunt this-any-ally 31)
+  (chat-to-player this-any-ally "I am not yet ready!")
+)
+
+(defrule
+  (taunt-detected any-ally 31)         ; Ally is requesting attack
+  (or (goal attack-control ATTACK-PENDING)
+      (goal attack-control ATTACK-OK)) ; Just about there....
+  (military-population >= large-easy-unit-threat)
+  =>
+  (set-goal attack-control AM-ATTACKING)
+  (acknowledge-taunt this-any-ally 31)
+  (chat-to-player this-any-ally "It's go time!")
+)
+
+(defrule
+  (taunt-detected any-ally 31)         ; Ally is requesting attack
+  (or (goal attack-control ATTACK-PENDING)
+      (goal attack-control ATTACK-OK)) ; Just about there....
+  (military-population < large-easy-unit-threat)
+  =>
+  (acknowledge-taunt this-any-ally 31)
+  (chat-to-player this-any-ally "Nearly there!")
+)
+
+(defrule
+  (enemy-captured-relics)
+  =>
+  (set-strategic-number sn-special-attack-type1 1)
+)
+
+(defrule
+  (not (enemy-captured-relics))
+  =>
+  (set-strategic-number sn-special-attack-type1 0)
+)
+
+(defrule
+  (not (goal attack-control AM-ATTACKING))
+  =>
+  (set-strategic-number sn-minimum-attack-group-size 0)
+  (set-strategic-number sn-maximum-attack-group-size 0)
+  (set-strategic-number sn-number-attack-groups 0)
+  (set-strategic-number sn-minimum-defend-group-size 1)
+  (set-strategic-number sn-maximum-defend-group-size 1)
+  (set-strategic-number sn-number-defend-groups 200)
+)
+
+(defrule
+  (goal attack-control AM-ATTACKING)
+  =>
+  (set-strategic-number sn-minimum-attack-group-size 1)
+  (set-strategic-number sn-maximum-attack-group-size 1)
+  (set-strategic-number sn-number-attack-groups 200)
+  (set-strategic-number sn-minimum-defend-group-size 0)
+  (set-strategic-number sn-maximum-defend-group-size 0)
+  (set-strategic-number sn-number-defend-groups 0)
+  (set-strategic-number sn-number-boat-defend-groups 0)
+  (chat-local-to-self "attack now!")
+  (attack-now)
+  (set-goal attack-control ATTACK-WAIT)
+)
+

@@ -1,0 +1,215 @@
+;concentrate on monastaries or not
+;go for monastaries
+(defrule
+	(enemy-captured-relics)
+=>
+	(set-strategic-number sn-special-attack-type1 1)
+)
+;stop attacking monastaries
+(defrule
+	(not (enemy-captured-relics))
+=>
+	(set-strategic-number sn-special-attack-type1 0)
+)
+
+; Military (ew flood)
+;research conscription asap
+(defrule
+	(can-research ri-conscription)
+=>
+	(chat-to-all "research conscription")
+	(research ri-conscription)
+)
+
+; build barracks
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(or
+	(or
+		(goal GOAL-START-THE-IMPERIAL-ARMY 1)
+		(wood-amount > 300)
+	)
+	(and (goal GOAL-MOBILISE-DEFENCE 1) (building-type-count-total barracks <= 3))
+	)
+	(building-type-count-total barracks <= 10)
+	(can-build barracks)
+=>
+;	(chat-to-all "build barracks")
+	(build barracks)
+)
+;prioritise this over building trebuchets
+(defrule
+	(unit-type-count-total eagle-warrior-line >= 15)
+	(can-research my-unique-research)
+=>
+	(chat-to-all "research eldorado")
+	(research my-unique-research)
+)
+;build trebuchet
+(defrule
+	;packed trebuchet
+	(unit-type-count-total trebuchet < 4)
+	;unpacked trebuchet
+	(unit-type-count-total 42 < 4)
+	(unit-type-count-total eagle-warrior-line >= 15)
+	(can-train trebuchet)
+=>
+	(train trebuchet)
+	(chat-to-all "train trebuchet")
+)
+
+;research elite eagle warrior
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(or (goal GOAL-MOBILISE-DEFENCE 1)
+		(goal GOAL-START-THE-IMPERIAL-ARMY 1))
+	(can-research ri-elite-eagle-warrior)
+=>
+	(chat-to-all "research elite-eagle-warrior")
+	(research ri-elite-eagle-warrior)
+)
+; research smithy upgrades
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(or (goal GOAL-MOBILISE-DEFENCE 1)
+		(goal GOAL-START-THE-IMPERIAL-ARMY 1))
+	(can-research ri-scale-mail)
+=>
+	(chat-to-all "research chain-mail")
+	(research ri-scale-mail)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(or (goal GOAL-MOBILISE-DEFENCE 1)
+		(goal GOAL-START-THE-IMPERIAL-ARMY 1))
+	(can-research ri-forging)
+=>
+	(chat-to-all "research forging")
+	(research ri-forging)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(or (goal GOAL-MOBILISE-DEFENCE 1)
+		(goal GOAL-START-THE-IMPERIAL-ARMY 1))
+	(can-research ri-chain-mail)
+=>
+	(chat-to-all "research chain-mail")
+	(research ri-chain-mail)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(or (goal GOAL-MOBILISE-DEFENCE 1)
+		(goal GOAL-START-THE-IMPERIAL-ARMY 1))
+	(can-research ri-iron-casting)
+=>
+	(chat-to-all "research iron-casting")
+	(research ri-iron-casting)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(or (goal GOAL-MOBILISE-DEFENCE 1)
+		(goal GOAL-START-THE-IMPERIAL-ARMY 1))
+	(can-research ri-plate-mail)
+=>
+	(chat-to-all "research plate-mail")
+	(research ri-plate-mail)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(or (goal GOAL-MOBILISE-DEFENCE 1)
+		(goal GOAL-START-THE-IMPERIAL-ARMY 1))
+	(can-research ri-blast-furnace)
+=>
+	(chat-to-all "research blast-furnace")
+	(research ri-blast-furnace)
+)
+
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(or (goal GOAL-MOBILISE-DEFENCE 1)
+		(goal GOAL-START-THE-IMPERIAL-ARMY 1))
+	(or (goal GOAL-MOBILISE-DEFENCE 1)
+		(research-completed ri-elite-eagle-warrior))
+	(can-train eagle-warrior-line)
+	(unit-type-count-total eagle-warrior-line < 70)
+=>
+;	(chat-to-all "training eagle-warrior")
+	(train eagle-warrior-line)
+)
+
+;ATTACK!ATTACK!ATTACK!
+(defrule
+	(unit-type-count-total eagle-warrior-line >= 15)
+	(goal GOAL-START-THE-IMPERIAL-ARMY 1)
+	(research-completed ri-elite-eagle-warrior)
+=>
+;	(taunt 14)
+	(chat-to-all "ATTACK!!!")
+	(attack-now)
+	(enable-timer TIMER-ATTACK 45)
+	(set-strategic-number sn-number-defend-groups 0)
+	(set-strategic-number sn-percent-attack-soldiers 100)
+	(disable-self)
+)
+(defrule
+	(timer-triggered TIMER-ATTACK)
+=>
+;	(taunt 23)
+	(chat-to-all "KEEP ATTACKING!!!")
+	(attack-now)
+	(disable-timer TIMER-ATTACK)
+	(enable-timer TIMER-ATTACK 45)
+)
+	
+; other research
+(defrule
+	(unit-type-count-total eagle-warrior-line >= 15)
+	(can-research ri-bracer)
+=>
+	(chat-to-all "research bracer")
+	(research ri-bracer)
+)
+(defrule
+	(unit-type-count-total eagle-warrior-line >= 15)
+	(or
+		(building-type-count-total castle > 0)
+		(stone-amount > 800)
+	)
+	(can-research ri-murder-holes)
+=>
+	(chat-to-all "research murder holes")
+	(research ri-murder-holes)
+)
+(defrule
+	(unit-type-count-total eagle-warrior-line >= 15)
+	(can-research ri-siege-engineers)
+=>
+	(chat-to-all "research siege engineers")
+	(research ri-siege-engineers)
+)
+(defrule
+	(unit-type-count-total eagle-warrior-line >= 15)
+	(can-research ri-squires)
+=>
+	(chat-to-all "research squires")
+	(research ri-squires)
+)
+(defrule
+	(unit-type-count-total eagle-warrior-line >= 15)
+	(can-research ri-ballistics)
+	(current-age == imperial-age)
+=>
+	(chat-to-all "research ballistics")
+	(research ri-ballistics)
+)
+;train monks for flood
+(defrule
+	(goal GOAL-START-THE-IMPERIAL-ARMY 1)
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(unit-type-count-total eagle-warrior-line >= 15)
+	(can-train monk)
+	(unit-type-count-total monk <= 5)
+=>
+	(train monk)
+;	(chat-to-all "train monk")
+)

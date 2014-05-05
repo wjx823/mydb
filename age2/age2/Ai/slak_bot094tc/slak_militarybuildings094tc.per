@@ -1,0 +1,411 @@
+; --------------------------------------------------------------------------
+; File: Slak_MilitaryBuildings.per
+; Author: SlakTheEldar
+; Date: 2000-10-25
+;
+; Available under BSD-like license; see accompanying Copying.txt file
+;
+; --------------------------------------------------------------------------
+
+;*********************************************************
+; Buildings
+;*********************************************************
+
+; --------------------------------------------------------------------------
+; Barracks
+; --------------------------------------------------------------------------
+(defrule
+  (building-type-count-total barracks == 0)
+  (or (and (current-age == castle-age)
+	   (current-age-time > 120))
+      (current-age == imperial-age))
+  (can-build barracks)
+  =>
+  (build barracks)
+  (chat-local-to-self "maintain first barracks")
+)
+
+(defrule
+  (goal main-or-response-unit FEUDAL-DEF)
+  (building-type-count-total barracks < 2)
+  (can-build-with-escrow barracks)
+  =>
+  (release-escrow wood)
+  (build barracks)
+  (chat-local-to-self "FEUDAL-DEF barracks")
+)
+
+(defrule
+  (or (goal main-or-response-unit FEUDAL-OFF)
+      (goal main-or-response-unit CASTLE-OFF))
+  (building-type-count-total barracks < 3)
+  (can-build-with-escrow barracks)
+  =>
+  (release-escrow wood)
+  (build-forward barracks)
+  (chat-local-to-self "FEUDAL-OFF barracks")
+;  (disable-self)
+)
+
+(defrule
+  (current-age == castle-age)
+  (building-type-count-total monastery == 1)
+  (or (building-type-count-total university == 1)
+      (goal uni-research-done YES))
+  (building-type-count-total barracks == 0)
+  (can-build-with-escrow barracks)
+  =>
+  (release-escrow wood)
+  (build barracks)
+  (chat-local-to-self "maintain first barracks")
+)
+
+(defrule
+  (current-age == imperial-age)
+  (building-type-count-total monastery > 0)
+  (or (building-type-count-total university == 1)
+      (goal uni-research-done YES))
+  (building-type-count-total archery-range > 0)
+  (building-type-count-total barracks <= num-barracks)
+  (goal econ-research-done YES)
+  (can-build-with-escrow barracks)
+  =>
+  (release-escrow wood)
+  (build barracks)
+  (chat-local-to-self "escrow barracks")
+)
+
+(defrule
+  (current-age == imperial-age)
+  (building-type-count-total barracks <= num-barracks)
+  (can-build barracks)
+  =>
+  (build barracks)
+  (chat-local-to-self "maintain next barracks")
+)
+
+; --------------------------------------------------------------------------
+; Archery
+; --------------------------------------------------------------------------
+(defrule
+  (goal main-or-response-unit FEUDAL-DEF)
+  (building-type-count-total archery-range < 2)
+  (can-build-with-escrow archery-range)
+  =>
+  (release-escrow wood)
+  (build archery-range)
+  (chat-local-to-self "FEUDAL-DEF archery")
+)
+
+(defrule
+  (or (goal main-or-response-unit FEUDAL-OFF)
+      (goal main-or-response-unit CASTLE-OFF))
+  (building-type-count-total archery-range < 3)
+  (can-build-with-escrow archery-range)
+  =>
+  (release-escrow wood)
+  (build-forward archery-range)
+  (chat-local-to-self "FEUDAL-OFF archery")
+;  (disable-self)
+)
+
+(defrule
+  (building-type-count-total archery-range == 0)
+  (can-build archery-range)
+  =>
+  (build archery-range)
+  (chat-local-to-self "maintain first archery")
+)
+
+(defrule
+  (building-type-count-total archery-range == 0)
+  (can-build-with-escrow archery-range)
+  =>
+  (release-escrow wood)
+  (build archery-range)
+  (chat-local-to-self "maintain first archery")
+)
+
+(defrule
+  (current-age == imperial-age)
+  (can-build-with-escrow archery-range)
+  (or (building-type-count-total university == 1)
+      (goal uni-research-done YES))
+  (building-type-count-total archery-range <= num-archeries)
+  (goal econ-research-done YES)
+  =>
+  (release-escrow wood)
+  (build archery-range)
+  (chat-local-to-self "maintain escrow archery")
+)
+
+(defrule
+  (current-age == imperial-age)
+  (building-type-count-total archery-range <= num-archeries)
+  (can-build archery-range)
+  (goal econ-research-done YES)
+  =>
+  (build archery-range)
+  (chat-local-to-self "maintain next archery")
+)
+
+; --------------------------------------------------------------------------
+; Stable
+; --------------------------------------------------------------------------
+; build a stable for fun - later, add logic
+(defrule
+  (building-type-count-total stable == 0)
+  (can-build stable)
+  =>
+  (build stable)
+  (chat-local-to-self "maintain first stables")
+)
+
+(defrule
+  (building-type-count-total stable == 0)
+  (can-build-with-escrow stable)
+  =>
+  (release-escrow wood)
+  (build stable)
+  (chat-local-to-self "maintain first stables")
+)
+
+(defrule
+  (current-age == imperial-age)
+  (building-type-count-total stable <= num-stables)
+  (goal econ-research-done YES)
+  (can-build stable)
+  =>
+  (build stable)
+  (chat-local-to-self "maintain next stable")
+)
+
+(defrule
+  (or (building-type-count-total university == 1)
+      (goal uni-research-done YES))
+  (can-build-with-escrow stable)
+  (goal econ-research-done YES)
+  (building-type-count-total stable <= num-stables)
+  =>
+  (release-escrow wood)
+  (build stable)
+  (chat-local-to-self "maintain stable")
+)
+
+; always maintain a scout
+(defrule
+  (unit-type-count-total scout-cavalry-line < 2)
+  (can-train scout-cavalry-line)
+  =>
+  (train scout-cavalry-line)
+  (chat-local-to-self "maintain scouts")
+)
+
+(defrule
+  (unit-type-count-total eagle-warrior-line < 2)
+  (can-train eagle-warrior-line)
+  =>
+  (train eagle-warrior-line)
+  (chat-local-to-self "maintain scout eagle")
+)
+
+; --------------------------------------------------------------------------
+; Siege workshop
+; --------------------------------------------------------------------------
+(defrule
+  (current-age == imperial-age)
+  (building-type-count-total barracks > 0)
+  (building-type-count-total siege-workshop == 0)
+  (can-build siege-workshop)
+  =>
+  (build siege-workshop)
+  (chat-local-to-self "maintain first siege-workshop")
+)
+
+(defrule
+  (goal main-or-response-unit CASTLE-OFF)
+  (building-type-count-total barracks > 0)
+  (building-type-count-total siege-workshop == 0)
+  (can-build-with-escrow siege-workshop)
+  =>
+  (release-escrow wood)
+  (build-forward siege-workshop)
+  (chat-local-to-self "CASTLE-OFF siege-workshop")
+)
+
+(defrule
+  (current-age == imperial-age)
+  (building-type-count-total barracks > 1)
+  (building-type-count-total archery-range > 1)
+  (building-type-count-total siege-workshop < num-workshops)
+  (can-build-with-escrow siege-workshop)
+  =>
+  (release-escrow wood)
+  (build siege-workshop)
+  (chat-local-to-self "maintain next siege-workshop")
+)
+
+; --------------------------------------------------------------------------
+; Castle
+; --------------------------------------------------------------------------
+(defrule
+  (can-build-with-escrow castle)
+  =>
+  (release-escrow stone)
+  (build castle)
+  (chat-local-to-self "building castle")
+)
+
+(defrule
+  (can-build castle)
+  =>
+  (build castle)
+  (chat-local-to-self "building castle")
+)
+
+; --------------------------------------------------------------------------
+; Monastery
+; --------------------------------------------------------------------------
+(defrule
+  (building-type-count-total monastery == 0)
+  (can-build monastery)
+  =>
+  (build monastery)
+  (chat-local-to-self "maintain first monastery")
+)
+
+(defrule
+  (building-type-count-total monastery == 0)
+  (can-build-with-escrow monastery)
+  =>
+  (release-escrow wood)
+  (build monastery)
+  (chat-local-to-self "maintain first monastery")
+)
+
+(defrule
+  (building-type-count-total monastery > 0)
+  (building-type-count-total castle > 0)
+  (building-type-count-total monastery <= num-monastaries)
+  (can-build monastery)
+  =>
+  (build monastery)
+  (chat-local-to-self "maintain next monastery")
+)
+
+; --------------------------------------------------------------------------
+; Monks
+; --------------------------------------------------------------------------
+; always have a monk on hand
+(defrule
+  (unit-type-count-total monk == 0)
+  (can-train monk)
+  =>
+  (train monk)
+  (chat-local-to-self "first monk")
+)
+
+(defrule
+  (unit-type-count-total monk == 0)
+  (not (can-train monk))
+  (can-train-with-escrow monk)
+  =>
+  (release-escrow gold)
+  (train monk)
+  (chat-local-to-self "first escrow monk")
+)
+
+(defrule
+  (current-age == imperial-age)
+  (unit-type-count-total monk < 5)
+  (military-population > large-easy-unit-threat)
+  (can-train monk)
+  =>
+  (train monk)
+  (chat-local-to-self "four monks")
+)
+
+; --------------------------------------------------------------------------
+; Towers
+; --------------------------------------------------------------------------
+(defrule
+  (current-age == feudal-age)
+  (not (goal main-or-response-unit FEUDAL-OFF))
+  (can-build watch-tower-line)
+  (building-type-count-total watch-tower-line <= feudal-tower)
+  =>
+  (build watch-tower-line)
+  (chat-local-to-self "building feudal watch-towers")
+)
+
+(defrule
+  (goal main-or-response-unit FEUDAL-DEF)
+  (can-build-with-escrow watch-tower-line)
+  (building-type-count-total watch-tower-line <= feudal-tower-rushed)
+  =>
+  (release-escrow stone)
+  (release-escrow wood)
+  (build watch-tower-line)
+  (chat-local-to-self "building FEUDAL-DEF watch-towers")
+)
+
+(defrule
+  (goal main-or-response-unit FEUDAL-OFF)
+  (can-build-with-escrow watch-tower-line)
+  (building-type-count-total watch-tower-line <= feudal-tower-rushed)
+  =>
+  (release-escrow stone)
+  (release-escrow wood)
+  (build-forward watch-tower-line)
+  (chat-local-to-self "building FEUDAL-OFF watch-towers")
+)
+
+(defrule
+  (current-age == castle-age)
+  (can-build watch-tower-line)
+  (not (research-available ri-murder-holes))
+  (building-type-count-total castle > 1)
+  (building-type-count-total town-center > 1)
+  (building-type-count-total watch-tower-line <= castle-tower)
+  =>
+  (build watch-tower-line)
+  (chat-local-to-self "building castle watch-towers")
+) 
+
+(defrule
+  (goal main-or-response-unit CASTLE-OFF)
+  (can-build-with-escrow watch-tower-line)
+  (building-type-count-total watch-tower-line <= castle-tower-rushed)
+  =>
+  (release-escrow stone)
+  (release-escrow wood)
+  (build-forward watch-tower-line)
+  (chat-local-to-self "building CASTLE-OFF watch-towers")
+)
+
+(defrule
+  (current-age == imperial-age)
+  (not (research-available ri-murder-holes))
+  (building-type-count-total castle > 1)
+  (building-type-count-total town-center > 2)
+  (building-type-count-total watch-tower-line <= imperial-tower)
+  (can-build watch-tower-line)
+  =>
+  (build watch-tower-line)
+  (chat-local-to-self "building imperial watch-towers")
+) 
+
+(defrule
+  (current-age == imperial-age)
+  (game-time >= panic-time)
+  (building-type-count-total watch-tower-line <= post-imperial-tower)
+  (can-build watch-tower-line)
+  =>
+  (build watch-tower-line)
+  (chat-local-to-self "building post-imperial watch-towers")
+) 
+
+
+
+
+

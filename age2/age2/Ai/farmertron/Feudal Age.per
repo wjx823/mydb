@@ -1,0 +1,299 @@
+; feudal age
+
+;research coinage
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(can-research ri-coinage)
+=>
+	(chat-to-all "research coinage")
+	(research ri-coinage)
+)
+;research cartography
+(defrule
+	(can-research ri-cartography)
+	(food-amount > 150)
+=>
+	(research ri-cartography)
+	(chat-to-all "research cartography")
+)
+;tribute wood
+(defrule
+	(goal GOAL-SLING-SUSPEND-TRIBUTE 0)
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(goal GOAL-NO-WOOD-NEEDED 0)
+	(wood-amount > 300)
+	(building-type-count-total market > 0)
+=>
+;	(chat-to-all "Give shot 100 wood")
+	(tribute-to-player any-computer-ally wood 100)
+)
+
+;tribute food
+(defrule
+	(goal GOAL-SLING-SUSPEND-TRIBUTE 0)
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(goal GOAL-NO-FOOD-NEEDED 0)
+	(food-amount > 180)
+	(building-type-count-total market > 0)
+=>
+;	(chat-to-all "Give shot 100 food")
+	(tribute-to-player any-computer-ally food 100)
+)
+
+;tribute gold
+(defrule
+	(goal GOAL-SLING-SUSPEND-TRIBUTE 0)
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(goal GOAL-NO-GOLD-NEEDED 0)
+	(gold-amount > 130)
+	(or ;allow for castle upgrade
+		(gold-amount > 330)
+		(food-amount < 800) 
+	)
+	(building-type-count-total market > 0)
+=>
+;	(chat-to-all "Give shot 100 gold")
+	(tribute-to-player any-computer-ally gold 100)
+)
+
+;tribute stone
+(defrule
+	(goal GOAL-SLING-SUSPEND-TRIBUTE 0)
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(goal GOAL-NO-STONE-NEEDED 0)
+	(stone-amount > 250)
+	(building-type-count-total market > 0)
+=>
+;	(chat-to-all "Give shot 100 stone")
+	(tribute-to-player any-computer-ally stone 100)
+)
+
+;disable mills until blacksmith is built
+(defrule
+	(current-age == feudal-age)
+=>
+	(set-goal GOAL-DISABLE-MILL-BUILDING 1)
+	(disable-self)
+)	
+
+;build blacksmith
+(defrule
+	(current-age != dark-age)
+	(building-type-count-total market > 0)
+	(building-type-count-total blacksmith == 0)
+	(can-build blacksmith)
+=>
+	(chat-to-all "build blacksmith")
+	(build blacksmith)
+	(set-goal GOAL-DISABLE-MILL-BUILDING 0)
+	(disable-self)
+)
+;rebuild blacksmith
+(defrule
+	(current-age != dark-age)
+	(building-type-count-total market > 0)
+	(building-type-count-total blacksmith == 0)
+	(can-build blacksmith)
+=>
+	(chat-to-all "rebuilding blacksmith")
+	(build blacksmith)
+)
+;build market
+(defrule
+	(current-age != dark-age) ;this allows rebuilding if lost after feudal age
+	(building-type-count-total market == 0)
+	(can-build market)
+=>
+	(chat-to-all "build market")
+	(build market)
+)
+;TOWER UP
+(defrule
+	;stop building towers once the attack is building, unless there is excess stone
+	(or
+		(goal GOAL-START-THE-IMPERIAL-ARMY 0)
+		(stone-amount > 800)
+	)
+	(building-type-count-total blacksmith > 0)
+	(can-build watch-tower-line)
+	(building-type-count-total watch-tower-line < 11)
+=>
+	(build watch-tower-line)
+	(chat-to-all "build tower")
+)
+
+; build farm during feudal
+(defrule
+	(current-age == feudal-age)
+	(goal GOAL-RESEARCHING-CASTLE 0)
+	(building-type-count-total market > 0)
+	(building-type-count-total blacksmith > 0)
+	(idle-farm-count < 1)
+	(can-build farm)
+=>
+;	(chat-to-all "build farm dfa")
+	(build farm)
+)
+; if not researched loom yet, research it
+(defrule
+	(current-age == feudal-age)
+	(can-research ri-loom)
+=>
+	(chat-to-all "researching loom (feudal)")
+	(research ri-loom)
+)
+; research wheel-barrow
+(defrule
+	(can-research ri-wheel-barrow)
+=>
+	(chat-to-all "research wheel barrow")
+	(research ri-wheel-barrow)
+)
+
+; Villager training (sling)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(current-age == feudal-age)
+	(not (can-research castle-age))
+	(unit-type-count-total villager <= 100)
+	(can-train villager)
+=>
+;	(chat-to-all "train villager dfa")
+	(train villager)
+)
+
+; Villager training (shot)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(current-age == feudal-age)
+	(not (can-research castle-age))
+	(unit-type-count-total villager < 51)
+	(can-train villager)
+=>
+;	(chat-to-all "train villager dfa")
+	(train villager)
+)
+
+; House building
+(defrule
+	(current-age == feudal-age)
+	(housing-headroom < 4)
+	(can-build house)
+=>
+;	(chat-to-all "build house")
+	(build house)
+)
+
+;sling research econ before castle age
+; double-bit axe
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(goal GOAL-SLING-SUSPEND-TRIBUTE 1)
+	(can-research ri-double-bit-axe)
+=>
+	(chat-to-all "research double-bit-axe")
+	(research ri-double-bit-axe)
+)
+; horse-collar
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(goal GOAL-SLING-SUSPEND-TRIBUTE 1)
+	(can-research ri-horse-collar)
+=>
+	(research ri-horse-collar)
+	(chat-to-all "research horse collar")
+)
+;early restart of tributes if all techs researched in time
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(research-completed ri-horse-collar)
+	(research-completed ri-double-bit-axe)
+	(goal GOAL-SLING-SUSPEND-TRIBUTE 1)
+=>
+	(chat-to-all "feudal techs researched: restart tributes")
+	(set-goal GOAL-SLING-SUSPEND-TRIBUTE 0)
+	(disable-self)
+)
+; research castle age
+(defrule
+	(current-age == feudal-age)
+	(can-research castle-age)
+=>
+	(chat-to-all "research castle")
+	(research castle-age)
+	(set-goal GOAL-RESEARCHING-CASTLE 1)
+	(set-goal GOAL-DISABLE-MILL-BUILDING 1)
+	(set-strategic-number sn-food-gatherer-percentage 44)
+	(set-strategic-number sn-wood-gatherer-percentage 29)
+	(set-strategic-number sn-gold-gatherer-percentage 17)
+	(set-strategic-number sn-stone-gatherer-percentage 10)
+)
+
+; report castle research status to sling
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 1)
+	(goal GOAL-RESEARCHING-CASTLE 1)
+=>
+	(chat-to-all "shot is researching castle")
+	(chat-to-player-using-id every-ally 22120)
+	(disable-self)
+)
+
+; sling acknowledges shot researching castle
+(defrule
+	(taunt-detected any-ally 1)
+	(goal GOAL-I-AM-THE-SHOT 0)
+=>
+	(acknowledge-taunt this-any-ally 1)
+	(chat-to-player this-any-ally "sling acknowledges you are researching castle")
+	(chat-to-all "sling is suspending tributes to concentrate on economy")
+	(set-goal GOAL-SLING-SUSPEND-TRIBUTE 1)
+	(disable-self)
+)
+
+; Inter age buildings and research
+; build stone mine
+(defrule
+	(building-type-count-total market > 0)
+	(resource-found stone)
+	(can-build mining-camp)
+=>
+	(chat-to-all "building mining-camp; stone")
+	(build mining-camp)
+	(set-strategic-number sn-food-gatherer-percentage 50)
+	(set-strategic-number sn-wood-gatherer-percentage 30)
+	(set-strategic-number sn-gold-gatherer-percentage 10)
+	(set-strategic-number sn-stone-gatherer-percentage 10)
+	(disable-self)
+)
+
+; double-bit axe
+(defrule
+	(can-research ri-double-bit-axe)
+=>
+	(research ri-double-bit-axe)
+)
+; horse-collar
+(defrule
+	(can-research ri-horse-collar)
+=>
+	(research ri-horse-collar)
+)
+;prioritise fletching to improve defence
+(defrule
+	(can-research ri-fletching)
+=>
+	(chat-to-all "research fletching")
+	(research ri-fletching)
+)
+;build farm during castle upgrade
+(defrule
+	(current-age == feudal-age)
+	(goal GOAL-RESEARCHING-CASTLE 1)
+	(idle-farm-count < 1)
+	(wood-amount >= 300)
+	(can-build farm)
+=>
+;	(chat-to-all "build farm dcu")
+	(build farm)
+)

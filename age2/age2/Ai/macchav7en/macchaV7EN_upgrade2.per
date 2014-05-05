@@ -1,0 +1,417 @@
+;********************************************************************
+; AI maccha Ver 7.00  upgrade2.per
+;********************************************************************
+;swordman
+(defrule 
+   (not(goal MAX_MILITIAMAN 0))
+   (not(goal MAX_MILITIAMAN 99))
+   (can-research ri-man-at-arms)
+=>
+   (chat-local-to-self "swordman lv:1")
+   (research ri-man-at-arms)
+)
+(defrule 
+   (not(goal MAX_MILITIAMAN 0))
+   (not(goal MAX_MILITIAMAN 99))
+   (can-research ri-long-swordsman)
+=>
+   (chat-local-to-self "swordman lv:2")
+   (research ri-long-swordsman)
+)
+(defrule 
+   (not(goal MAX_MILITIAMAN 0))
+   (not(goal MAX_MILITIAMAN 99))
+   (can-research ri-two-handed-swordsman)
+=>
+   (chat-local-to-self "swordman lv:3")
+   (research ri-two-handed-swordsman)
+)
+(defrule 
+   (not(goal MAX_MILITIAMAN 0))
+   (not(goal MAX_MILITIAMAN 99))
+   (can-research ri-champion)
+=>
+   (chat-local-to-self "swordman lv:4")
+   (research ri-champion)
+)
+;knight
+(defrule 
+   (not(goal MAX_KNIGHT 0))
+   (not(goal MAX_KNIGHT 99))
+   (can-research ri-cavalier)
+=>
+   (chat-local-to-self "knight lv:1")
+   (research ri-cavalier)
+)
+(defrule 
+   (not(goal MAX_KNIGHT 0))
+   (not(goal MAX_KNIGHT 99))
+   (can-research ri-paladin)
+=>
+   (chat-local-to-self "knight lv:2")
+   (research ri-paladin)
+)
+;archer
+(defrule 
+   (not(goal MAX_ARCHER 0))
+   (not(goal MAX_ARCHER 99))
+   (can-research ri-crossbow)
+=>
+   (chat-local-to-self "archer lv:1")
+   (research ri-crossbow)
+)
+(defrule 
+   (not(goal MAX_ARCHER 0))
+   (not(goal MAX_ARCHER 99))
+   (can-research ri-arbalest)
+=>
+   (chat-local-to-self "archer lv:2")
+   (research ri-arbalest)
+)
+(defrule 
+   (not(goal MAX_ARCHER 0))
+   (can-research ri-thumb-ring)
+=>
+   (chat-local-to-self "research ri-thumb-ring")
+   (research ri-thumb-ring)
+)
+;cavalry
+(defrule 
+   (not(goal MAX_LIGHTCAVALRY 0))
+   (can-research ri-light-cavalry)
+=>
+   (chat-local-to-self "cavalry lv:1")
+   (research ri-light-cavalry)
+)
+(defrule 
+   (can-research ri-hussar)
+=>
+   (chat-local-to-self "cavalry lv:2")
+   (research ri-hussar)
+)
+;ram
+(defrule 
+   (unit-type-count battering-ram-line >= 3)
+   (can-research ri-capped-ram)
+=>
+   (chat-local-to-self "ram lv:1")
+   (research ri-capped-ram)
+)
+(defrule 
+   (unit-type-count battering-ram-line >= 6)
+   (can-research ri-siege-ram)
+=>
+   (chat-local-to-self "ram lv:2")
+   (research ri-siege-ram)
+)
+;unique
+(defrule 
+   (or
+       (goal MAX_UNIQUE 4)
+       (goal MAX_UNIQUE 5)
+   )
+   (can-research my-unique-unit-upgrade)
+=>
+   (chat-local-to-self "unique lv:1")
+   (research my-unique-unit-upgrade)
+)
+(defrule
+   (goal ATTACK_MODE UNIQUE_MANIA)
+   (can-research ri-conscription)
+=>
+   (chat-local-to-self "research ri-conscription")
+   (research ri-conscription)
+)
+;etc
+(defrule 
+   (building-type-count stable != 0)
+   (or
+       (or
+           (not(goal MAX_KNIGHT 0))
+           (not(goal MAX_CAMEL 0))
+       )
+           (not(goal MAX_LIGHTCAVALRY 0))
+   )
+   (can-research ri-scale-barding)
+=>
+   (research ri-scale-barding)
+)
+(defrule 
+   (or
+       (or
+           (not(goal MAX_KNIGHT 0))
+           (not(goal MAX_CAMEL 0))
+       )
+           (not(goal MAX_LIGHTCAVALRY 0))
+   )
+   (can-research ri-chain-barding)
+=>
+   (research ri-chain-barding)
+)
+(defrule 
+   (or
+       (or
+           (not(goal MAX_KNIGHT 0))
+           (not(goal MAX_CAMEL 0))
+       )
+           (not(goal MAX_LIGHTCAVALRY 0))
+   )
+   (can-research ri-plate-barding)
+=>
+   (research ri-plate-barding)
+)
+(defrule 
+   (or
+       (or
+           (not(goal MAX_KNIGHT 0))
+           (not(goal MAX_CAMEL 0))
+       )
+           (not(goal MAX_LIGHTCAVALRY 0))
+   )
+   (can-research ri-forging)
+=>
+   (research ri-forging)
+)
+(defrule 
+   (or
+       (or
+           (not(goal MAX_KNIGHT 0))
+           (not(goal MAX_CAMEL 0))
+       )
+           (not(goal MAX_LIGHTCAVALRY 0))
+   )
+   (can-research ri-iron-casting)
+=>
+   (research ri-iron-casting)
+)
+(defrule 
+   (or
+       (or
+           (not(goal MAX_KNIGHT 0))
+           (not(goal MAX_CAMEL 0))
+       )
+           (not(goal MAX_LIGHTCAVALRY 0))
+   )
+   (can-research ri-blast-furnace)
+=>
+   (research ri-blast-furnace)
+)
+(defrule 
+   (or
+       (or
+           (not(goal MAX_KNIGHT 0))
+           (not(goal MAX_CAMEL 0))
+       )
+           (not(goal MAX_LIGHTCAVALRY 0))
+   )
+   (can-research ri-bloodlines)
+=>
+   (research ri-bloodlines)
+)
+(defrule 
+   (or
+       (or
+           (not(goal MAX_KNIGHT 0))
+           (not(goal MAX_CAMEL 0))
+       )
+           (not(goal MAX_LIGHTCAVALRY 0))
+   )
+   (can-research ri-husbandry)
+=>
+   (research ri-husbandry)
+)
+(defrule 
+   (not(goal MAX_MILITIAMAN 0))
+   (can-research ri-scale-mail)
+=>
+   (research ri-scale-mail)
+)
+(defrule
+   (not(goal MAX_MILITIAMAN 0))
+   (can-research ri-chain-mail)
+=>
+   (research ri-chain-mail)
+)
+(defrule 
+   (not(goal MAX_MILITIAMAN 0))
+   (can-research ri-plate-mail)
+=>
+   (research ri-plate-mail)
+)
+(defrule 
+   (not(goal MAX_MILITIAMAN 0))
+   (can-research ri-forging)
+=>
+   (research ri-forging)
+)
+(defrule
+   (not(goal MAX_MILITIAMAN 0))
+   (can-research ri-iron-casting)
+=>
+   (research ri-iron-casting)
+)
+(defrule 
+   (not(goal MAX_MILITIAMAN 0))
+   (can-research ri-blast-furnace)
+=>
+   (research ri-blast-furnace)
+)
+(defrule 
+   (food-amount > 500)
+   (not(goal MAX_MILITIAMAN 0))
+   (can-research ri-squires)
+=>
+   (research ri-squires)
+)
+(defrule 
+   (food-amount > 1200)
+   (not(goal MAX_MILITIAMAN 0))
+   (can-research ri-tracking)
+=>
+   (research ri-tracking)
+)
+(defrule 
+   (not(goal MAX_ARCHER 0))
+   (can-research ri-padded-archer-armor)
+=>
+   (research ri-padded-archer-armor)
+)
+(defrule 
+   (not(goal MAX_ARCHER 0))
+   (can-research ri-leather-archer-armor)
+=>
+   (research ri-leather-archer-armor)
+)
+(defrule 
+   (not(goal MAX_ARCHER 0))
+   (can-research ri-ring-archer-armor)
+=>
+   (research ri-ring-archer-armor)
+)
+;spear&skirmisher
+(defrule 
+   (not(goal MAX_SPEARMAN 0))
+   (unit-type-count spearman-line > pop-6)
+   (can-research ri-pikeman)
+=>
+   (chat-local-to-self "spear lv:1")
+   (research ri-pikeman)
+)
+(defrule 
+   (not(goal MAX_SPEARMAN 0))
+   (can-research ri-halberdier)
+=>
+   (chat-local-to-self "spear lv:2")
+   (research ri-halberdier)
+)
+(defrule 
+   (building-type-count town-center >= 2)
+   (not(goal MAX_SKIRMISHER 0))
+   (can-research ri-elite-skirmisher)
+=>
+   (chat-local-to-self "skirmisher lv:1")
+   (research ri-elite-skirmisher)
+)
+;camel
+(defrule 
+   (or
+       (goal MAX_CAMEL 4)
+       (goal MAX_CAMEL 5)
+   )
+   (can-research ri-heavy-camel)
+=>
+   (chat-local-to-self "camel lv:1")
+   (research ri-heavy-camel)
+)
+;range
+(defrule 
+   (or
+      (not(goal MAX_ARCHER 0))
+      (research-completed ri-bombard-tower)
+   )
+   (can-research ri-fletching)
+=>
+   (research ri-fletching)
+)
+(defrule 
+   (or
+      (not(goal MAX_ARCHER 0))
+      (research-completed ri-bombard-tower)
+   )
+   (can-research ri-bodkin-arrow)
+=>
+   (research ri-bodkin-arrow)
+)
+(defrule 
+   (or
+      (not(goal MAX_ARCHER 0))
+      (research-completed ri-bombard-tower)
+   )
+   (can-research ri-bracer)
+=>
+   (research ri-bracer)
+)
+(defrule 
+   (not(goal MAX_ARCHER 0))
+   (can-research ri-thumb-ring)
+=>
+   (research ri-thumb-ring)
+)
+(defrule 
+   (or
+      (not(goal MAX_ARCHER 0))
+      (research-completed ri-bombard-tower)
+   )
+   (can-research ri-ballistics)
+=>
+   (research ri-ballistics)
+)
+(defrule 
+   (not(goal MAX_CAVALRYARCHER 0))
+   (can-research ri-parthian-tactics)
+=>
+   (research ri-parthian-tactics)
+)
+;tower
+(defrule 
+   (building-type-count-total watch-tower-line > 4)
+   (can-research ri-guard-tower)
+=>
+   (chat-local-to-self "tower lv:1")
+   (research ri-guard-tower)
+)
+(defrule 
+   (building-type-count-total watch-tower-line > 4)
+   (can-research ri-keep)
+=>
+   (chat-local-to-self "tower lv:2")
+   (research ri-keep)
+)
+;mangonel
+(defrule 
+   (unit-type-count mangonel-line >= pop-4)
+   (can-research ri-onager)
+=>
+   (chat-local-to-self "mangonel lv:1")
+   (research ri-onager)
+)
+(defrule 
+   (unit-type-count mangonel-line >= pop-4)
+   (can-research ri-siege-onager)
+=>
+   (chat-local-to-self "mangonel lv:2")
+   (research ri-siege-onager)
+)
+(defrule
+   (can-research ri-siege-engineers)
+=>
+   (research ri-siege-engineers)
+)
+;scorpion
+(defrule 
+   (goal MAX_SCORPION 5)
+   (can-research ri-heavy-scorpion)
+=>
+   (chat-local-to-self "scorpion lv:1")
+   (research ri-heavy-scorpion)
+)

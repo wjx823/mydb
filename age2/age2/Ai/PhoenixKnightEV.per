@@ -1,0 +1,214 @@
+(load "rmresign")
+
+;////////////////////////////////////////////////////////////////////////////////
+;/_
+;/_ AI Name:PhoenixKnightEV(English Version)(^^;; 
+;/_ Version: 1.10
+;/_ Author:Keita
+;/_ Mail <cps01@mypad.com>
+;/_ Civilizations:
+;/_        MultiPlayer(Division I) - Aztec,Spanish
+;/_        SinglePlayer(Division II) - Aztec
+;/_ Date:2000/12/17
+;/_ Populantion Limit: 125 Only
+;/////////////////////////////////////////////////////////////////////////////////
+(load "PhoenixKnightEV\PhoenixKnight_Init")
+(load "PhoenixKnightEV\PhoenixKnight_Exmap")
+(load "PhoenixKnightEV\PhoenixKnight_Taunt")
+(load "PhoenixKnightEV\PhoenixKnight_Common")
+(load "PhoenixKnightEV\PhoenixKnight_Tech")
+(load "PhoenixKnightEV\PhoenixKnight_Taunt")
+(load "PhoenixKnightEV\PhoenixKnight_Building")
+
+#load-if-defined VIKING-CIV
+(defrule
+ (true)
+=>
+ (chat-to-all "Sorry...... *NOT* Detected [Civ]")
+ (chat-to-all "Resign")
+ (resign)
+)
+#end-if
+
+#load-if-defined SPANISH-CIV
+(defrule
+ (true)
+=>
+ (chat-to-all "ySpanish Civ Detectedz")
+ (disable-self)
+)
+(load "PhoenixKnightEV\PhoenixKnight_spanish-civ")
+#end-if
+
+#load-if-defined AZTEC-CIV
+(defrule
+ (true)
+=>
+ (chat-to-all "yAztec Civ Detectedz")
+ (disable-self)
+)
+(load "PhoenixKnightEV\PhoenixKnight_aztec-civ")
+#end-if
+
+#load-if-defined BRITON-CIV
+(defrule
+ (true)
+=>
+ (chat-to-all "Sorry...... *NOT* Detected [Civ]")
+ (chat-to-all "Resign")
+ (resign)
+)
+
+#end-if
+
+#load-if-defined BYZANTINE-CIV
+(defrule
+ (true)
+=>
+ (chat-to-all "Sorry...... *NOT* Detected [Civ]")
+ (chat-to-all "Resign")
+ (resign)
+)
+
+#end-if
+
+#load-if-defined CELTIC-CIV
+(defrule
+ (true)
+=>
+ (chat-to-all "Sorry...... *NOT* Detected [Civ]")
+ (chat-to-all "Resign")
+ (resign)
+)
+
+#end-if
+
+#load-if-defined CHINESE-CIV
+(defrule
+ (true)
+=>
+ (chat-to-all "Sorry...... *NOT* Detected [Civ]")
+ (chat-to-all "Resign")
+ (resign)
+)
+
+#end-if
+
+#load-if-defined FRANKISH-CIV
+(defrule
+ (true)
+=>
+ (chat-to-all "Sorry...... *NOT* Detected [Civ]")
+ (chat-to-all "Resign")
+ (resign)
+)
+
+#end-if
+
+#load-if-defined GOTHIC-CIV
+(defrule
+ (true)
+=>
+ (chat-to-all "Sorry...... *NOT* Detected [Civ]")
+ (chat-to-all "Resign")
+ (resign)
+)
+
+#end-if
+
+#load-if-defined HUN-CIV
+(defrule
+ (true)
+=>
+ (chat-to-all "Sorry...... *NOT* Detected [Civ]")
+ (chat-to-all "Resign")
+ (resign)
+)
+
+#end-if
+
+#load-if-defined JAPANESE-CIV
+(defrule
+ (true)
+=>
+ (chat-to-all "Sorry...... *NOT* Detected [Civ]")
+ (chat-to-all "Resign")
+ (resign)
+)
+
+#end-if
+
+#load-if-defined KOREAN-CIV
+(defrule
+ (true)
+=>
+ (chat-to-all "Sorry...... *NOT* Detected [Civ]")
+ (chat-to-all "Resign")
+ (resign)
+)
+
+#end-if
+
+#load-if-defined MAYAN-CIV
+(defrule
+ (true)
+=>
+ (chat-to-all "Sorry...... *NOT* Detected [Civ]")
+ (chat-to-all "Resign")
+ (resign)
+)
+#end-if
+
+#load-if-defined MONGOL-CIV
+(defrule
+ (true)
+=>
+ (chat-to-all "Sorry...... *NOT* Detected [Civ]")
+ (chat-to-all "Resign")
+ (resign)
+)
+
+#end-if
+
+#load-if-defined PERSIAN-CIV
+(defrule
+ (true)
+=>
+ (chat-to-all "Sorry...... *NOT* Detected [Civ]")
+ (chat-to-all "Resign")
+ (resign)
+)
+
+#end-if
+
+#load-if-defined SARACEN-CIV
+(defrule
+ (true)
+=>
+ (chat-to-all "Sorry...... *NOT* Detected [Civ]")
+ (chat-to-all "Resign")
+ (resign)
+)
+
+#end-if
+
+#load-if-defined TEUTONIC-CIV
+(defrule
+ (true)
+=>
+ (chat-to-all "Sorry...... *NOT* Detected [Civ]")
+ (chat-to-all "Resign")
+ (resign)
+)
+#end-if
+
+#load-if-defined TURKISH-CIV
+(defrule
+ (true)
+=>
+ (chat-to-all "Sorry...... *NOT* Detected [Civ]")
+ (chat-to-all "Resign")
+ (resign)
+)
+
+#end-if

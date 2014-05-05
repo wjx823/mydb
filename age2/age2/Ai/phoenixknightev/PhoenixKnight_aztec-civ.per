@@ -1,0 +1,357 @@
+;/////////////////////////////////////////////////////////////////////////////////
+;//                   Civilization Initialize
+;/////////////////////////////////////////////////////////////////////////////////
+;(AZTEC-CIVj
+
+
+;(defconst  39)
+;(defconst  40)
+
+(defrule
+ (game-time > 10)
+=>
+ (chat-to-all "yAztec-civ loadedz")
+ (chat-to-all "yVer-2000.12.08z")
+ (disable-self)
+)
+
+(defrule
+ (true)
+=>
+ (set-goal UNIQUE_UNIT YES)
+ (set-goal UNIQUE_TECH YES)
+ (set-goal BARRACKS_LINE NO)
+ (set-goal ARCHERY_LINE NO)
+ (set-goal STABLE_LINE NO)
+ (set-goal 1st_MONASTERY YES)
+ (set-goal 2nd_MONASTERY NO)
+ (set-goal SIEGE_LINE NO)
+ (disable-self)
+)
+
+(defrule
+ (current-age == castle-age)
+=>
+ (set-goal BARRACKS_LINE YES)
+ (disable-self)
+)
+
+
+(defrule
+ (current-age == imperial-age)
+ (research-completed  my-unique-unit-upgrade)
+=>
+ (set-goal 2nd_MONASTERY YES)
+ (set-goal SIEGE_LINE YES)
+ (set-goal ARCHERY_LINE YES)
+ (chat-local-to-self "!debug:[ALL]")
+ (disable-self)
+)
+
+;//Villager//
+(defrule
+ (current-age == dark-age)
+ (unit-type-count-total villager < 29)
+ (can-train villager)
+=>
+ (train villager)
+)
+
+(defrule
+ (current-age == feudal-age)
+ (food-amount <= 800)
+ (unit-type-count-total villager < 36)
+ (can-train villager)
+=>
+ (train villager)
+)
+(defrule
+ (current-age >= castle-age)
+; (research-completed ri-hand-cart)
+ (unit-type-count villager < 56 )
+ (can-train villager)
+=>
+ (train villager)
+)
+
+(defrule
+ (current-age == imperial-age)
+ (not(research-completed my-unique-unit-upgrade))
+ (unit-type-count villager < 75 )
+ (can-train villager)
+=>
+ (train villager)
+)
+
+(defrule
+ (current-age == imperial-age)
+ (research-completed my-unique-unit-upgrade)
+ (unit-type-count villager < 60 )
+ (can-train villager)
+=>
+ (train villager)
+)
+
+(defrule
+ (current-age == imperial-age)
+ (research-completed my-unique-unit-upgrade)
+ (research-completed my-unique-research)
+ (unit-type-count villager > 61 )
+=>
+
+ (delete-unit villager)
+)
+;//It evolves in the Feudal-Age.//
+(defrule
+ (can-research feudal-age)
+ (unit-type-count-total villager >= 29)
+=>
+ (research feudal-age)
+ (set-strategic-number sn-food-gatherer-percentage 40 )
+ (set-strategic-number sn-wood-gatherer-percentage 42 )
+ (set-strategic-number sn-gold-gatherer-percentage 15 )
+ (set-strategic-number sn-stone-gatherer-percentage 3 )
+ (set-goal EVOLUTION 1)
+ (chat-to-allies "Research [Feudal-age]")
+)
+
+;/_/_/_/_/_/ Trade Cart /_/_/_/_/_/_/
+(defrule
+ (goal UnderAttack NO)
+ (population > 80)
+ (wood-amount > 500)
+ (gold-amount > 200)
+ (unit-type-count-total trade-cart < 12)
+ (player-in-game any-ally)
+ (can-train trade-cart)
+=>
+ (train trade-cart)
+)
+
+(defrule
+ (unit-type-count-total trade-cart < 12)
+ (player-in-game any-ally)
+ (current-age == imperial-age)
+ (can-train trade-cart)
+=>
+ (train trade-cart)
+)
+
+;/_/_/_/_/_/ Unique Unit Line /_/_/_/_/_/_/
+(defrule
+ (gold-amount > 250)
+ (current-age == castle-age)
+ (unit-type-count my-unique-unit-line  < 3 )
+ (can-train my-unique-unit-line )
+=>
+ (train my-unique-unit-line )
+ (chat-local-to-self "Unique-Unit-Line")
+)
+
+(defrule
+ (goal UnderAttack YES)
+ (unit-type-count my-unique-unit-line  < 10 )
+ (can-train my-unique-unit-line )
+=>
+ (train my-unique-unit-line )
+ (chat-local-to-self "Unique-Unit-Line")
+)
+
+;/_/_/_/_/_/ Trebuchet /_/_/_/_/_/_/
+(defrule
+ (gold-amount > 350)
+ (unit-type-count trebuchet < 1 )
+ (can-train trebuchet)
+=>
+ (train trebuchet )
+ (chat-local-to-self "(First?)Trebuchet")
+)
+
+(defrule
+ (current-age == imperial-age)
+ (building-type-count-total castle >= 2)
+ (unit-type-count-total trebuchet <= 4)
+ (can-train trebuchet)
+=>
+ (chat-local-to-self "Trebuchet")
+ (train trebuchet)
+)
+
+
+(defrule
+ (gold-amount > 180)
+ (current-age == imperial-age)
+ (unit-type-count my-unique-unit-line  < 35 )
+ (research-completed my-unique-research)
+ (research-completed my-unique-unit-upgrade)
+ (can-train my-unique-unit-line )
+
+=>
+ (train my-unique-unit-line )
+ (chat-local-to-self "Unique-Unit-Line")
+)
+
+
+;/_/_/_/_/_/ Eagle-Warrior-Line /_/_/_/_/_/_/
+(defrule
+ (unit-type-count-total eagle-warrior-line < 1)
+ (can-train eagle-warrior-line )
+=>
+ (train eagle-warrior-line )
+ ;(chat-local-to-self "Eagle-Warrior-Line")
+)
+
+;///////////  Upgrade Pikeman  //////////////
+(defrule
+ (goal Follow NO)
+ (research-completed ri-murder-holes)
+ (can-research ri-pikeman)
+=>
+ (research ri-pikeman)
+ (chat-local-to-self "<Upgrade Pikeman>")
+)
+
+;/_/_/_/_/_/ Spearman-Line /_/_/_/_/_/_/
+(defrule
+ (goal Follow NO)
+ (current-age >= castle-age)
+ (research-completed ri-pikeman)
+ (not(research-completed my-unique-unit-upgrade))
+ (unit-type-count-total spearman-line < 20)
+ (can-train spearman-line)
+=>
+ (train spearman-line)
+ (chat-local-to-self "Spearman-Line")
+)
+
+(defrule
+ (goal Follow NO)
+ (current-age == imperial-age)
+ (research-completed my-unique-unit-upgrade)
+ (research-completed ri-pikeman)
+ (unit-type-count-total spearman-line < 10)
+ (can-train spearman-line)
+=>
+ (train spearman-line)
+ (chat-local-to-self "Spearman-Line")
+)
+
+;//Research Tracking//
+(defrule
+ (current-age == imperial-age)
+ (can-research ri-tracking )
+=>
+ (research ri-tracking )
+ (chat-local-to-self "Research [Tracking]")
+)
+
+;//Research Squires//
+(defrule
+ (can-research ri-squires)
+=>
+ (research ri-squires )
+ (chat-local-to-self "Research [Squires]")
+)
+
+;/_/_/_/_/_/ Skirmisher-Line /_/_/_/_/_/_/
+(defrule
+ (unit-type-count-total skirmisher-line < 3)
+ (can-train skirmisher-line)
+=>
+ (train skirmisher-line)
+)
+
+;/_/_/_/_/_/ Ram-Line /_/_/_/_/_/_/
+(defrule
+ (unit-type-count-total battering-ram-line < 3)
+ (can-train battering-ram-line)
+=>
+ (train battering-ram-line)
+ (chat-local-to-self "Ram-Line")
+)
+
+;/_/_/_/_/_/ Monk /_/_/_/_/_/_/
+(defrule
+ (gold-amount > 120)
+ (current-age >= castle-age)
+ (unit-type-count monk < 2 )
+ (can-train monk)
+=>
+ (train monk)
+ (chat-local-to-self "Monk")
+)
+
+(defrule
+ (goal Follow NO)
+ (gold-amount > 150)
+ (unit-type-count monk < 10 )
+ (can-train monk)
+=>
+ (train monk)
+ (chat-local-to-self "Monk")
+)
+
+(defrule
+ (gold-amount > 120)
+ (current-age == imperial-age)
+ (unit-type-count monk < 25 )
+ (can-train monk)
+=>
+ (train monk)
+ (chat-local-to-self "Monk")
+)
+
+
+;//////////////////////////////////////////////////////////////////////////////
+;//                Buildings(Civ)
+;//////////////////////////////////////////////////////////////////////////////
+
+;//Monastery//
+(defrule
+ (goal READY_BUILD YES)
+ (building-type-count-total monastery < 3 )
+ (can-build monastery)
+=>
+ (set-strategic-number sn-minimum-town-size 14)
+ (set-strategic-number sn-maximum-town-size 16)
+ (build monastery)
+ (set-goal TOWN-SIZE YES)
+ (chat-local-to-self "Build:Monastery")
+ (enable-timer BUILD_TIME 5)
+ (set-goal READY_BUILD NO)
+)
+
+;//Monastery//
+(defrule
+ (current-age == imperial-age) 
+ (goal READY_BUILD YES)
+ (building-type-count-total monastery < 4 )
+ (can-build monastery)
+=>
+ (set-strategic-number sn-minimum-town-size 14)
+ (set-strategic-number sn-maximum-town-size 16)
+ (build monastery)
+ (set-goal TOWN-SIZE YES)
+ (chat-local-to-self "Build:Monastery")
+ (enable-timer BUILD_TIME 5)
+ (set-goal READY_BUILD NO)
+)
+
+;--------------------------------------------------------------------------------------
+(defrule
+ (players-civ any-ally spanish)
+ (research-completed ri-banking)
+ (current-age == castle-age)
+ (stone-amount >= 1500)
+=>
+ (tribute-to-player every-ally stone 100)
+)
+
+(defrule
+ (players-civ any-ally spanish)
+ (research-completed ri-banking)
+ (current-age == imperial-age)
+ (stone-amount >= 800)
+=>
+ (tribute-to-player every-ally stone 100)
+)

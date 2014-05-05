@@ -1,0 +1,77 @@
+;********************************************************************
+; AI maccha Ver 7.00  imperial.per
+;********************************************************************
+;{strategic-number---------------------------------------------------
+(defrule 
+   (current-age == imperial-age)
+   (goal CONTROL_TOWNSIZE NO)
+   (or(unit-type-count 42 <= 1)(player-in-game any-ally))
+=>
+   (set-strategic-number sn-minimum-town-size 30)
+   (set-strategic-number sn-maximum-town-size 40)
+)
+(defrule
+   (current-age == imperial-age)
+   (not(player-in-game any-ally))
+   (goal CONTROL_TOWNSIZE NO)
+   (unit-type-count 42 > 1)
+   (goal PROJECT_W 0)
+=>
+   (chat-local-to-self "maxium-townsize for targeting enemy castle!!")
+   (set-strategic-number sn-minimum-town-size 30)
+   (set-strategic-number sn-maximum-town-size 100)
+)
+;}-------------------------------------------------------------------
+;{upgrade------------------------------------------------------------
+(defrule 
+   (can-research ri-chemistry)
+=>
+   (chat-local-to-self "research ri-chemistry")
+   (research ri-chemistry)
+)
+(defrule 
+   (can-research ri-crop-rotation)
+=>
+   (chat-local-to-self "research ri-crop-rotation")
+   (research ri-crop-rotation)
+)
+(defrule 
+   (can-research ri-two-man-saw)
+=>
+   (chat-local-to-self "research ri-two-man-saw")
+   (research ri-two-man-saw)
+)
+(defrule 
+   (goal EVOLUTION 3)
+   (can-research ri-murder-holes)
+=>
+   (chat-local-to-self "research ri-murder-holes")
+   (research ri-murder-holes)
+)
+(defrule 
+   (goal EVOLUTION 3)
+   (can-research ri-town-watch)
+=>
+   (chat-local-to-self "research ri-town-watch")
+   (research ri-town-watch)
+)
+(defrule 
+   (can-research ri-bombard-tower)
+=>
+   (chat-local-to-self "$$$research ri-bombard-tower$$$")
+   (research ri-bombard-tower)
+)
+;}-------------------------------------------------------------------
+;{building-----------------------------------------------------------
+(defrule
+   (can-build bombard-tower)
+=>
+   (chat-local-to-self "$$$build bombard-tower for deffence town$$$")
+   (set-strategic-number sn-minimum-town-size 8)
+   (set-strategic-number sn-maximum-town-size 10)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (build bombard-tower)
+   (disable-self)
+)
+;}-------------------------------------------------------------------

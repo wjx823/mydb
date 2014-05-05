@@ -1,0 +1,594 @@
+; --------------------------------------------------------------------------
+; File: Slak_Market.per
+; Author: SlakTheEldar
+; Date: 2000-10-25
+;
+; Available under BSD-like license; see accompanying Copying.txt file
+;
+; --------------------------------------------------------------------------
+
+; --------------------------------------------------------------------------
+; Trading units
+; --------------------------------------------------------------------------
+; Maintain trade-carts/cogs
+
+(defrule
+  (current-age == feudal-age)
+  (players-building-type-count any-ally map-trade-building > 0)
+  (unit-type-count map-trade-unit <= max-feudal-trade-units)
+  (or (wood-amount > 175)
+      (escrow-amount wood > 175))
+  (building-type-count-total archery-range > 1)
+  (building-type-count-total barracks > 1)
+  (can-train-with-escrow map-trade-unit)
+  =>
+  (chat-local-to-self "trade-unit")
+  (release-escrow wood)
+  (release-escrow gold)
+  (train map-trade-unit)
+)
+
+(defrule
+  (current-age == feudal-age)
+  (players-building-type-count any-ally map-trade-building > 0)
+  (unit-type-count map-trade-unit <= max-feudal-trade-units)
+  (building-type-count-total archery-range > 1)
+  (building-type-count-total barracks > 1)
+  (wood-amount > 175)
+  (can-train map-trade-unit)
+  =>
+  (chat-local-to-self "trade-unit")
+  (train map-trade-unit)
+)
+
+(defrule
+  (current-age == feudal-age)
+  (players-building-type-count any-ally map-trade-building > 0)
+  (unit-type-count map-trade-unit <= max-feudal-trade-units)
+  (or (wood-amount > 175)
+      (escrow-amount wood > 175))
+  (building-type-count-total archery-range > 1)
+  (building-type-count-total barracks > 1)
+  (can-train-with-escrow map-trade-unit)
+  =>
+  (chat-local-to-self "trade-unit")
+  (release-escrow wood)
+  (release-escrow gold)
+  (train map-trade-unit)
+)
+
+(defrule
+  (current-age == castle-age)
+  (players-building-type-count any-ally map-trade-building > 0)
+  (unit-type-count map-trade-unit <= max-castle-trade-units)
+  (building-type-count-total archery-range > 1)
+  (building-type-count-total barracks > 1)
+  (wood-amount > 175)
+  (can-train map-trade-unit)
+  =>
+  (chat-local-to-self "trade-unit")
+  (train map-trade-unit)
+)
+
+(defrule
+  (current-age == castle-age)
+  (players-building-type-count any-ally map-trade-building > 0)
+  (unit-type-count map-trade-unit <= max-castle-trade-units)
+  (or (wood-amount > 175)
+      (escrow-amount wood > 175))
+  (building-type-count-total archery-range > 1)
+  (building-type-count-total barracks > 1)
+  (can-train-with-escrow map-trade-unit)
+  =>
+  (chat-local-to-self "trade-unit")
+  (release-escrow wood)
+  (release-escrow gold)
+  (train map-trade-unit)
+)
+
+(defrule
+  (current-age == imperial-age)
+  (players-building-type-count any-ally map-trade-building > 0)
+  (unit-type-count map-trade-unit <= max-imperial-trade-units)
+  (building-type-count-total archery-range > 1)
+  (building-type-count-total barracks > 1)
+  (wood-amount > 175)
+  (can-train map-trade-unit)
+  =>
+  (chat-local-to-self "trade-unit")
+  (train map-trade-unit)
+)
+
+; --------------------------------------------------------------------------
+; MARKET STUFF
+; --------------------------------------------------------------------------
+(defrule
+  (gold-amount >= 500)
+  (wood-amount <= 100)
+  (commodity-buying-price wood <= 120)
+  (can-buy-commodity wood)
+  =>
+  (chat-local-to-self "Buy wood - feudal")
+  (buy-commodity wood)
+) 
+
+(defrule
+  (current-age == feudal-age)
+  (gold-amount >= 500)
+  (food-amount <= 100)
+  (commodity-buying-price food <= 120)
+  (can-buy-commodity food)
+  =>
+  (chat-local-to-self "Buy food - feudal")
+  (buy-commodity food)
+) 
+
+(defrule
+  (current-age == feudal-age)
+  (unit-type-count enemy-units-attacking-me > 5)
+  (goal age-advancement NONE)
+  (food-amount <= 50)
+  (can-buy-commodity food)
+  =>
+  (chat-local-to-self "Food panic!!! Buy food - feudal")
+  (buy-commodity food)
+) 
+
+(defrule
+  (current-age == feudal-age)
+  (gold-amount >= 600)
+  (stone-amount <= 100)
+  (commodity-buying-price stone <= 200)
+  (can-buy-commodity stone)
+  =>
+  (chat-local-to-self "Buy stone - feudal")
+  (buy-commodity stone)
+) 
+
+(defrule
+  (current-age == feudal-age)
+  (wood-amount >= 500)
+  (commodity-selling-price wood >= 50)
+  (can-sell-commodity wood)
+  =>
+  (chat-local-to-self "Sell wood - feudal")
+  (sell-commodity wood)
+) 
+
+;******** CASTLE AGE
+
+(defrule
+  (current-age == castle-age)
+  (gold-amount >= 500)
+  (wood-amount <= 200)
+  (commodity-buying-price wood <= 130)
+  (can-buy-commodity wood)
+  =>
+  (chat-local-to-self "Buy wood - castle")
+  (buy-commodity wood)
+) 
+
+(defrule
+  (current-age == castle-age)
+  (gold-amount >= 500)
+  (wood-amount <= 100)
+  (can-buy-commodity wood)
+  =>
+  (chat-local-to-self "Buy wood - castle")
+  (buy-commodity wood)
+) 
+
+(defrule
+  (current-age == castle-age)
+  (gold-amount >= 500)
+  (food-amount <= 200)
+  (commodity-buying-price food <= 130)
+  (can-buy-commodity food)
+  =>
+  (chat-local-to-self "Buy food - castle")
+  (buy-commodity food)
+) 
+
+(defrule
+  (current-age == castle-age)
+  (gold-amount >= 500)
+  (food-amount <= 100)
+  (can-buy-commodity food)
+  =>
+  (chat-local-to-self "Buy much food - castle")
+  (buy-commodity food)
+) 
+
+(defrule
+  (current-age == castle-age)
+  (gold-amount >= 1200)
+  (stone-amount <= 200)
+  (commodity-buying-price stone <= 150)
+  (can-buy-commodity stone)
+  =>
+  (chat-local-to-self "Buy stone - castle")
+  (buy-commodity stone)
+) 
+
+(defrule
+  (current-age == castle-age)
+  (wood-amount >= 1000)
+  (or (gold-amount < 200)
+      (food-amount < 200) )
+  (commodity-selling-price wood >= 25)
+  (can-sell-commodity wood)
+  =>
+  (chat-local-to-self "Sell wood - castle")
+  (sell-commodity wood)
+) 
+
+(defrule
+  (current-age == castle-age)
+  (food-amount >= 1350)
+  (or (gold-amount < 200)
+      (wood-amount < 200))
+  (can-sell-commodity food)
+  =>
+  (chat-local-to-self "Way too much food - castle")
+  (sell-commodity food)
+) 
+
+; Imperial
+(defrule
+  (current-age == imperial-age)
+  (current-age-time < 120)
+  (gold-amount >= 500)
+  (wood-amount <= 200)
+  (commodity-buying-price wood <= 140)
+  (can-buy-commodity wood)
+  =>
+  (chat-local-to-self "Buy wood - imperial")
+  (buy-commodity wood)
+) 
+
+(defrule
+  (current-age == castle-age)
+  (gold-amount >= 500)
+  (food-amount <= 200)
+  (commodity-buying-price food <= 140)
+  (can-buy-commodity food)
+  =>
+  (chat-local-to-self "Buy food - imperial")
+  (buy-commodity food)
+) 
+
+; General stuff.....
+(defrule
+  (current-age == imperial-age)
+  (wood-amount > 1600)
+  (can-sell-commodity wood)
+  =>
+  (chat-local-to-self "abuse market - sell wood")
+  (sell-commodity wood)
+)
+
+(defrule
+  (current-age == imperial-age)
+  (food-amount > 1800)
+  (can-sell-commodity food)
+  =>
+  (chat-local-to-self "abuse market - sell food")
+  (sell-commodity food)
+)
+
+(defrule
+  (current-age >= feudal-age)
+  (civilian-population >= villager-feudal)
+  (research-available ri-wheel-barrow)
+  (food-amount < 400)
+  (can-buy-commodity food)
+  =>
+  (chat-local-to-self "Buy food for wb")
+  (buy-commodity food)
+)
+
+(defrule
+  (current-age >= feudal-age)
+  (civilian-population >= villager-feudal)
+  (research-available ri-wheel-barrow)
+  (wood-amount < 400)
+  (can-buy-commodity wood)
+  =>
+  (chat-local-to-self "Buy food for wb")
+  (buy-commodity wood)
+)
+
+(defrule
+  (current-age >= castle-age)
+  (research-available ri-hand-cart)
+  (civilian-population >= villager-castle)
+  (food-amount < 400)
+  (can-buy-commodity food)
+  =>
+  (chat-local-to-self "Buy food for hc")
+  (buy-commodity food)
+)
+
+(defrule
+  (current-age >= castle-age)
+  (civilian-population >= villager-castle)
+  (research-available ri-hand-cart)
+  (wood-amount < 400)
+  (can-buy-commodity wood)
+  =>
+  (chat-local-to-self "Buy food for hc")
+  (buy-commodity wood)
+)
+
+(defrule
+  (current-age == feudal-age)
+  (research-completed ri-wheel-barrow)
+  (food-amount < 800)
+  (gold-amount > 800)
+  (can-buy-commodity food)
+  =>
+  (buy-commodity food)
+  (chat-local-to-self "Buying food for boost to castle")
+)
+
+(defrule
+  (current-age == castle-age)
+  (research-completed ri-hand-cart)
+  (food-amount < 800)
+  (gold-amount > 1200)
+  (can-buy-commodity food)
+  =>
+  (buy-commodity food)
+  (chat-local-to-self "Buying food for boost to imperial")
+)
+
+(defrule
+  (game-time > panic-time)
+  (food-amount > 700)
+  (gold-amount < 200)
+  (can-sell-commodity food)
+  =>
+  (sell-commodity food)
+  (chat-local-to-self "Panic food sale")
+)
+
+(defrule
+  (game-time > panic-time)
+  (wood-amount > 700)
+  (gold-amount < 200)
+  (can-sell-commodity wood)
+  =>
+  (sell-commodity wood)
+  (chat-local-to-self "Panic wood sale")
+)
+
+(defrule
+  (game-time > panic-time)
+  (dropsite-min-distance stone > 7)
+  (or (building-type-count-total watch-tower-line < post-imperial-tower)
+      (building-type-count-total castle < 2))
+  (gold-amount > 400)
+  (can-buy-commodity stone)
+  =>
+  (buy-commodity stone)
+  (chat-local-to-self "panic stone buy")
+)
+
+; --------------------------------------------------------------------------
+; General food/wood buying
+; --------------------------------------------------------------------------
+(defrule
+  (unit-type-count map-trade-unit > 0)
+  (food-amount < 200)
+  (gold-amount > 400)
+  (can-buy-commodity food)
+  =>
+  (buy-commodity food)
+)
+
+(defrule
+  (unit-type-count map-trade-unit > 0)
+  (wood-amount < 200)
+  (gold-amount > 400)
+  (can-buy-commodity wood)
+  =>
+  (buy-commodity wood)
+)
+
+; --------------------------------------------------------------------------
+; Tribute System (use player-tribute)
+; 
+; 3  = FOOD
+; 4  = WOOD
+; 5  = GOLD
+; 6  = STONE
+; 38 = ALL-RESOURCES
+; --------------------------------------------------------------------------
+; If we don't have a market, we cannot tribute.
+(defrule
+  (taunt-detected any-ally 3)
+  (building-type-count market == 0)
+  =>
+  (acknowledge-taunt this-any-ally 3)
+  (chat-to-player-using-id this-any-ally 22164)
+  ;"39 But sire! I have no market!"
+)
+
+(defrule
+  (taunt-detected any-ally 4)
+  (building-type-count market == 0)
+  =>
+  (acknowledge-taunt this-any-ally 4)
+  (chat-to-player-using-id this-any-ally 22164)
+  ;"39 But sire! I have no market!"
+)
+
+(defrule
+  (taunt-detected any-ally 5)
+  (building-type-count market == 0)
+  =>
+  (acknowledge-taunt this-any-ally 5)
+  (chat-to-player-using-id this-any-ally 22164)
+  ;"39 But sire! I have no market!"
+)
+
+(defrule
+  (taunt-detected any-ally 6)
+  (building-type-count market == 0)
+  =>
+  (acknowledge-taunt this-any-ally 6)
+  (chat-to-player-using-id this-any-ally 22164)
+  ;"39 But sire! I have no market!"
+)
+
+(defrule
+  (taunt-detected any-ally 38)
+  (building-type-count market == 0)
+  =>
+  (acknowledge-taunt this-any-ally 38)
+  (chat-to-player-using-id this-any-ally 22164)
+  ;"39 But sire! I have no market!"
+)
+
+(defrule
+  (taunt-detected any-ally 3)
+  (building-type-count market > 0)
+  =>
+  (set-goal ally-tribute-resource-needed FOOD)
+)
+
+(defrule
+  (taunt-detected any-ally 4)
+  (building-type-count market > 0)
+  =>
+  (set-goal ally-tribute-resource-needed WOOD)
+)
+
+(defrule
+  (taunt-detected any-ally 5)
+  (building-type-count market > 0)
+  =>
+  (set-goal ally-tribute-resource-needed GOLD)
+)
+
+(defrule
+  (taunt-detected any-ally 6)
+  (building-type-count market > 0)
+  =>
+  (set-goal ally-tribute-resource-needed STONE)
+)
+
+(defrule
+  (taunt-detected any-ally 38)
+  (building-type-count market > 0)
+  =>
+  (set-goal ally-tribute-resource-needed ALL-RESOURCES)
+)
+
+; Process the request
+(defrule
+  (goal ally-tribute-resource-needed FOOD)
+  (taunt-detected any-ally 3)
+  (food-amount > 240)
+  =>
+  (tribute-to-player this-any-ally food 100)
+)
+
+(defrule
+  (goal ally-tribute-resource-needed ALL-RESOURCES)
+  (taunt-detected any-ally 38)
+  (food-amount > 240)
+  =>
+  (tribute-to-player this-any-ally food 100)
+)
+
+(defrule
+  (goal ally-tribute-resource-needed WOOD)
+  (taunt-detected any-ally 4)
+  (wood-amount > 240)
+  =>
+  (tribute-to-player this-any-ally wood 100)
+)
+
+(defrule
+  (goal ally-tribute-resource-needed ALL-RESOURCES)
+  (taunt-detected any-ally 38)
+  (wood-amount > 240)
+  =>
+  (tribute-to-player this-any-ally wood 100)
+)
+
+(defrule
+  (goal ally-tribute-resource-needed GOLD)
+  (taunt-detected any-ally 5)
+  (gold-amount > 280)
+  =>
+  (tribute-to-player this-any-ally gold 100)
+)
+
+(defrule
+  (goal ally-tribute-resource-needed ALL-RESOURCES)
+  (taunt-detected any-ally 38)
+  (gold-amount > 280)
+  =>
+  (tribute-to-player this-any-ally gold 100)
+)
+
+(defrule
+  (goal ally-tribute-resource-needed STONE)
+  (taunt-detected any-ally 6)
+  (stone-amount > 280)
+  =>
+  (tribute-to-player this-any-ally stone 100)
+)
+
+(defrule
+  (goal ally-tribute-resource-needed ALL-RESOURCES)
+  (taunt-detected any-ally 38)
+  (gold-amount > 280)
+  =>
+  (tribute-to-player this-any-ally gold 100)
+)
+
+; Acknowledge the taunts
+(defrule
+  (taunt-detected any-ally 3)
+  =>
+  (acknowledge-taunt this-any-ally 3)
+)
+
+(defrule
+  (taunt-detected any-ally 4)
+  =>
+  (acknowledge-taunt this-any-ally 4)
+)
+
+(defrule
+  (taunt-detected any-ally 5)
+  =>
+  (acknowledge-taunt this-any-ally 5)
+)
+
+(defrule
+  (taunt-detected any-ally 6)
+  =>
+  (acknowledge-taunt this-any-ally 6)
+)
+
+(defrule
+  (taunt-detected any-ally 38)
+  =>
+  (acknowledge-taunt this-any-ally 38)
+)
+
+; --------------------------------------------------------------------------
+; Tribute System (use player-tribute)
+; 
+; 3  = FOOD
+; 4  = WOOD
+; 5  = GOLD
+; 6  = STONE
+; 38 = ALL-RESOURCES
+; --------------------------------------------------------------------------
+; Request resources
+

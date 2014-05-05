@@ -1,0 +1,475 @@
+#load-if-defined AZTEC-CIV
+
+(defrule
+ (true)
+=>
+ (set-goal UNIQ HOHEI)
+ (set-goal HOHEI 1)
+ (set-goal YUMI 1)
+ (disable-self)
+)
+
+(defrule
+ (can-research-with-escrow my-unique-unit-upgrade)
+=>
+ (release-escrow food)
+ (release-escrow gold)
+ (research my-unique-unit-upgrade)
+
+)
+
+(defrule
+ (can-research-with-escrow my-unique-research)
+=>
+ (release-escrow food)
+ (release-escrow gold)
+ (research my-unique-research)
+)
+
+#end-if
+
+#load-if-defined BRITON-CIV
+
+(defrule
+ (true)
+=>
+ (set-goal UNIQ YUMI)
+ (set-goal YARI 1)
+ (set-goal YUMI 1)
+ (disable-self)
+)
+
+(defrule
+ (can-research-with-escrow my-unique-unit-upgrade)
+=>
+ (release-escrow food)
+ (release-escrow gold)
+ (research my-unique-unit-upgrade)
+
+)
+
+(defrule
+ (can-research-with-escrow my-unique-research)
+=>
+ (release-escrow wood)
+ (release-escrow gold)
+ (research my-unique-research)
+)
+
+#end-if
+
+#load-if-defined BYZANTINE-CIV
+
+(defrule
+ (true)
+=>
+ (set-goal UNIQ KIHEI)
+ (set-goal YARI 1)
+ (set-goal KISHI 1)
+ (set-goal RAKUDA 1)
+ (disable-self)
+)
+
+(defrule
+ (can-research-with-escrow my-unique-unit-upgrade)
+=>
+ (release-escrow food)
+ (release-escrow gold)
+ (research my-unique-unit-upgrade)
+)
+
+(defrule
+ (can-research-with-escrow my-unique-research)
+=>
+ (release-escrow wood)
+ (release-escrow gold)
+ (research my-unique-research)
+)
+
+#end-if
+
+#load-if-defined CELTIC-CIV
+
+(defrule
+ (true)
+=>
+ (set-goal UNIQ HOHEI)
+ (set-goal HOHEI 1)
+ (set-goal KISHI 1)
+ (disable-self)
+)
+
+(defrule
+ (can-research-with-escrow my-unique-research)
+=>
+ (release-escrow food)
+ (release-escrow gold)
+ (research my-unique-research)
+)
+
+#end-if
+
+#load-if-defined CHINESE-CIV
+
+(defrule
+ (true)
+=>
+ (set-goal UNIQ YUMI)
+ (set-goal YUMI 1)
+ (set-goal YARI 1)
+ (disable-self)
+)
+
+(defrule
+ (can-research-with-escrow my-unique-research)
+=>
+ (release-escrow wood)
+ (release-escrow gold)
+ (research my-unique-research)
+)
+
+#end-if
+
+#load-if-defined FRANKISH-CIV
+
+(defrule
+ (true)
+=>
+ (set-goal UNIQ HOHEI)
+ (set-goal HOHEI 1)
+ (set-goal KISHI 1)
+ (disable-self)
+)
+
+#end-if
+
+#load-if-defined GOTHIC-CIV
+
+(defrule
+ (true)
+=>
+ (set-goal UNIQ HOHEI)
+ (set-goal HOHEI 1)
+ (set-goal YARI 1)
+ (disable-self)
+)
+
+(defrule
+ (can-research-with-escrow my-unique-research) ; 無秩序
+=>
+ (release-escrow food)
+ (release-escrow gold)
+ (research my-unique-research)
+)
+
+(defrule
+ (can-research-with-escrow 457) ; パーフュージョン
+=>
+ (release-escrow wood)
+ (release-escrow gold)
+ (research 457)
+)
+
+(defrule
+ (can-research-with-escrow my-unique-unit-upgrade)
+=>
+ (release-escrow food)
+ (release-escrow gold)
+ (research my-unique-unit-upgrade)
+)
+
+#end-if
+
+#load-if-defined HUN-CIV
+
+(defrule
+ (true)
+=>
+ (set-goal UNIQ KIHEI)
+ (set-goal YARI 1)
+ (set-goal KISHI 1)
+ (set-goal YUMI-KIHEI 1)
+ (disable-self)
+)
+
+(defrule
+ (can-research-with-escrow my-unique-unit-upgrade)
+=>
+ (release-escrow food)
+ (release-escrow gold)
+ (research my-unique-unit-upgrade)
+)
+
+#end-if
+
+#load-if-defined JAPANESE-CIV
+
+(defrule
+ (true)
+=>
+ (set-goal UNIQ HOHEI)
+ (set-goal HOHEI 1)
+ (set-goal YUMI 1)
+ (disable-self)
+)
+
+
+(defrule
+ (can-research-with-escrow my-unique-unit-upgrade)
+=>
+ (release-escrow food)
+ (release-escrow gold)
+ (research my-unique-unit-upgrade)
+)
+
+#end-if
+
+#load-if-defined KOREAN-CIV
+
+(defrule
+ (true)
+=>
+ (set-goal UNIQ YUMI-KIHEI)
+ (set-goal YUMI 1)
+ (set-goal YARI 1)
+ (disable-self)
+)
+
+(defrule
+ (can-research-with-escrow my-unique-research)
+=>
+ (release-escrow wood)
+ (release-escrow gold)
+ (research my-unique-research)
+)
+
+(defrule
+ (can-research-with-escrow my-unique-unit-upgrade)
+=>
+ (release-escrow wood)
+ (release-escrow gold)
+ (research my-unique-unit-upgrade)
+)
+
+#end-if
+
+#load-if-defined MAYAN-CIV
+
+(defrule
+ (true)
+=>
+ (set-goal UNIQ YUMI)
+ (set-goal YUMI 1)
+ (set-goal EAGLE 1)
+ (set-goal YARI 1)
+ (disable-self)
+)
+
+(defrule
+ (can-research-with-escrow my-unique-research)
+=>
+ (release-escrow food)
+ (release-escrow gold)
+ (research my-unique-research)
+)
+
+(defrule
+ (can-research-with-escrow my-unique-unit-upgrade)
+=>
+ (release-escrow food)
+ (release-escrow wood)
+ (research my-unique-unit-upgrade)
+)
+
+#end-if
+
+#load-if-defined MONGOL-CIV
+
+(defrule
+ (true)
+=>
+ (set-goal UNIQ YUMI-KIHEI)
+ (set-goal YUMI-KIHEI 1)
+ (set-goal KIHEI 1)
+ (set-goal RAKUDA 1)
+ (disable-self)
+)
+
+(defrule
+ (can-research-with-escrow my-unique-research)
+=>
+ (release-escrow food)
+ (release-escrow gold)
+ (research my-unique-research)
+)
+
+(defrule
+ (can-research-with-escrow my-unique-unit-upgrade)
+=>
+ (release-escrow gold)
+ (release-escrow wood)
+ (research my-unique-unit-upgrade)
+)
+
+#end-if
+
+#load-if-defined PERSIAN-CIV
+
+(defrule
+ (true)
+=>
+ (set-goal UNIQ KIHEI)
+ (set-goal KISHI 1)
+ (set-goal YUMI-KIHEI 1)
+ (disable-self)
+)
+
+(defrule
+ (can-research-with-escrow my-unique-research)
+=>
+ (release-escrow food)
+ (release-escrow gold)
+ (research my-unique-research)
+)
+
+(defrule
+ (can-research-with-escrow my-unique-unit-upgrade)
+=>
+ (release-escrow food)
+ (release-escrow gold)
+ (research my-unique-unit-upgrade)
+)
+
+(defrule
+ (can-research-with-escrow ri-faith)
+=>
+ (release-escrow food)
+ (release-escrow gold)
+ (research ri-faith)
+)
+
+#end-if
+
+#load-if-defined SARACEN-CIV
+
+(defrule
+ (true)
+=>
+ (set-goal UNIQ RAKUDA)
+ (set-goal YUMI-KIHEI 1)
+ (set-goal RAKUDA 1)
+ (set-goal HOHEI 1)
+ (disable-self)
+)
+
+(defrule
+ (can-research-with-escrow my-unique-research)
+=>
+ (release-escrow food)
+ (release-escrow gold)
+ (research my-unique-research)
+)
+
+(defrule
+ (can-research-with-escrow my-unique-unit-upgrade)
+=>
+ (release-escrow food)
+ (release-escrow gold)
+ (research my-unique-unit-upgrade)
+)
+
+#end-if
+
+#load-if-defined SPANISH-CIV
+
+(defrule
+ (true)
+=>
+ (set-goal UNIQ YUMI-KIHEI)
+ (set-goal YARI 1)
+ (set-goal KISHI 1)
+ (disable-self)
+)
+
+(defrule
+ (can-research-with-escrow ri-theocracy)
+=>
+ (release-escrow food)
+ (release-escrow gold)
+ (research ri-theocracy)
+)
+
+(defrule
+ (can-research-with-escrow my-unique-unit-upgrade)
+=>
+ (release-escrow food)
+ (release-escrow gold)
+ (research my-unique-unit-upgrade)
+)
+
+#end-if
+
+#load-if-defined TEUTONIC-CIV
+
+(defrule
+ (true)
+=>
+ (set-goal UNIQ HOHEI)
+ (set-goal KISHI 1)
+ (set-goal HOHEI 1)
+ (disable-self)
+)
+
+(defrule
+ (can-research-with-escrow my-unique-unit-upgrade)
+=>
+ (release-escrow food)
+ (release-escrow gold)
+ (research my-unique-unit-upgrade)
+)
+
+#end-if
+
+#load-if-defined TURKISH-CIV
+
+(defrule
+ (true)
+=>
+ (set-goal UNIQ YUMI)
+ (set-goal YUMI 1)
+ (set-goal HOHEI 1)
+ (set-goal KIHEI 1)
+ (disable-self)
+)
+
+(defrule
+ (can-research-with-escrow my-unique-unit-upgrade)
+=>
+ (release-escrow food)
+ (release-escrow gold)
+ (research my-unique-unit-upgrade)
+)
+
+#end-if
+
+#load-if-defined VIKING-CIV
+
+(defrule
+ (true)
+=>
+ (set-goal UNIQ HOHEI)
+ (set-goal HOHEI 1)
+ (set-goal YUMI 1)
+ (disable-self)
+)
+
+(defrule
+ (can-research-with-escrow my-unique-unit-upgrade)
+=>
+ (release-escrow food)
+ (release-escrow gold)
+ (research my-unique-unit-upgrade)
+)
+
+#end-if
+

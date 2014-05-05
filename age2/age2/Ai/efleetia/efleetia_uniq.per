@@ -1,0 +1,83 @@
+(defrule
+ (goal UNIQ YUMI)
+ (can-train my-unique-unit-line)
+ (research-completed ri-bodkin-arrow)
+ (research-completed ri-leather-archer-armor)
+ (or
+  (current-age == castle-age)
+  (unit-type-count trebuchet >= 2)
+ )
+=>
+ (train my-unique-unit-line)
+)
+
+(defrule
+ (goal UNIQ YUMI-KIHEI)
+ (can-train my-unique-unit-line)
+ (or
+  (current-age == castle-age)
+  (unit-type-count trebuchet >= 2)
+ )
+=>
+ (train my-unique-unit-line)
+)
+
+(defrule
+ (goal UNIQ KIHEI)
+ (can-train my-unique-unit-line)
+ (goal HORSE 2)
+ (research-completed ri-iron-casting)
+ (research-completed ri-chain-barding)
+ (or
+  (current-age == castle-age)
+  (unit-type-count trebuchet >= 2)
+ )
+=>
+ (train my-unique-unit-line)
+)
+
+(defrule
+ (goal UNIQ RAKUDA)
+ (can-train my-unique-unit-line)
+ (goal HORSE 2)
+ (research-completed ri-iron-casting)
+ (research-completed ri-chain-barding)
+ (or
+  (current-age == castle-age)
+  (unit-type-count trebuchet >= 2)
+ )
+=>
+ (train my-unique-unit-line)
+)
+
+(defrule
+ (goal UNIQ HOHEI)
+ (can-train my-unique-unit-line)
+ (research-completed ri-iron-casting)
+ (research-completed ri-chain-mail)
+ (or
+  (current-age == castle-age)
+  (unit-type-count trebuchet >= 2)
+ )
+=>
+ (train my-unique-unit-line)
+)
+
+(defrule
+ (can-train 759)
+=>
+ (train 759)
+)
+
+(defrule
+ (can-train 761)
+=>
+ (train 761)
+)
+
+(defrule
+ (can-train missionary)
+=>
+ (train missionary)
+)
+

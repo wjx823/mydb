@@ -1,0 +1,121 @@
+; --------------------------------------------------------------------------
+; File: Slak_Ages.per
+; Author: SlakTheEldar
+; Date: 2000-10-25
+;
+; Copyright 1999-2000, Dan Cieslak  All rights reserved.
+; Available under BSD-like license; see accompanying Copying.txt file
+;
+; --------------------------------------------------------------------------
+
+; --------------------------------------------------------------------------
+; This contains the logic for advancing through the ages.
+; --------------------------------------------------------------------------
+
+; --------------------------------------------------------------------------
+; Go feudal when we complete the specified number of dark age villagers
+; --------------------------------------------------------------------------
+(defrule
+  (current-age == dark-age)
+  (civilian-population >= villager-dark)
+  =>
+  (set-goal age-advancement ADVANCE)
+  (chat-local-to-self "age-advancement set to ADVANCE")
+  (disable-self)
+)
+
+(defrule
+  (goal age-advancement ADVANCE)
+  (can-research feudal-age)
+  =>
+  (chat-local-to-self "Researching feudal")
+  (research feudal-age)
+  (set-goal age-advancement NOTICE)
+  (set-goal resource-needed CHECKING)
+  (disable-self)
+)
+
+(defrule
+  (current-age == feudal-age)
+  =>
+  (set-goal age-advancement NONE)
+)
+
+; --------------------------------------------------------------------------
+; Go castle when we complete the specified number of feudal villagers
+; --------------------------------------------------------------------------
+(defrule
+  (current-age == feudal-age)
+  (not (goal main-or-response-unit FEUDAL-DEF))
+  (not (goal age-advancement NOTICE))
+  (civilian-population >= villager-feudal)
+  =>
+  (set-goal age-advancement ADVANCE)
+)
+
+(defrule
+  (current-age == feudal-age)
+  (goal main-or-response-unit FEUDAL-DEF)
+  (not (goal age-advancement NOTICE))
+  (civilian-population >= villager-feudal-rushed)
+  =>
+  (set-goal age-advancement ADVANCE)
+)
+
+(defrule
+  (or (goal age-advancement ADVANCE)
+      (building-type-count-total town-center > 1))
+  (can-research-with-escrow castle-age)
+  (not (town-under-attack))
+  =>
+  (release-escrow food)
+  (release-escrow gold)
+  (research castle-age)
+  (set-goal age-advancement NOTICE)
+  (set-goal resource-needed NONE)
+  (set-goal escrow-wood YES)
+  (set-goal escrow-food YES)
+  (set-goal escrow-gold YES)
+  (chat-local-to-self "Researching castle")
+)
+
+(defrule
+  (current-age == castle-age)
+  =>
+  (set-goal age-advancement NONE)
+  (disable-self)
+)
+
+; --------------------------------------------------------------------------
+; Go imperial when we complete the specified number of castle villagers
+; --------------------------------------------------------------------------
+(defrule
+  (can-research imperial-age)
+  (not (town-under-attack))
+  =>
+  (chat-local-to-self "Researching imperial")
+  (set-goal age-advancement NOTICE)
+  (set-goal resource-needed NONE)
+  (set-goal main-or-response-unit MAIN) ; move to imp military
+  (research imperial-age)
+)
+
+(defrule
+  (can-research-with-escrow imperial-age)
+  (not (town-under-attack))
+  =>
+  (chat-local-to-self "Researching imperial with escrow")
+  (release-escrow food)
+  (release-escrow gold)
+  (research imperial-age)
+  (set-goal age-advancement NOTICE)
+  (set-goal resource-needed NONE)
+)
+
+(defrule
+  (current-age == imperial-age)
+  =>
+  (set-goal age-advancement NO)
+  (set-goal resource-needed NONE)
+  (disable-self)
+)

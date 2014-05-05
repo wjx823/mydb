@@ -1,0 +1,432 @@
+;********************************************************************
+; AI maccha Ver 7.00  castleage.per
+;********************************************************************
+;{strategic-number---------------------------------------------------
+(defrule 
+   (current-age == castle-age)
+=>
+   (set-strategic-number sn-food-dropsite-distance 10)
+   (set-strategic-number sn-maximum-food-drop-distance 30)
+   (set-strategic-number sn-maximum-wood-drop-distance 15)
+   (set-strategic-number sn-maximum-gold-drop-distance 50)
+   (set-strategic-number sn-mill-max-distance 30)
+   (set-strategic-number sn-wood-dropsite-distance 7)
+   (disable-self)
+)
+;*town-size
+(defrule 
+   (current-age == castle-age)
+   (players-current-age any-enemy <= feudal-age)
+   (unit-type-count battering-ram-line == 0)
+   (goal CONTROL_TOWNSIZE NO)
+=>
+   (set-strategic-number sn-minimum-town-size 10)
+   (set-strategic-number sn-maximum-town-size 15)
+)
+(defrule 
+   (current-age == castle-age)
+   (military-population > pop-8)
+   (or
+      (unit-type-count battering-ram-line > 0)
+      (unit-type-count mangonel-line > 0)
+   )
+   (goal CONTROL_TOWNSIZE NO)
+=>
+   (set-strategic-number sn-minimum-town-size 20)
+   (set-strategic-number sn-maximum-town-size 25)
+)
+(defrule 
+   (current-age == castle-age)
+   (or
+       (players-current-age any-enemy > feudal-age)
+       (military-population > pop-16)
+   )
+   (goal CONTROL_TOWNSIZE NO)
+=>
+   (set-strategic-number sn-minimum-town-size 25)
+   (set-strategic-number sn-maximum-town-size 30)
+)
+(defrule 
+   (current-age == castle-age)
+   (military-population > pop-25)
+   (goal CONTROL_TOWNSIZE NO)
+=>
+   (set-strategic-number sn-minimum-town-size 25)
+   (set-strategic-number sn-maximum-town-size 35)
+)
+;}-------------------------------------------------------------------
+;{villager adjustment------------------------------------------------
+(defrule
+   (goal SUPPLY_PLAN 1)
+;   (unit-type-count villager > pop-40)
+=>
+   (set-strategic-number sn-food-gatherer-percentage 45)
+   (set-strategic-number sn-gold-gatherer-percentage 25)
+   (set-strategic-number sn-stone-gatherer-percentage 5)
+   (set-strategic-number sn-wood-gatherer-percentage 25)
+)
+(defrule
+   (goal SUPPLY_PLAN 2)
+;   (unit-type-count villager > pop-40)
+=>
+   (set-strategic-number sn-food-gatherer-percentage 30)
+   (set-strategic-number sn-gold-gatherer-percentage 30)
+   (set-strategic-number sn-stone-gatherer-percentage 5)
+   (set-strategic-number sn-wood-gatherer-percentage 35)
+)
+(defrule
+   (goal SUPPLY_PLAN 3)
+=>
+   (set-strategic-number sn-food-gatherer-percentage 40)
+   (set-strategic-number sn-gold-gatherer-percentage 20)
+   (set-strategic-number sn-stone-gatherer-percentage 20)
+   (set-strategic-number sn-wood-gatherer-percentage 20)
+)
+;}-------------------------------------------------------------------
+;{building(top priority)---------------------------------------------
+(defrule 
+   (can-build town-center)
+=>
+   (chat-local-to-self "build first town-center")
+   (set-strategic-number sn-minimum-town-size 15)
+   (set-strategic-number sn-maximum-town-size 25)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (build town-center)
+   (disable-self)
+)
+(defrule
+   (building-type-count-total town-center >= 2)
+=>
+   (set-goal ENEMY_RUSH YES)
+   (disable-self)
+)
+(defrule 
+   (players-current-age every-enemy < castle-age)
+   (building-type-count siege-workshop < 1)
+   (can-build siege-workshop)
+=>
+   (chat-local-to-self "build first siege-workshop")
+   (set-strategic-number sn-minimum-town-size 8)
+   (set-strategic-number sn-maximum-town-size 12)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (build siege-workshop)
+   (disable-self)
+)
+(defrule 
+   (building-type-count monastery == 0)
+   (or(not(player-in-game any-ally))(goal EVOLUTION 3))
+   (can-build monastery)
+=>
+   (chat-local-to-self "build monastery")
+   (build monastery)
+)
+(defrule 
+
+   (building-type-count siege-workshop < 1)
+   (can-build siege-workshop)
+=>
+   (chat-local-to-self "build first siege-workshop")
+   (build siege-workshop)
+)
+;}-------------------------------------------------------------------
+;{vs feudal-rush(strategy)-------------------------------------------
+(defrule 
+   (current-age == castle-age)
+   (players-current-age every-enemy < castle-age)
+   (goal ATTACK_MODE UNIQUE_MANIA)
+=>
+   (chat-local-to-self "changes to a martial organization of the standard. /knight is admitted to produce. ")
+   (set-goal MAX_KNIGHT 5)
+   (set-goal ATTACK_MODE NORMAL)
+   (disable-self)
+)
+(defrule 
+   (current-age == castle-age)
+   (goal ATTACK_MODE RUSH_HORSE)
+   (players-unit-type-count any-enemy spearman-line > pop-25)
+=>
+   (chat-local-to-self "changes to a martial organization of the standard. s.t.A lot of spearmen")
+   (set-goal MAX_KNIGHT 0)
+   (set-goal MAX_LIGHTCAVALRY 0)
+   (set-goal MAX_CAMEL 0)
+   (set-goal ATTACK_MODE NORMAL)
+   (disable-self)
+)
+;}-------------------------------------------------------------------
+;{upgrade------------------------------------------------------------
+(defrule 
+   (or(building-type-count-total town-center >= 2)(unit-type-count villager > pop-50))
+   (can-research ri-bow-saw)
+=>
+   (chat-local-to-self "research ri-bow-saw")
+   (research ri-bow-saw)
+)
+(defrule 
+    (or(building-type-count-total town-center >= 2)(unit-type-count villager > pop-50))
+   (can-research ri-heavy-plow)
+=>
+   (chat-local-to-self "research ri-heavy-plow")
+   (research ri-heavy-plow)
+)
+(defrule 
+    (or(building-type-count-total town-center >= 2)(unit-type-count villager > pop-50))
+   (can-research ri-hand-cart)
+=>
+   (chat-local-to-self "research ri-hand-cart")
+   (research ri-hand-cart)
+)
+(defrule
+   (building-type-count-total town-center >= 2)
+   (building-type-count-total siege-workshop > 0)
+   (can-research ri-gold-shaft-mining)
+=>
+   (chat-local-to-self "research gold-shaft-mining")
+   (research ri-gold-shaft-mining)
+)
+(defrule
+   (current-age >= castle-age)
+   (player-in-game any-ally)
+   (unit-type-count villager >= pop-60)
+   (can-research ri-cartography)
+=>
+   (chat-local-to-self "research cartography")
+   (research ri-cartography)
+)
+(defrule
+   (can-research imperial-age)
+=>
+   (chat-local-to-self "research imperial-age")
+   (research imperial-age)
+   (set-goal EVOLUTION 3)
+)
+;}-------------------------------------------------------------------
+;{train villager-----------------------------------------------------
+(defrule 
+   (current-age >= castle-age)
+   (unit-type-count villager < 100)
+   (unit-type-count villager < pop-70)
+   (or
+      (goal RESTRICT_MILITARY NO)
+      (population < pop-90)
+   )
+   (can-train villager) 
+=>
+   (train villager)
+)
+;}-------------------------------------------------------------------
+;{building-----------------------------------------------------------
+(defrule  
+   (current-age >= castle-age)
+   (not(goal PROJECT_W 2))
+   (housing-headroom < 10)
+   (can-build house) 
+=>
+   (build house)
+)
+(defrule 
+   (building-type-count-total siege-workshop >= 1)
+   (building-type-count town-center < 3)
+   (can-build town-center)
+=>
+   (chat-local-to-self "build town-center")
+   (build town-center)
+)
+(defrule
+   (current-age >= castle-age)
+   (building-type-count-total town-center >= 2)
+   (building-type-count market == 0)
+   (can-build market)
+=>
+   (chat-local-to-self "build market")
+   (build market)
+)
+(defrule
+   (building-type-count-total town-center >= 2)
+   (building-type-count university == 0)
+   (can-build university)
+=>
+   (chat-local-to-self "build university")
+   (build university)
+)
+(defrule
+   (current-age == castle-age)
+   (game-time < 2400)
+   (not(player-in-game any-ally))
+   (military-population >= pop-13)
+   (players-military-population every-enemy <= pop-25)
+   (players-building-type-count every-enemy castle < 2)
+   (building-type-count castle >= 1)
+   (can-build castle)
+=>
+   (chat-local-to-self "*1vs1* build-forward castle /It's a gambling.")
+   (build-forward castle)
+)
+(defrule
+   (goal PROJECT_W 0)
+   (can-build castle)
+=>
+   (chat-local-to-self "build castle")
+   (set-strategic-number sn-minimum-town-size 10)
+   (set-strategic-number sn-maximum-town-size 14)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (build castle)
+)
+(defrule 
+   (current-age == castle-age)
+   (players-current-age any-enemy >= castle-age)
+   (building-type-count outpost < 8)
+   (can-build outpost)
+=>
+   (set-strategic-number sn-minimum-town-size 25)
+   (set-strategic-number sn-maximum-town-size 35)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (chat-local-to-self "build outpost")
+   (build outpost)
+)
+;*farm
+(defrule
+   (current-age >= castle-age)
+   (not(goal PROJECT_W 2))
+   (building-type-count-total farm <= 40)
+   (can-build farm)
+=>
+   (build farm)
+)
+;*lumber-camp
+(defrule 
+   (building-type-count lumber-camp > 1)
+   (game-time <= 5000)
+   (resource-found wood)
+   (dropsite-min-distance wood > 5)
+   (can-build-with-escrow lumber-camp)
+=>
+   (chat-local-to-self "build lumber-camp 2nd")
+   (release-escrow wood)
+   (set-strategic-number sn-camp-max-distance 50)
+   (build lumber-camp)
+)
+(defrule 
+   (or
+      (current-age == imperial-age)
+      (game-time > 5000)
+   )
+   (resource-found wood)
+   (dropsite-min-distance wood > 5)
+   (can-build-with-escrow lumber-camp)
+=>
+   (chat-local-to-self "build lumber-camp 3rd")
+   (release-escrow wood)
+   (set-strategic-number sn-maximum-wood-drop-distance 80)
+   (set-strategic-number sn-camp-max-distance 80)
+   (build lumber-camp)
+)
+;*mining-camp
+(defrule 
+   (current-age >= castle-age)
+   (game-time <= 3000)
+   (resource-found gold)
+   (dropsite-min-distance gold > 5)
+   (can-build-with-escrow mining-camp)
+=>
+   (chat-local-to-self "build mining-camp for gold 2nd")
+   (release-escrow wood)
+   (set-strategic-number sn-camp-max-distance 50)
+   (build mining-camp)
+)
+(defrule 
+   (or
+      (current-age == imperial-age)
+      (game-time > 4000)
+   )
+   (resource-found gold)
+   (dropsite-min-distance gold > 5)
+   (can-build-with-escrow mining-camp)
+=>
+   (chat-local-to-self "build mining-camp for gold 3rd")
+   (release-escrow wood)
+   (set-strategic-number sn-camp-max-distance 144)
+   (build mining-camp)
+)
+(defrule 
+   (current-age >= castle-age)
+   (game-time <= 3000)
+   (resource-found stone)
+   (dropsite-min-distance stone > 5)
+   (can-build-with-escrow mining-camp)
+=>
+   (chat-local-to-self "build mining-camp for stone 2nd")
+   (release-escrow wood)
+   (set-strategic-number sn-camp-max-distance 40)
+   (build mining-camp)
+)
+(defrule 
+   (or
+      (current-age == imperial-age)
+      (game-time > 4000)
+   )
+   (resource-found stone)
+   (dropsite-min-distance stone > 5)
+   (can-build-with-escrow mining-camp)
+=>
+   (chat-local-to-self "build mining-camp for stone 3rd")
+   (release-escrow wood)
+   (set-strategic-number sn-camp-max-distance 144)
+   (build mining-camp)
+)
+;}-------------------------------------------------------------------
+;{vs feudal-rush(military)-------------------------------------------
+(defrule 
+   (players-current-age every-enemy < castle-age)
+   (unit-type-count 112 > 0)
+   (unit-type-count-total battering-ram-line < 3)
+   (can-train battering-ram-line)
+=>
+   (chat-local-to-self "train battering-ram-line")
+   (train battering-ram-line)
+)
+(defrule 
+   (players-current-age every-enemy < castle-age)
+   (unit-type-count scorpion-line < 8)
+   (can-train scorpion-line)
+=>
+   (chat-local-to-self "train scorpion-line")
+   (train scorpion-line)
+)
+(defrule 
+   (current-age <= castle-age)
+   (town-under-attack)
+   (or
+      (unit-type-count 54 > 0)
+      (unit-type-count 211 > 0)
+   )
+   (can-train knight-line)
+=>
+   (chat-local-to-self "train knight-line")
+   (train knight-line)
+)
+(defrule 
+   (current-age <= castle-age)
+   (town-under-attack)
+   (or
+      (unit-type-count 54 > 0)
+      (unit-type-count 211 > 0)
+   )
+   (can-train camel-line)
+=>
+   (chat-local-to-self "train camel-line")
+   (train camel-line)
+)
+(defrule 
+   (current-age == castle-age)
+   (players-current-age any-enemy < castle-age)
+   (town-under-attack)
+   (can-train archer-line)
+=>
+   (chat-local-to-self "train archer-line")
+   (train archer-line)
+)
+;}-------------------------------------------------------------------

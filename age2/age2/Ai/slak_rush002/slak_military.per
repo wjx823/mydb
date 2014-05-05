@@ -1,0 +1,349 @@
+; --------------------------------------------------------------------------
+; File: Slak_Military.per
+; Author: SlakTheEldar
+; Date: 2000-11-29
+;
+; Available under BSD-like license; see accompanying Copying.txt file
+;
+; --------------------------------------------------------------------------
+
+(defrule
+  (true)
+  =>
+  (set-goal main-or-response-unit NONE)
+)
+
+(defrule
+  (current-age == feudal-age)
+  (not (research-available ri-man-at-arms))
+  =>
+  (set-goal main-or-response-unit MAIN)
+)
+
+(defrule
+  (current-age == castle-age)
+  (building-type-count-total monastery > 0)
+  =>
+  (set-goal main-or-response-unit MAIN)
+)
+
+(defrule
+  (current-age == imperial-age)
+  =>
+  (set-goal main-or-response-unit MAIN)
+)
+
+(defrule
+  (goal main-or-response-unit MAIN)
+  (can-train barracks-huskarl)       ; Just for Goths
+  =>
+  (train barracks-huskarl)
+)
+
+(defrule
+  (goal main-or-response-unit MAIN)
+  (can-train militiaman-line)
+  =>
+  (train militiaman-line)
+)
+
+(defrule
+  (goal main-or-response-unit MAIN)
+  (current-age < imperial-age)
+  (unit-type-count-total militiaman-line < 5)
+  (unit-type-count-total skirmisher-line < 10)
+  (can-train skirmisher-line)
+  =>
+  (train skirmisher-line)
+)
+
+(defrule
+  (goal main-or-response-unit MAIN)
+  (current-age < imperial-age)
+  (unit-type-count-total militiaman-line >= 5)
+  (unit-type-count-total militiaman-line < 10)
+  (unit-type-count-total skirmisher-line < 20)
+  (can-train skirmisher-line)
+  =>
+  (train skirmisher-line)
+)
+
+(defrule
+  (goal main-or-response-unit MAIN)
+  (current-age < imperial-age)
+  (unit-type-count-total militiaman-line > 10)
+  (can-train skirmisher-line)
+  =>
+  (train skirmisher-line)
+)
+
+(defrule
+  (goal main-or-response-unit MAIN)
+  (can-train eagle-warrior-line)
+  =>
+  (train eagle-warrior-line)
+)
+
+(defrule
+  (goal main-or-response-unit MAIN)
+  (military-population > medium-normal-unit-threat)
+  (unit-type-count-total mangonel-line < 4)
+  (can-train mangonel-line)
+  =>
+  (train mangonel-line)
+)
+
+(defrule
+  (goal main-or-response-unit MAIN)
+  (military-population > medium-normal-unit-threat)
+  (unit-type-count-total battering-ram-line < 4)
+  (can-train battering-ram-line)
+  =>
+  (train battering-ram-line)
+)
+
+(defrule
+  (goal main-or-response-unit MAIN)
+  (military-population > medium-normal-unit-threat)
+  (can-train monk)
+  =>
+  (train monk)
+)
+
+(defrule
+  (goal main-or-response-unit MAIN)
+  (military-population > medium-normal-unit-threat)
+  (can-train trebuchet)
+  =>
+  (train trebuchet)
+)
+
+(defrule
+  (goal main-or-response-unit MAIN)
+  (military-population > medium-normal-unit-threat)
+  (can-train-with-escrow trebuchet)
+  =>
+  (release-escrow wood)
+  (release-escrow gold)
+  (train trebuchet)
+)
+
+; ***********************************************************************
+; Attack control.
+;
+; Process flow:
+;
+;         ATTACK-WAIT -> ATTACK-PENDING -> ATTACK-OK -> AM-ATTACKING
+;              ^                                            V
+;              | <------------------------------------------<
+;
+; Several other conditions trigger the AM-ATTACKING state.  Under the
+; "normal" progression they are:
+;
+;   * In Castle age, once military population exceeds medium-easy-unit
+;     an attack will be made 70% of the time.
+;   * In Imperial age, if military population exceeds medium-easy-unit
+;     an attack will be made.
+;
+; There are other conditions which trigger AM-ATTACKING:
+;
+;   * Enemy control of relics and more than medium-easy-unit military
+;   * Population hits maximum - has several other conditions
+;   * Enemy controls relics and in Imperial age.
+;   * Ally requests aid and are almost ready to attack.
+;   * Enemy has no towers or castle and military bigger than medium-normal
+; ***********************************************************************
+; Normal progression
+(defrule
+  (current-age < feudal-age)
+  =>
+  (set-goal attack-control ATTACK-WAIT)
+  (disable-self) ; NEW
+)
+
+(defrule
+  (goal attack-control ATTACK-WAIT)
+  =>
+  (disable-timer t-attack)
+  (enable-timer t-attack 60)
+  (set-goal attack-control ATTACK-PENDING)
+)
+
+(defrule
+  (goal attack-control ATTACK-WAIT)
+  =>
+  (disable-timer t-attack)
+  (enable-timer t-attack 300)
+  (set-goal attack-control ATTACK-PENDING)
+)
+
+(defrule
+  (goal attack-control ATTACK-PENDING)
+  (timer-triggered t-attack)     ; attack
+  (not (town-under-attack))
+  =>
+  (set-goal attack-control ATTACK-OK)
+)
+
+(defrule
+  (town-under-attack)                ; We are under attack
+  =>
+  (set-goal attack-control UNDER-ATTACK)
+)
+
+(defrule
+  (goal attack-control UNDER-ATTACK)
+  =>
+  (disable-timer t-attack)
+)
+
+(defrule
+  (goal attack-control UNDER-ATTACK)
+  (not (town-under-attack))          ; No longer under attack
+  =>
+  (set-goal attack-control ATTACK-WAIT)
+  (set-goal pri-mil-research-allowed YES)
+  (set-goal sec-mil-research-allowed YES)
+  (set-goal eco-research-allowed YES)
+)
+
+; if the enemy has control of relics, attack
+(defrule
+  (current-age == imperial-age)
+  (not (goal attack-control AM-ATTACKING))
+  (enemy-captured-relics)
+  (military-population >= attack-force-min-size)
+  =>
+  (chat-to-player every-ally "31")
+  (set-goal attack-control AM-ATTACKING)
+  (chat-local-to-self "relic attack")
+)
+
+(defrule
+  (goal attack-control ATTACK-OK)
+  (military-population >= attack-force-min-size)
+  (building-type-count-total archery-range > 0)
+  =>
+  (chat-to-player every-ally "31")
+  (chat-local-to-self "attack now!")
+  (set-goal attack-control AM-ATTACKING)
+)
+
+(defrule
+  (goal attack-control ATTACK-OK)
+  (or (military-population < attack-force-min-size)
+      (building-type-count-total archery-range == 0))
+  =>
+  (set-goal attack-control ATTACK-WAIT)
+  (chat-local-to-self "building up")
+)
+
+(defrule
+  (current-age == imperial-age)
+  (game-time < panic-time)
+  (population >= pop-cap)            ; Clear population attack
+  (goal econ-research-done YES)      ; Finish Econ research
+  (not (goal attack-control AM-ATTACKING))
+  (wood-amount > 300)                ; Make sure we can rebuild after attack
+  (food-amount > 200)
+  (gold-amount > 200)
+  =>
+  (chat-to-player every-ally "31")
+  (set-goal attack-control AM-ATTACKING)
+  (chat-local-to-self "pop-cap: attack now")
+)
+
+(defrule
+  (game-time >= panic-time)          ; panic time pop cap attack
+  (population >= pop-cap)            ; Clear population attack
+  (not (goal attack-control AM-ATTACKING)) ; wait for all research to complete
+  (gold-amount > 350)
+  (wood-amount > 400)                ; Make sure we can rebuild after attack
+  (food-amount > 400)
+  =>
+  (chat-to-player every-ally "31")
+  (set-goal attack-control AM-ATTACKING)
+  (chat-local-to-self "pop-cap: attack now")
+)
+
+(defrule
+  (taunt-detected any-ally 31)        ; Ally is requesting attack
+  (goal attack-control AM-ATTACKING)  ; Already attacking
+  =>
+  (acknowledge-taunt this-any-ally 31)
+  (chat-to-player this-any-ally "I am already on the offensive!")
+)
+
+(defrule
+  (taunt-detected any-ally 31)        ; Ally is requesting attack
+  (goal attack-control UNDER-ATTACK)  ; Have my own problems...
+  =>
+  (acknowledge-taunt this-any-ally 31)
+  (chat-to-player this-any-ally "I have problems of my own!")
+)
+
+(defrule
+  (taunt-detected any-ally 31)          ; Ally is requesting attack
+  (not (goal attack-control ATTACK-OK)) ; Not ready yet...
+  =>
+  (acknowledge-taunt this-any-ally 31)
+  (chat-to-player this-any-ally "I am not yet ready!")
+)
+
+(defrule
+  (taunt-detected any-ally 31)         ; Ally is requesting attack
+  (goal attack-control ATTACK-OK)      ; Just about there....
+  (military-population >= attack-force-min-size)
+  =>
+  (set-goal attack-control AM-ATTACKING)
+  (acknowledge-taunt this-any-ally 31)
+  (chat-to-player this-any-ally "It's go time!")
+)
+
+(defrule
+  (taunt-detected any-ally 31)         ; Ally is requesting attack
+  (goal attack-control ATTACK-OK)      ; Just about there....
+  (military-population < attack-force-min-size)
+  =>
+  (acknowledge-taunt this-any-ally 31)
+  (chat-to-player this-any-ally "Nearly there!")
+)
+
+(defrule
+  (enemy-captured-relics)
+  =>
+  (set-strategic-number sn-special-attack-type1 1)
+)
+
+(defrule
+  (not (enemy-captured-relics))
+  =>
+  (set-strategic-number sn-special-attack-type1 0)
+)
+
+(defrule
+  (not (goal attack-control AM-ATTACKING))
+  =>
+  (set-strategic-number sn-minimum-attack-group-size 0)
+  (set-strategic-number sn-maximum-attack-group-size 0)
+  (set-strategic-number sn-number-attack-groups 0)
+  (set-strategic-number sn-minimum-defend-group-size 0)
+  (set-strategic-number sn-maximum-defend-group-size 0)
+  (set-strategic-number sn-number-defend-groups 0)
+)
+
+(defrule
+  (goal attack-control AM-ATTACKING)
+  =>
+  (set-strategic-number sn-minimum-attack-group-size 1)
+  (set-strategic-number sn-maximum-attack-group-size 1)
+  (set-strategic-number sn-number-attack-groups 200)
+  (set-strategic-number sn-minimum-defend-group-size 0)
+  (set-strategic-number sn-maximum-defend-group-size 0)
+  (set-strategic-number sn-number-defend-groups 0)
+  (set-strategic-number sn-number-boat-defend-groups 0)
+  (chat-local-to-self "attack now!")
+  (attack-now)
+  (set-goal attack-control ATTACK-WAIT)
+)
+

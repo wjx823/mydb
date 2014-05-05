@@ -1,0 +1,101 @@
+(defrule
+ (true)
+=>
+ (enable-timer RUSH 60)
+ (disable-self)
+)
+
+(defrule
+ (game-time >= 120)
+=>
+ (set-strategic-number sn-minimum-town-size 10)
+ (set-strategic-number sn-maximum-town-size 60)
+)
+
+(defrule
+ (timer-triggered RUSH)
+ (town-under-attack)
+ (players-military-population any-enemy > 10)
+ (players-stance any-ally ally)
+=>
+ (chat-to-allies "12 UŒ‚‚ðŽó‚¯‚Ä‚¢‚é")
+ (chat-local-to-self "‰‡ŒR—v¿")
+ (disable-timer RUSH)
+ (enable-timer RUSH 60)
+)
+
+(defrule
+ (timer-triggered RUSH)
+ (current-age >= feudal-age)
+ (unit-type-count villager < 20)
+ (or
+  (unit-type-count-total villager > 0)
+  (building-type-count-total town-center > 0)
+ )
+ (players-stance any-ally ally)
+=>
+ (chat-to-allies "24 ‘S–Å‚µ‚»‚¤‚¾")
+ (disable-timer RUSH)
+ (enable-timer RUSH 60)
+)
+
+(defrule
+ (taunt-detected any-ally 24)
+ (food-amount > 300)
+=>
+ (tribute-to-player this-any-ally food 150)
+)
+
+(defrule
+ (taunt-detected any-ally 24)
+ (wood-amount > 300)
+=>
+ (tribute-to-player this-any-ally wood 150)
+)
+
+(defrule
+ (taunt-detected any-ally 24)
+ (gold-amount > 300)
+=>
+ (tribute-to-player this-any-ally gold 150)
+)
+
+(defrule
+ (taunt-detected any-ally 24)
+ (stone-amount > 300)
+=>
+ (tribute-to-player this-any-ally stone 150)
+)
+
+(defrule
+ (taunt-detected any-ally 24)
+=>
+ (acknowledge-taunt this-any-ally 24)
+)
+
+(defrule
+ (game-time >= 480)
+ (game-time < 900)
+=>
+ (set-strategic-number sn-camp-max-distance 20)
+)
+
+(defrule
+ (game-time >= 900)
+ (current-age < castle-age)
+=>
+ (set-strategic-number sn-camp-max-distance 30)
+)
+
+(defrule
+ (current-age == castle-age)
+=>
+ (set-strategic-number sn-camp-max-distance 40)
+)
+
+(defrule
+ (current-age == imperial-age)
+=>
+ (set-strategic-number sn-camp-max-distance 999)
+ (set-strategic-number sn-maximum-town-size 80)
+)

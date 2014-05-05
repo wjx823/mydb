@@ -1,0 +1,653 @@
+;{********************************************************************
+; AI maccha Ver 7.00  army.per
+;}********************************************************************
+;*siege weapon&trebuchet
+(defrule 
+   (can-train trebuchet)
+=>
+   (chat-local-to-self "* train trebuchet *")
+   (train trebuchet)
+)
+(defrule 
+   (can-train bombard-cannon)
+=>
+   (chat-local-to-self "* train otoko no taihou *")
+   (train bombard-cannon)
+)
+(defrule
+   (current-age == castle-age)
+   (or(enemy-buildings-in-town)(building-type-count town-center >= 2)) 
+   (unit-type-count battering-ram-line < 4)
+   (can-train battering-ram-line)
+=>
+   (chat-local-to-self "train battering-ram-line")
+   (train battering-ram-line)
+)
+(defrule
+   (or
+      (or(unit-type-count mangonel-line == 0)(civ-selected korean))
+      (civ-selected briton)
+   )
+   (can-train mangonel-line)
+=>
+   (chat-local-to-self "train mangonel-line")
+   (train mangonel-line)
+)
+;*monk
+(defrule 
+   (unit-type-count monk == 0)
+   (unit-type-count 286 == 0)
+   (can-train monk)
+=>
+   (chat-local-to-self "train monk LV:1")
+   (train monk)
+)
+(defrule 
+   (can-train monk)
+=>
+   (chat-local-to-self "train monk LV:1")
+   (train monk)
+   (disable-self)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_MONK 1)
+   (not(town-under-attack))
+   (not(enemy-buildings-in-town))
+   (unit-type-count monk < pop-2)
+   (can-train monk)
+=>
+   (chat-local-to-self "train monk LV:1")
+   (train monk)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_MONK 2)
+   (not(enemy-buildings-in-town))
+   (unit-type-count monk < pop-6)
+   (can-train monk)
+=>
+   (chat-local-to-self "train monk LV:2")
+   (train monk)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_MONK 3)
+   (not(enemy-buildings-in-town))
+   (unit-type-count monk < pop-10)
+   (can-train monk)
+=>
+   (chat-local-to-self "train monk LV:3")
+   (train monk)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_MONK 4)
+   (not(enemy-buildings-in-town))
+   (unit-type-count monk < pop-16)
+   (can-train monk)
+=>
+   (chat-local-to-self "train monk LV:4")
+   (train monk)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_MONK 5)
+   (not(enemy-buildings-in-town))
+   (unit-type-count monk < pop-95)
+   (can-train monk)
+=>
+   (chat-local-to-self "train monk LV:5")
+   (train monk)
+)
+;*unique
+(defrule
+   (goal ATTACK_MODE NORMAL)
+   (can-research 16)
+=>
+   (research 16)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_UNIQUE 1)
+   (unit-type-count my-unique-unit-line < pop-2)
+   (can-train my-unique-unit-line)
+=>
+   (chat-local-to-self "train my-unique-unit-line LV:1")
+   (train my-unique-unit-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_UNIQUE 2)
+   (unit-type-count my-unique-unit-line < pop-6)
+   (can-train my-unique-unit-line)
+=>
+   (chat-local-to-self "train my-unique-unit-line LV:2")
+   (train my-unique-unit-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_UNIQUE 3)
+   (unit-type-count my-unique-unit-line < pop-10)
+   (can-train my-unique-unit-line)
+=>
+   (chat-local-to-self "train my-unique-unit-line LV:3")
+   (train my-unique-unit-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_UNIQUE 4)
+   (unit-type-count my-unique-unit-line < pop-16)
+   (can-train my-unique-unit-line)
+=>
+   (chat-local-to-self "train my-unique-unit-line LV:4")
+   (train my-unique-unit-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_UNIQUE 5)
+   (unit-type-count my-unique-unit-line < pop-95)
+   (can-train my-unique-unit-line)
+=>
+   (chat-local-to-self "train my-unique-unit-line LV:5")
+   (train my-unique-unit-line)
+)
+;*militiaman
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_MILITIAMAN 1)
+   (unit-type-count militiaman-line < pop-2)
+   (can-train militiaman-line)
+=>
+   (chat-local-to-self "train militiaman-line LV:1")
+   (train militiaman-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_MILITIAMAN 2)
+   (unit-type-count militiaman-line < pop-6)
+   (can-train militiaman-line)
+=>
+   (chat-local-to-self "train militiaman-line LV:2")
+   (train militiaman-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_MILITIAMAN 3)
+   (unit-type-count militiaman-line < pop-10)
+   (can-train militiaman-line)
+=>
+   (chat-local-to-self "train militiaman-line LV:3")
+   (train militiaman-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_MILITIAMAN 4)
+   (unit-type-count militiaman-line < pop-16)
+   (can-train militiaman-line)
+=>
+   (chat-local-to-self "train militiaman-line LV:4")
+   (train militiaman-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_MILITIAMAN 5)
+   (unit-type-count militiaman-line < pop-95)
+   (can-train militiaman-line)
+=>
+   (chat-local-to-self "train militiaman-line LV:5")
+   (train militiaman-line)
+)
+;*spearman
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_SPEARMAN 1)
+   (unit-type-count spearman-line < pop-2)
+   (can-train spearman-line)
+=>
+   (chat-local-to-self "train spearman-line LV:1")
+   (train spearman-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_SPEARMAN 2)
+   (unit-type-count spearman-line < pop-6)
+   (can-train spearman-line)
+=>
+   (chat-local-to-self "train spearman-line LV:2")
+   (train spearman-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_SPEARMAN 3)
+   (unit-type-count spearman-line < pop-10)
+   (can-train spearman-line)
+=>
+   (chat-local-to-self "train spearman-line LV:3")
+   (train spearman-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_SPEARMAN 4)
+   (unit-type-count spearman-line < pop-16)
+   (can-train spearman-line)
+=>
+   (chat-local-to-self "train spearman-line LV:4")
+   (train spearman-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_SPEARMAN 5)
+   (unit-type-count spearman-line < pop-95)
+   (can-train spearman-line)
+=>
+   (chat-local-to-self "train spearman-line LV:5")
+   (train spearman-line)
+)
+;*knight
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_KNIGHT 1)
+   (unit-type-count knight-line < pop-2)
+   (can-train knight-line)
+=>
+   (chat-local-to-self "train knight-line LV:1")
+   (train knight-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_KNIGHT 2)
+   (unit-type-count knight-line < pop-6)
+   (can-train knight-line)
+=>
+   (chat-local-to-self "train knight-line LV:2")
+   (train knight-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_KNIGHT 3)
+   (unit-type-count knight-line < pop-10)
+   (can-train knight-line)
+=>
+   (chat-local-to-self "train knight-line LV:3")
+   (train knight-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_KNIGHT 4)
+   (unit-type-count knight-line < pop-16)
+   (can-train knight-line)
+=>
+   (chat-local-to-self "train knight-line LV:4")
+   (train knight-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_KNIGHT 5)
+   (unit-type-count knight-line < pop-95)
+   (can-train knight-line)
+=>
+   (chat-local-to-self "train knight-line LV:5")
+   (train knight-line)
+)
+;*camel
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_CAMEL 1)
+   (unit-type-count camel-line < pop-2)
+   (can-train camel-line)
+=>
+   (chat-local-to-self "train camel-line LV:1")
+   (train camel-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_CAMEL 2)
+   (unit-type-count camel-line < pop-6)
+   (can-train camel-line)
+=>
+   (chat-local-to-self "train camel-line LV:2")
+   (train camel-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_CAMEL 3)
+   (unit-type-count camel-line < pop-10)
+   (can-train camel-line)
+=>
+   (chat-local-to-self "train camel-line LV:3")
+   (train camel-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_CAMEL 4)
+   (unit-type-count camel-line < pop-16)
+   (can-train camel-line)
+=>
+   (chat-local-to-self "train camel-line LV:4")
+   (train camel-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_CAMEL 5)
+   (unit-type-count camel-line < pop-95)
+   (can-train camel-line)
+=>
+   (chat-local-to-self "train camel-line LV:5")
+   (train camel-line)
+)
+;*light-cavalry
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_LIGHTCAVALRY 1)
+   (unit-type-count light-cavalry < pop-2)
+   (can-train light-cavalry)
+=>
+   (chat-local-to-self "train light-cavalry LV:1")
+   (train light-cavalry)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_LIGHTCAVALRY 2)
+   (unit-type-count light-cavalry < pop-6)
+   (can-train light-cavalry)
+=>
+   (chat-local-to-self "train light-cavalry LV:2")
+   (train light-cavalry)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_LIGHTCAVALRY 3)
+   (unit-type-count light-cavalry < pop-10)
+   (can-train light-cavalry)
+=>
+   (chat-local-to-self "train light-cavalry LV:3")
+   (train light-cavalry)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_LIGHTCAVALRY 4)
+   (unit-type-count light-cavalry < pop-16)
+   (can-train light-cavalry)
+=>
+   (chat-local-to-self "train light-cavalry LV:4")
+   (train light-cavalry)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_LIGHTCAVALRY 5)
+   (unit-type-count light-cavalry < pop-95)
+   (can-train light-cavalry)
+=>
+   (chat-local-to-self "train light-cavalry LV:5")
+   (train light-cavalry)
+)
+;*archer
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_ARCHER 1)
+   (unit-type-count archer-line < pop-2)
+   (can-train archer-line)
+=>
+   (chat-local-to-self "train archer-line LV:1")
+   (train archer-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_ARCHER 2)
+   (unit-type-count archer-line < pop-6)
+   (can-train archer-line)
+=>
+   (chat-local-to-self "train archer-line LV:2")
+   (train archer-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_ARCHER 3)
+   (unit-type-count archer-line < pop-10)
+   (can-train archer-line)
+=>
+   (chat-local-to-self "train archer-line LV:3")
+   (train archer-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_ARCHER 4)
+   (unit-type-count archer-line < pop-16)
+   (can-train archer-line)
+=>
+   (chat-local-to-self "train archer-line LV:4")
+   (train archer-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_ARCHER 5)
+   (unit-type-count archer-line < pop-95)
+   (can-train archer-line)
+=>
+   (chat-local-to-self "train archer-line LV:5")
+   (train archer-line)
+)
+;*skirmisher
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_SKIRMISHER 1)
+   (unit-type-count skirmisher-line < pop-2)
+   (can-train skirmisher-line)
+=>
+   (chat-local-to-self "train skirmisher-line LV:1")
+   (train skirmisher-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_SKIRMISHER 2)
+   (unit-type-count skirmisher-line < pop-6)
+   (can-train skirmisher-line)
+=>
+   (chat-local-to-self "train skirmisher-line LV:2")
+   (train skirmisher-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_SKIRMISHER 3)
+   (unit-type-count skirmisher-line < pop-10)
+   (can-train skirmisher-line)
+=>
+   (chat-local-to-self "train skirmisher-line LV:3")
+   (train skirmisher-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_SKIRMISHER 4)
+   (unit-type-count skirmisher-line < pop-16)
+   (can-train skirmisher-line)
+=>
+   (chat-local-to-self "train skirmisher-line LV:4")
+   (train skirmisher-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_SKIRMISHER 5)
+   (unit-type-count skirmisher-line < pop-95)
+   (can-train skirmisher-line)
+=>
+   (chat-local-to-self "train skirmisher-line LV:5")
+   (train skirmisher-line)
+)
+;*cavalry-archer
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_CAVALRYARCHER 1)
+   (unit-type-count cavalry-archer-line < pop-2)
+   (can-train cavalry-archer-line)
+=>
+   (chat-local-to-self "train cavalry-archer-line LV:1")
+   (train cavalry-archer-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_CAVALRYARCHER 2)
+   (unit-type-count cavalry-archer-line < pop-6)
+   (can-train cavalry-archer-line)
+=>
+   (chat-local-to-self "train cavalry-archer-line LV:2")
+   (train cavalry-archer-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_CAVALRYARCHER 3)
+   (unit-type-count cavalry-archer-line < pop-10)
+   (can-train cavalry-archer-line)
+=>
+   (chat-local-to-self "train cavalry-archer-line LV:3")
+   (train cavalry-archer-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_CAVALRYARCHER 4)
+   (unit-type-count cavalry-archer-line < pop-16)
+   (can-train cavalry-archer-line)
+=>
+   (chat-local-to-self "train cavalry-archer-line LV:4")
+   (train cavalry-archer-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_CAVALRYARCHER 5)
+   (unit-type-count cavalry-archer-line < pop-95)
+   (can-train cavalry-archer-line)
+=>
+   (chat-local-to-self "train cavalry-archer-line LV:5")
+   (train cavalry-archer-line)
+)
+;*hand-cannoneer
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_HANDCANNONEER 1)
+   (unit-type-count hand-cannoneer < pop-2)
+   (can-train hand-cannoneer)
+=>
+   (chat-local-to-self "train hand-cannoneer LV:1")
+   (train hand-cannoneer)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_HANDCANNONEER 2)
+   (unit-type-count hand-cannoneer < pop-6)
+   (can-train hand-cannoneer)
+=>
+   (chat-local-to-self "train hand-cannoneer LV:2")
+   (train hand-cannoneer)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_HANDCANNONEER 3)
+   (unit-type-count hand-cannoneer < pop-10)
+   (can-train hand-cannoneer)
+=>
+   (chat-local-to-self "train hand-cannoneer LV:3")
+   (train hand-cannoneer)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_HANDCANNONEER 4)
+   (unit-type-count hand-cannoneer < pop-16)
+   (can-train hand-cannoneer)
+=>
+   (chat-local-to-self "train hand-cannoneer LV:4")
+   (train hand-cannoneer)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_HANDCANNONEER 5)
+   (unit-type-count hand-cannoneer < pop-95)
+   (can-train hand-cannoneer)
+=>
+   (chat-local-to-self "train hand-cannoneer LV:5")
+   (train hand-cannoneer)
+)
+;*scorpion
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_SCORPION 1)
+   (unit-type-count scorpion-line < pop-2)
+   (can-train scorpion-line)
+=>
+   (chat-local-to-self "train scorpion-line LV:1")
+   (train scorpion-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_SCORPION 2)
+   (unit-type-count scorpion-line < pop-6)
+   (can-train scorpion-line)
+=>
+   (chat-local-to-self "train scorpion-line LV:2")
+   (train scorpion-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_SCORPION 3)
+   (unit-type-count scorpion-line < pop-10)
+   (can-train scorpion-line)
+=>
+   (chat-local-to-self "train scorpion-line LV:3")
+   (train scorpion-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_SCORPION 4)
+   (unit-type-count scorpion-line < pop-16)
+   (can-train scorpion-line)
+=>
+   (chat-local-to-self "train scorpion-line LV:4")
+   (train scorpion-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_SCORPION 5)
+   (unit-type-count scorpion-line < pop-95)
+   (can-train scorpion-line)
+=>
+   (chat-local-to-self "train scorpion-line LV:5")
+   (train scorpion-line)
+)
+;*rely on the hussar?(gold is lacked)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (current-age >= castle-age)
+   (food-amount >= 1500)
+   (can-research ri-light-cavalry)
+=>
+   (chat-local-to-self "Light-cavalry is developed because there is fully food. ")
+   (research ri-light-cavalry)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (current-age >= castle-age)
+   (food-amount >= 1500)
+   (research-completed ri-light-cavalry)
+   (can-train scout-cavalry-line)
+=>
+   (train scout-cavalry-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (current-age >= castle-age)
+   (gold-amount < 100)
+   (food-amount > 300)
+   (research-completed ri-light-cavalry)
+   (can-train scout-cavalry-line)
+=>
+   (train scout-cavalry-line)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (current-age == imperial-age)
+   (gold-amount < 15)
+   (wood-amount > 250)
+   (food-amount > 350)
+   (can-train spearman-line)
+=>
+   (train spearman-line)
+)

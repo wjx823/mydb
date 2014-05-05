@@ -1,0 +1,46 @@
+; Villager training SHOT
+(defrule
+	(current-age == imperial-age)
+	(unit-type-count-total villager < 50)
+	(can-train villager)
+=>
+;	(chat-to-all "train villager dca")
+	(train villager)
+)
+
+; House building
+(defrule
+	(current-age == imperial-age)
+	(housing-headroom < 10)
+	(building-type-count-total house < 500)
+	(can-build house)
+=>
+;	(chat-to-all "build house")
+	(build house)
+)
+
+;build castle
+(defrule
+	(can-build castle)
+=>
+	(build castle)
+	(chat-to-all "building castle")
+)
+;build university
+(defrule
+	(can-build university)
+	(building-type-count-total university == 0)
+	(building-type-count-total monastery > 0)
+	(building-type-count-total siege-workshop > 0)
+=>
+	(build university)
+	(chat-to-all "building university")
+)
+;prioritise bracer to improve defence
+(defrule
+	(unit-type-count-total militiaman-line >= 15)
+	(can-research ri-bracer)
+=>
+	(chat-to-all "research bracer")
+	(research ri-bracer)
+)

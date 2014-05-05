@@ -1,0 +1,121 @@
+;********************************************************************
+; AI maccha Ver 7.00  market.per
+;********************************************************************
+;{market trade-------------------------------------------------------
+(defrule 
+   (current-age == castle-age)
+   (can-sell-commodity wood)
+   (wood-amount > 1000)
+=>
+   (sell-commodity wood)
+)
+(defrule 
+   (current-age == castle-age)
+   (can-sell-commodity food)
+   (food-amount > 1200)
+   (gold-amount < 800)
+=>
+   (sell-commodity food)
+)
+(defrule 
+   (current-age == castle-age)
+   (can-buy-commodity food)
+   (gold-amount > 1000)
+   (food-amount < 1000)
+=>
+   (buy-commodity food)
+)
+(defrule 
+   (current-age == castle-age)
+   (can-buy-commodity food)
+   (food-amount < 50)
+   (unit-type-count villager < pop-60)
+=>
+   (buy-commodity food)
+)
+(defrule 
+   (current-age >= castle-age)
+   (wood-amount < 100)
+   (dropsite-min-distance wood > 8)
+   (can-buy-commodity wood)
+=>
+   (buy-commodity wood)
+)
+(defrule 
+   (current-age == imperial-age)
+   (can-buy-commodity wood)
+   (wood-amount < 150)
+   (gold-amount > 1000)
+=>
+   (buy-commodity wood)
+)
+(defrule 
+   (current-age == imperial-age)
+   (can-sell-commodity wood)
+   (wood-amount > 1200)
+=>
+   (sell-commodity wood)
+)
+(defrule 
+   (current-age == imperial-age)
+   (can-sell-commodity food)
+   (or
+      (and(food-amount > 1850)(goal PROJECT_W 0))
+      (food-amount > 10000)
+   )
+=>
+   (sell-commodity food)
+)
+(defrule 
+   (research-completed ri-bombard-tower)
+   (can-buy-commodity stone)
+   (stone-amount < 125)
+=>
+   (buy-commodity stone)
+)
+(defrule 
+   (current-age == imperial-age)
+   (current-age-time < 600)
+   (wood-amount < 200)
+   (gold-amount > 400)
+=>
+   (buy-commodity wood)
+)
+;}-------------------------------------------------------------------
+;{trade-cart---------------------------------------------------------
+(defrule 
+   (current-age == imperial-age)
+   (not(town-under-attack))
+   (not(map-type islands))
+   (players-building-type-count any-ally market > 0)
+   (unit-type-count-total trade-cart <= pop-2)
+   (can-train trade-cart)
+=>
+   (chat-local-to-self "train trade-cart unit-type-count-total trade-cart <= pop-2")
+   (train trade-cart)
+)
+(defrule 
+   (current-age == imperial-age)
+   (game-time > 5400)
+   (not(town-under-attack))
+   (not(map-type islands))
+   (players-building-type-count any-ally market > 0)
+   (unit-type-count-total trade-cart <= pop-8)
+   (can-train trade-cart)
+=>
+   (chat-local-to-self "train trade-cart unit-type-count-total trade-cart <= pop-8")
+   (train trade-cart)
+)
+(defrule 
+   (current-age == imperial-age)
+   (game-time > 7200)
+   (not(town-under-attack))
+   (not(map-type islands))
+   (players-building-type-count any-ally market > 0)
+   (unit-type-count-total trade-cart <= pop-16)
+   (can-train trade-cart)
+=>
+   (chat-local-to-self "train trade-cart unit-type-count-total trade-cart <= pop-16")
+   (train trade-cart)
+)
+;}-------------------------------------------------------------------

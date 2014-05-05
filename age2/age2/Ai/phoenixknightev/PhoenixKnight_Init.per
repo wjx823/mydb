@@ -1,0 +1,350 @@
+;//////////////////////////////////////////////////////////////////
+;//           Phoenix Knight (Initialize Script)
+;//////////////////////////////////////////////////////////////////
+; _/_/_/_/_/_/ Timer _/_/_/_/_/_/ 
+(defconst NONE 0) ;
+(defconst IM_FARM_TIMER 1) 
+(defconst UNDERATTACK_TIMER 2)
+(defconst CS_TIMER 3)
+(defconst DEBUG_TIMER 4)
+(defconst RES_TIMER 5)
+;(defconst TIMER_06 6) 
+;(defconst TIMER_07 7) 
+(defconst IM_LATE_TIMER 8)
+(defconst TOWN-SIZE 9)
+(defconst BUILD_TIME 10)
+; _/_/_/_/_/_/ goal _/_/_/_/_/_/ 
+(defconst READY_BUILD 11)
+(defconst AGE 12)
+(defconst ENEMY_UNDERATTACK 13)
+(defconst ATTACK 14)
+(defconst WOOD 15)
+(defconst FOOD 16)
+(defconst GOLD 17)
+(defconst STONE 18)
+(defconst RES_CHK_FOOD 19)
+(defconst RES_CHK_WOOD 20)
+(defconst RES_CHK_GOLD 21)
+(defconst RES_CHK_STONE 22)
+(defconst EVOLUTION 23)
+(defconst UnderAttack 24)
+(defconst Follow 25)
+(defconst CHECKED 26)
+(defconst UNIQUE_UNIT 27)
+(defconst UNIQUE_TECH 28)
+(defconst BARRACKS_LINE 31)
+(defconst ARCHERY_LINE 32)
+(defconst STABLE_LINE 33)
+(defconst 1st_MONASTERY 34)
+(defconst 2nd_MONASTERY 35)
+(defconst SIEGE_LINE 36)
+(defconst TOWER_LINE 37)
+(defconst FOLLOW_ATTACK 38)
+(defconst ENEMY_WONDER 39)
+(defconst ENEMY_RELICS 40)
+
+; _/_/_/_/_/_/ etc.... _/_/_/_/_/_/ 
+(defconst NO 50)
+(defconst YES 51)
+
+; _/_/_/_/_/_/ (1st)Init goal _/_/_/_/_/_/ 
+(defrule
+ (true)
+=>
+ (set-goal EVOLUTION 0)
+ (set-goal CHECKED NO)
+ (set-goal ATTACK NO)
+ (set-goal UnderAttack NO)
+ (set-goal Follow NO)
+ (enable-timer UNDERATTACK_TIMER 10)
+
+ (set-goal TOWN-SIZE NO)
+ (set-goal READY_BUILD YES)
+ (set-goal BUILD_TIME 0)
+ (set-goal ENEMY_UNDERATTACK NO)
+ (set-goal FOLLOW_ATTACK NO)
+ (disable-self)
+)
+; _/_/_/_/_/_/ (2nd)Init goal _/_/_/_/_/_/ 
+(defrule
+ (true)
+=>
+ (set-goal WOOD NO)
+ (set-goal FOOD NO)
+ (set-goal GOLD NO)
+ (set-goal STONE NO)
+ (set-goal RES_CHK_FOOD NO)
+ (set-goal RES_CHK_WOOD NO)
+ (set-goal RES_CHK_GOLD NO)
+ (set-goal RES_CHK_STONE NO)
+ (set-goal ENEMY_WONDER NO)
+ (set-goal ENEMY_RELICS NO)
+ (disable-self)
+)
+
+(defrule
+ (true)
+=>
+ (set-goal UNIQUE_UNIT NO)
+ (set-goal UNIQUE_TECH NO)
+ (set-goal BARRACKS_LINE NO)
+ (set-goal ARCHERY_LINE NO)
+ (set-goal STABLE_LINE NO)
+ (set-goal 1st_MONASTERY NO)
+ (set-goal 2nd_MONASTERY NO)
+ (set-goal SIEGE_LINE NO)
+ (set-goal TOWER_LINE YES)
+ (disable-self)
+)
+
+; _/_/_/_/_/_/ Villager Settings
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-percent-civilian-builders 35)
+ (set-strategic-number sn-percent-civilian-explorers 65)
+ (set-strategic-number sn-percent-civilian-gatherers 0)
+
+ (set-strategic-number sn-cap-civilian-builders 20)
+ (set-strategic-number sn-minimum-civilian-explorers 2)
+ (set-strategic-number sn-cap-civilian-explorers 6)
+ (set-strategic-number sn-cap-civilian-gatherers 150)
+
+; (set-strategic-number sn-number-forward-builders 6)
+ (set-strategic-number sn-maximum-gaia-attack-response 1)
+ (disable-self)
+)
+; _/_/_/_/_/_/ Build Settings
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-minimum-town-size 10)
+ (set-strategic-number sn-maximum-town-size 12)
+ (set-strategic-number sn-camp-max-distance 18)
+ (set-strategic-number sn-mill-max-distance 18)
+ (set-strategic-number sn-random-placement-factor 0)
+ (set-strategic-number sn-minimum-water-body-size-for-dock 10)
+ (set-strategic-number sn-minimum-dropsite-buffer 30)
+ (set-strategic-number sn-required-forest-tiles 6)
+ (set-strategic-number sn-max-build-plan-gatherer-percentage 50)
+ (disable-self)
+)
+; _/_/_/_/_/_/ explorer Settings
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-total-number-explorers 4)
+ (set-strategic-number sn-initial-exploration-required 0)
+ (set-strategic-number sn-blot-exploration-map 1)
+ (set-strategic-number sn-blot-size 20)
+ (set-strategic-number sn-percent-exploration-required 70)
+ (set-strategic-number sn-percent-half-exploration 15)
+ (set-strategic-number sn-number-enemy-objects-required 0)
+ (set-strategic-number sn-coop-share-information 1)
+ (disable-self)
+)
+; _/_/_/_/_/_/ Gatherer Settings
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-food-gatherer-percentage 80)
+ (set-strategic-number sn-wood-gatherer-percentage 20)
+ (set-strategic-number sn-gold-gatherer-percentage 0)
+ (set-strategic-number sn-stone-gatherer-percentage 0)
+
+ (set-strategic-number sn-food-dropsite-distance 10)
+ (set-strategic-number sn-wood-dropsite-distance 10)
+ (set-strategic-number sn-gold-dropsite-distance 8)
+ (set-strategic-number sn-stone-dropsite-distance 8)
+
+ (set-strategic-number sn-maximum-food-drop-distance 10)
+ (set-strategic-number sn-maximum-hunt-drop-distance 10)
+ (set-strategic-number sn-maximum-fish-boat-drop-distance -1)
+ (set-strategic-number sn-maximum-wood-drop-distance 16)
+ (set-strategic-number sn-maximum-gold-drop-distance 10)
+ (set-strategic-number sn-maximum-stone-drop-distance 10)
+ (disable-self)
+)
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-retask-gather-amount 20)
+ (set-strategic-number sn-max-retask-gather-amount 40)
+ (set-strategic-number sn-use-by-type-max-gathering 1)
+
+ (set-strategic-number sn-minimum-boar-hunt-group-size 6)
+ (disable-self)
+)
+; _/_/_/_/_/_/ commander Setting
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-easier-reaction-percentage 100)
+ (set-strategic-number sn-easiest-reaction-percentage 100)
+ (set-strategic-number sn-group-commander-selection-method 1)
+ (set-strategic-number sn-group-form-distance 30)
+ (set-strategic-number sn-attack-group-gather-spacing 4)
+ (set-strategic-number sn-consecutive-idle-unit-limit 5)
+ (disable-self)
+)
+; _/_/_/_/_/_/ Grand Setting
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-number-attack-groups 0)
+ (set-strategic-number sn-minimum-attack-group-size 0)
+ (set-strategic-number sn-maximum-attack-group-size 0)
+
+ (set-strategic-number sn-number-defend-groups 10)
+ (set-strategic-number sn-minimum-defend-group-size 5)
+ (set-strategic-number sn-maximum-defend-group-size 15)
+
+ (set-strategic-number sn-number-explore-groups 1)
+ (set-strategic-number sn-minimum-explore-group-size 1)
+ (set-strategic-number sn-maximum-explore-group-size 1)
+ (set-strategic-number sn-percentage-explore-exterminators 0)
+
+ (set-strategic-number sn-percent-attack-soldiers 90)
+ (set-strategic-number sn-garrison-rams 1)
+ (set-strategic-number sn-gather-idle-soldiers-at-center 0)
+ (disable-self)
+)
+; _/_/_/_/_/_/ Sea Setting
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-number-boat-attack-groups 2)
+ (set-strategic-number sn-minimum-boat-attack-group-size 1)
+ (set-strategic-number sn-maximum-boat-attack-group-size 5)
+
+ (set-strategic-number sn-number-boat-defend-groups 0)
+ (set-strategic-number sn-minimum-boat-defend-group-size 0)
+ (set-strategic-number sn-maximum-boat-defend-group-size 10)
+
+ (set-strategic-number sn-number-boat-explore-groups 1)
+ (set-strategic-number sn-minimum-boat-explore-group-size 1)
+ (set-strategic-number sn-maximum-boat-explore-group-size 1)
+
+ (set-strategic-number sn-percent-attack-boats 100)
+ (disable-self)
+)
+; _/_/_/_/_/_/  Attack Setting
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-attack-group-size-randomness 0)
+ (set-strategic-number sn-attack-intelligence 1)
+ (set-strategic-number sn-initial-attack-delay 0)
+ (set-strategic-number sn-initial-attack-delay-type 0)
+ (set-strategic-number sn-attack-separation-time-randomness 0)
+ (set-strategic-number sn-group-leader-defense-distance 0)
+ (disable-self)
+)
+; _/_/_/_/_/_/ Deffence Set..
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-town-defend-priority 1)
+ (set-strategic-number sn-forage-defend-priority 2)
+ (set-strategic-number sn-gold-defend-priority 3)
+ (set-strategic-number sn-stone-defend-priority 4)
+ (set-strategic-number sn-relic-defend-priority 2)
+ (set-strategic-number sn-zero-priority-distance 10)
+ (disable-self)
+)
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-allow-civilian-defense 0)
+ (set-strategic-number sn-dock-defend-priority 0)
+ (set-strategic-number sn-task-ungrouped-soldiers 0)
+ (set-strategic-number sn-sentry-distance 20)
+ (set-strategic-number sn-defense-distance 5)
+ (set-strategic-number sn-defend-overlap-distance 10)
+ (set-strategic-number sn-sentry-distance-variation 10)
+ (set-strategic-number sn-percent-enemy-sighted-response 100)
+ (set-strategic-number sn-enemy-sighted-response-distance 30)
+ (disable-self)
+)
+; _/_/_/_/_/_/ Target Set...
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-attack-winning-player 1)
+ (set-strategic-number sn-attack-winning-player-factor 60)
+ (disable-self)
+)
+
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-target-evaluation-ally-proximity 0)
+ (set-strategic-number sn-target-evaluation-attack-attempts 0)
+ (set-strategic-number sn-target-evaluation-damage-capability 0)
+ (set-strategic-number sn-target-evaluation-distance 50)
+ (set-strategic-number sn-target-evaluation-hitpoints 40)
+ (set-strategic-number sn-target-evaluation-kills 0)
+ (set-strategic-number sn-target-evaluation-range 80)
+ (set-strategic-number sn-target-evaluation-rof 0)
+ (set-strategic-number sn-target-evaluation-in-progress 60)
+ (set-strategic-number sn-target-evaluation-time-kill-ratio 0)
+ (set-strategic-number sn-target-evaluation-continent 0)
+ (set-strategic-number sn-target-evaluation-siege-weapon 60)
+ (set-strategic-number sn-target-evaluation-boat 0)
+ (set-strategic-number sn-target-evaluation-randomness 0)
+ (disable-self)
+)
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-special-attack-type1 -1)
+ (set-strategic-number sn-special-attack-influence1 0)
+ (set-strategic-number sn-special-attack-type2 0)
+ (set-strategic-number sn-special-attack-type3 0)
+ (disable-self)
+)
+; _/_/_/_/_/_/ Ally Set....
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-coop-share-attacking 1)
+ (set-strategic-number sn-coop-share-attacking-interval 10)
+ (set-strategic-number sn-minimum-peace-like-level 85)
+ (set-strategic-number sn-attack-diplomacy-impact 10)
+ (set-strategic-number sn-hits-before-alliance-change 100)
+ (set-strategic-number sn-minimum-amount-for-trading 0)
+ (disable-self)
+)
+; _/_/_/_/_/_/ ?????
+(defrule
+ (true)
+=>
+; (set-strategic-number sn-build-frequency 1)
+; (set-strategic-number sn-max-skips-per-attempt 10)
+; (set-strategic-number sn-number-build-attempts-before-skip 25)
+; (set-strategic-number sn-scale-maximum-attack-group-size 0)
+; (set-strategic-number sn-scale-minimum-attack-group-size 1)
+; (set-strategic-number sn-scaling-frequency 10)
+ (disable-self)
+)
+; _/_/_/_/_/_/ ?????????????
+(defrule
+ (true)
+=>
+; (set-strategic-number sn-do-not-scale-for-difficulty-level )
+; (set-strategic-number sn-do-not-transport-from-same-zone )
+; (set-strategic-number sn-gather-defense-units )
+; (set-strategic-number sn-ignore-attack-group-under-attack )
+ (set-strategic-number sn-intelligent-gathering 1)
+; (set-strategic-number sn-number-max-skip-cycles )
+ (disable-self)
+)
+; _/_/_/_/_/_/ etc....
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-relic-return-distance 600)
+; (set-strategic-number sn-track-player-history )
+; (set-strategic-number sn-save-scenario-information )
+ (disable-self)
+)

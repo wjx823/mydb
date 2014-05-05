@@ -1,0 +1,317 @@
+;{********************************************************************
+; AI maccha Ver 7.00  building.per
+;}********************************************************************
+;*monastery
+(defrule 
+   (or
+      (goal MAX_MONK 1)
+      (goal MAX_MONK 2)
+   )
+   (building-type-count monastery < 1)
+   (can-build monastery)
+=>
+   (chat-local-to-self "build monastery Lv:1")
+   (set-strategic-number sn-minimum-town-size 10)
+   (set-strategic-number sn-maximum-town-size 14)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (build monastery)
+)
+(defrule 
+   (or
+      (goal MAX_MONK 3)
+      (goal MAX_MONK 4)
+   )
+   (building-type-count monastery < 2)
+   (can-build monastery)
+=>
+   (chat-local-to-self "build monastery Lv:2")
+   (build monastery)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_MONK 5)
+   (building-type-count monastery < 3)
+   (can-build monastery)
+=>
+   (chat-local-to-self "build monastery Lv:3")
+   (build monastery)
+)
+;*stable
+(defrule
+   (or
+   (or
+   (or
+   (goal MAX_KNIGHT 1)
+   (goal MAX_CAMEL 1)
+   )
+   (goal MAX_KNIGHT 2)
+   )
+   (goal MAX_CAMEL 2)
+   )
+   (building-type-count stable < 1)
+   (can-build stable)
+=>
+   (set-strategic-number sn-minimum-town-size 10)
+   (set-strategic-number sn-maximum-town-size 14)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (build stable)
+   (chat-local-to-self "build stable Lv:1")
+)
+(defrule 
+   (or
+   (or
+   (or
+   (goal MAX_KNIGHT 3)
+   (goal MAX_CAMEL 3)
+   )
+   (goal MAX_KNIGHT 4)
+   )
+   (goal MAX_CAMEL 4)
+   )
+   (building-type-count stable < 3)
+   (can-build stable)
+=>
+   (set-strategic-number sn-minimum-town-size 10)
+   (set-strategic-number sn-maximum-town-size 14)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (build stable)
+   (chat-local-to-self "build stable Lv:2")
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (or
+   (goal MAX_KNIGHT 5)
+   (goal MAX_CAMEL 5)
+   )
+   (building-type-count stable < 4)
+   (can-build stable)
+=>
+   (set-strategic-number sn-minimum-town-size 10)
+   (set-strategic-number sn-maximum-town-size 14)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (build stable)
+   (chat-local-to-self "build stable Lv:3")
+)
+(defrule 
+   (or
+      (goal MAX_LIGHTCAVALRY 1)
+      (goal MAX_LIGHTCAVALRY 2)
+   )
+   (building-type-count stable < 1)
+   (can-build stable)
+=>
+   (set-strategic-number sn-minimum-town-size 10)
+   (set-strategic-number sn-maximum-town-size 14)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (build stable)
+   (chat-local-to-self "build stable Lv:1")
+)
+(defrule 
+   (or
+      (goal MAX_LIGHTCAVALRY 3)
+      (goal MAX_LIGHTCAVALRY 4)
+   )
+   (building-type-count stable < 3)
+   (can-build stable)
+=>
+   (set-strategic-number sn-minimum-town-size 10)
+   (set-strategic-number sn-maximum-town-size 14)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (build stable)
+   (chat-local-to-self "build stable Lv:2")
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (goal MAX_LIGHTCAVALRY 5)
+   (building-type-count stable < 4)
+   (can-build stable)
+=>
+   (set-strategic-number sn-minimum-town-size 10)
+   (set-strategic-number sn-maximum-town-size 14)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (build stable)
+   (chat-local-to-self "build stable Lv:3")
+)
+;*archery-range
+(defrule 
+   (or
+   (or
+   (or
+   (goal MAX_ARCHER 1)
+   (goal MAX_SKIRMISHER 1)
+   )
+   (goal MAX_ARCHER 2)
+   )
+   (goal MAX_SKIRMISHER 2)
+   )
+   (building-type-count archery-range < 1)
+   (can-build archery-range)
+=>
+   (set-strategic-number sn-minimum-town-size 10)
+   (set-strategic-number sn-maximum-town-size 14)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (chat-local-to-self "build archery-range Lv:1")
+   (build archery-range)
+)
+(defrule 
+   (or
+   (or
+   (or
+   (goal MAX_ARCHER 3)
+   (goal MAX_SKIRMISHER 3)
+   )
+   (goal MAX_ARCHER 4)
+   )
+   (goal MAX_SKIRMISHER 4)
+   )
+   (building-type-count archery-range < 3)
+   (can-build archery-range)
+=>
+   (set-strategic-number sn-minimum-town-size 10)
+   (set-strategic-number sn-maximum-town-size 14)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (chat-local-to-self "build archery-range Lv:2")
+   (build archery-range)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (or
+   (goal MAX_ARCHER 5)
+   (goal MAX_SKIRMISHER 5)
+   )
+   (building-type-count archery-range < 4)
+   (can-build archery-range)
+=>
+   (set-strategic-number sn-minimum-town-size 10)
+   (set-strategic-number sn-maximum-town-size 14)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (chat-local-to-self "build archery-range Lv:3")
+   (build archery-range)
+)
+(defrule 
+   (or
+   (or
+   (or
+   (goal MAX_CAVALRYARCHER 1)
+   (goal MAX_HANDCANNONEER 1)
+   )
+   (goal MAX_CAVALRYARCHER 2)
+   )
+   (goal MAX_HANDCANNONEER 2)
+   )
+   (building-type-count archery-range < 1)
+   (can-build archery-range)
+=>
+   (set-strategic-number sn-minimum-town-size 10)
+   (set-strategic-number sn-maximum-town-size 14)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (chat-local-to-self "build archery-range Lv:1")
+   (build archery-range)
+)
+(defrule 
+   (or
+   (or
+   (or
+   (goal MAX_CAVALRYARCHER 3)
+   (goal MAX_HANDCANNONEER 3)
+   )
+   (goal MAX_CAVALRYARCHER 4)
+   )
+   (goal MAX_HANDCANNONEER 4)
+   )
+   (building-type-count archery-range < 3)
+   (can-build archery-range)
+=>
+   (set-strategic-number sn-minimum-town-size 10)
+   (set-strategic-number sn-maximum-town-size 14)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (chat-local-to-self "build archery-range Lv:2")
+   (build archery-range)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (or
+   (goal MAX_CAVALRYARCHER 5)
+   (goal MAX_HANDCANNONEER 5)
+   )
+   (building-type-count archery-range < 4)
+   (can-build archery-range)
+=>
+   (set-strategic-number sn-minimum-town-size 10)
+   (set-strategic-number sn-maximum-town-size 14)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (chat-local-to-self "build archery-range Lv:3")
+   (build archery-range)
+)
+;*barracks
+(defrule 
+   (or
+   (or
+   (or
+   (goal MAX_MILITIAMAN 1)
+   (goal MAX_SPEARMAN 1)
+   )
+   (goal MAX_MILITIAMAN 2)
+   )
+   (goal MAX_SPEARMAN 2)
+   )
+   (building-type-count barracks < 1) 
+   (can-build barracks)
+=>
+   (chat-local-to-self "build barracks Lv:1")
+   (set-strategic-number sn-minimum-town-size 10)
+   (set-strategic-number sn-maximum-town-size 14)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (build barracks)
+)
+(defrule 
+   (or
+   (or
+   (or
+   (goal MAX_MILITIAMAN 3)
+   (goal MAX_SPEARMAN 3)
+   )
+   (goal MAX_MILITIAMAN 4)
+   )
+   (goal MAX_SPEARMAN 4)
+   )
+   (building-type-count barracks < 3) 
+   (can-build barracks)
+=>
+   (chat-local-to-self "build barracks Lv:2")
+   (set-strategic-number sn-minimum-town-size 10)
+   (set-strategic-number sn-maximum-town-size 14)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (build barracks)
+)
+(defrule 
+   (goal RESTRICT_MILITARY NO)
+   (or
+   (goal MAX_MILITIAMAN 5)
+   (goal MAX_SPEARMAN 5)
+   )
+   (building-type-count barracks < 4)
+   (can-build barracks)
+=>
+   (chat-local-to-self "build barracks Lv:3")
+   (set-strategic-number sn-minimum-town-size 10)
+   (set-strategic-number sn-maximum-town-size 14)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (build barracks)
+)

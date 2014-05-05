@@ -1,0 +1,705 @@
+;////////////////////////////////////////////////////////////////////////////
+;//          PhoenixKnight - Common Script
+;////////////////////////////////////////////////////////////////////////////
+;//Wall Setting//
+(defrule
+ (true)
+=>
+ (enable-wall-placement 2)
+ (disable-self)
+)
+
+;//Build Wall//
+(defrule
+ (goal Follow YES)
+ (goal UnderAttack NO)
+ (current-age >= castle-age)
+ (can-build-wall 2 stone-wall-line)
+ (can-afford-complete-wall 2 stone-wall-line)
+=>
+ (build-wall 2 stone-wall-line)
+)
+
+;//Build Gate//
+(defrule
+ (goal Follow YES)
+ (goal UnderAttack NO)
+ (current-age >= castle-age)
+ (can-build-gate 2)
+=>
+ (build-gate 2)
+)
+;//Research Coinage//
+(defrule
+ (goal UnderAttack NO) 
+ (goal Follow YES)
+ (player-in-game any-ally)
+ (can-research ri-coinage )
+=>
+ (research ri-coinage)
+ (chat-to-allies "(Support)Research Coinage")
+)
+
+;//Research Banking//
+(defrule
+ (goal UnderAttack NO)
+ (player-in-game any-ally)
+ (goal Follow YES)
+ (can-research ri-banking )
+=>
+ (research ri-banking)
+ (chat-to-allies "(Support)Research Banking")
+)
+
+;////////////////////////////////////////////////////////////////////////////
+;//   　　　　　　　　　　　Evolution
+;////////////////////////////////////////////////////////////////////////////
+;//It evolves in the Feudal-Age.//
+(defrule
+ (current-age == feudal-age)
+=>
+ (set-goal EVOLUTION 2)
+ (disable-self)
+)
+(defrule
+ (goal EVOLUTION 2)
+=>
+ (set-strategic-number sn-food-gatherer-percentage 40 )
+ (set-strategic-number sn-wood-gatherer-percentage 40 )
+ (set-strategic-number sn-gold-gatherer-percentage 15 )
+ (set-strategic-number sn-stone-gatherer-percentage 5 )
+ (disable-self)
+)
+;//It evolves in the Castle-Age.//
+(defrule
+ (can-research castle-age)
+=>
+ (research castle-age)
+ (set-strategic-number sn-food-gatherer-percentage 35 )
+ (set-strategic-number sn-wood-gatherer-percentage 35 )
+ (set-strategic-number sn-gold-gatherer-percentage 20 )
+ (set-strategic-number sn-stone-gatherer-percentage 10 )
+ (set-goal EVOLUTION 3)
+ (chat-to-allies "Research [Castle-age]")
+)
+
+(defrule
+ (current-age == castle-age)
+=>
+ (set-goal EVOLUTION 4)
+ (disable-self)
+)
+
+;■It evolves in the Imperial-Age.■
+(defrule
+ (building-type-count castle >= 1)
+ (can-research imperial-age)
+ (food-amount > 1200)
+=>
+ (research imperial-age)
+ (set-strategic-number sn-food-gatherer-percentage 45 )
+ (set-strategic-number sn-wood-gatherer-percentage 35 )
+ (set-strategic-number sn-gold-gatherer-percentage 15 )
+ (set-strategic-number sn-stone-gatherer-percentage 5 )
+ (chat-to-allies "Research [Imperial-Age]")
+ (set-goal EVOLUTION 5)
+ (enable-timer IM_LATE_TIMER 540)
+ (enable-timer RES_TIMER 100)
+)
+
+;■(Sub)Imperial Age■
+(defrule
+ (building-type-count-total castle <= 1)
+ (stone-amount > 1200)
+ (food-amount > 1200)
+ (can-research imperial-age)
+=>
+ (research imperial-age)
+ (set-strategic-number sn-food-gatherer-percentage 45 )
+ (set-strategic-number sn-wood-gatherer-percentage 35 )
+ (set-strategic-number sn-gold-gatherer-percentage 15 )
+ (set-strategic-number sn-stone-gatherer-percentage 5 )
+ (chat-to-allies "Research [Imperial-Age]")
+ (set-goal EVOLUTION 5)
+ (enable-timer IM_LATE_TIMER 540)
+ (enable-timer RES_TIMER 100)
+)
+
+(defrule
+ (current-age == imperial-age)
+=>
+ (set-goal EVOLUTION 6)
+ (disable-self)
+)
+;/////////////////////////////////////////////////////////////////////////
+;//                   Market Trade
+;/////////////////////////////////////////////////////////////////////////
+(defrule
+ (current-age == imperial-age)
+ (gold-amount < 1700)
+ (wood-amount > 2000)
+=>
+ (sell-commodity wood)
+)
+
+(defrule
+ (current-age == imperial-age)
+ (gold-amount > 1700)
+ (stone-amount < 700)
+=>
+ (buy-commodity stone)
+)
+
+(defrule
+ (current-age == imperial-age)
+ (gold-amount < 1600)
+ (food-amount > 1800)
+=>
+ (sell-commodity food)
+)
+
+(defrule
+ (current-age == castle-age)
+ (gold-amount < 1200)
+ (wood-amount > 1000)
+=>
+ (sell-commodity wood)
+)
+
+(defrule
+ (current-age == castle-age)
+ (food-amount > 3000)
+=>
+ (sell-commodity food)
+)
+
+(defrule
+ (goal UnderAttack YES)
+ (current-age == castle-age)
+ (building-type-count castle <= 1)
+ (gold-amount > 1200)
+=>
+ (buy-commodity stone)
+)
+
+(defrule
+ (goal UnderAttack YES)
+ (current-age == castle-age)
+ (gold-amount > 600)
+ (food-amount < 200)
+=>
+ (buy-commodity food)
+)
+
+(defrule
+ (current-age == feudal-age)
+ (building-type-count market >= 1 )
+ (gold-amount >= 350)
+ (food-amount <= 800)
+=>
+ (buy-commodity food)
+)
+
+(defrule
+ (goal EVOLUTION 2)
+ (building-type-count market >= 1 )
+ (gold-amount <= 350)
+ (wood-amount >= 400)
+=>
+ (sell-commodity wood)
+)
+
+(defrule
+ (research-completed ri-banking)
+ (current-age == imperial-age)
+ (wood-amount >= 3000)
+=>
+ (tribute-to-player every-ally wood 100)
+)
+(defrule
+ (research-completed ri-banking)
+ (current-age == imperial-age)
+ (food-amount >= 2500)
+=>
+ (tribute-to-player every-ally food 100)
+)
+(defrule
+ (research-completed ri-banking)
+ (gold-amount >= 2000)
+ (current-age == imperial-age)
+=>
+ (tribute-to-player every-ally gold 100)
+)
+
+;//Request for help(Ally)//
+(defrule
+ (or
+  (current-age == castle-age)
+  (and
+   (not(timer-triggered IM_LATE_TIMER))
+   (current-age == imperial-age)
+  )
+ )
+ (player-in-game any-ally)
+ (town-under-attack)
+ (players-military-population any-enemy >= 7)
+ (goal UnderAttack NO)
+=>
+ (set-goal UnderAttack YES)
+ (enable-timer UNDERATTACK_TIMER 8)
+ (set-goal ENEMY_UNDERATTACK YES)
+ (chat-to-allies "110)【Town-Under-Attack】")
+)
+
+(defrule
+ (timer-triggered UNDERATTACK_TIMER)
+=>
+ (set-goal UnderAttack NO)
+)
+
+(defrule
+ (goal Follow NO)
+ (current-age >= castle-age)
+ (taunt-detected any-ally 110)
+ (goal UnderAttack NO)
+=>
+ (set-goal Follow YES)
+ (chat-to-allies "【Taunt(Under attack) detected!!】")
+ (acknowledge-taunt this-any-ally 110)
+)
+
+;//Support//
+(defrule
+ (goal Follow YES)
+ (research-completed ri-banking)
+=>
+ (tribute-to-player every-ally food 80)
+ (tribute-to-player every-ally wood 60)
+ (tribute-to-player every-ally gold 100)
+ (tribute-to-player every-ally stone 20)
+ (set-goal Follow NO)
+)
+
+(defrule
+ (population > 120)
+ (goal ATTACK NO)
+ (goal UnderAttack NO)
+ (soldier-count >= 8)
+ (research-completed ri-faith)
+ (research-completed ri-heresy)
+=>
+ (set-goal ATTACK YES)
+ (chat-to-allies "23 A General Attack is Started. ")
+)
+
+(defrule
+ (goal ATTACK YES)
+=>
+ (set-strategic-number sn-percent-attack-soldiers 90)
+ (set-strategic-number sn-number-attack-groups 100)
+ (set-strategic-number sn-minimum-attack-group-size 1)
+ (set-strategic-number sn-maximum-attack-group-size 1)
+ (set-strategic-number sn-number-defend-groups 4 )
+ (set-strategic-number sn-minimum-defend-group-size 1 )
+ (set-strategic-number sn-maximum-defend-group-size 5 )
+ (set-strategic-number sn-enemy-sighted-response-distance 2 )
+)
+
+
+;//Retreats//
+(defrule
+ (goal ATTACK YES)
+ (goal ENEMY_RELICS NO)
+ (soldier-count <= 32)
+ (current-age == imperial-age)
+=>
+ (chat-to-allies "36 It retreats once.")
+ (set-strategic-number sn-percent-attack-soldiers 0)
+ (set-strategic-number sn-minimum-attack-group-size 0)
+ (set-strategic-number sn-maximum-attack-group-size 0)
+ (set-strategic-number sn-minimum-defend-group-size 1)
+ (set-strategic-number sn-maximum-defend-group-size 10)
+ (set-strategic-number sn-number-attack-groups 0)
+ (set-strategic-number sn-number-defend-groups 40)
+ (set-goal TOWN-SIZE YES)
+ (set-goal ATTACK NO)
+)
+;//Town Size//
+(defrule
+ (goal TOWN-SIZE YES)
+ (timer-triggered BUILD_TIME)
+ (current-age == feudal-age)
+=>
+ (set-strategic-number sn-minimum-town-size 10)
+ (set-strategic-number sn-maximum-town-size 15)
+ (set-goal TOWN-SIZE NO)
+)
+
+(defrule
+ (goal TOWN-SIZE YES)
+ (timer-triggered BUILD_TIME)
+ (current-age == castle-age)
+=>
+ (set-strategic-number sn-minimum-town-size 10)
+ (set-strategic-number sn-maximum-town-size 20)
+ (set-goal TOWN-SIZE NO)
+)
+
+(defrule
+ (goal TOWN-SIZE YES)
+ (current-age == imperial-age)
+=>
+ (set-strategic-number sn-minimum-town-size 10)
+ (set-strategic-number sn-maximum-town-size 26)
+ (set-goal TOWN-SIZE NO)
+)
+
+;/////////////////////////////////////////////////////////////////////////////////
+;//                          Change Settintgs
+;/////////////////////////////////////////////////////////////////////////////////
+;//found food?//
+#load-if-not-defined NOMAD-MAP
+(defrule
+ (or
+  (resource-found food)
+  (unit-type-count-total 594 >= 2)
+ )
+=>
+ (set-strategic-number sn-percent-civilian-explorers 0)
+ (set-strategic-number sn-percent-civilian-gatherers 65)
+ (set-strategic-number sn-total-number-explorers 1)
+ (set-strategic-number sn-minimum-civilian-explorers 0)
+ (set-strategic-number sn-cap-civilian-explorers 0)
+ (disable-self)
+)
+#end-if
+
+;//Gatherer BALANCE-1//
+(defrule
+ (unit-type-count-total villager >= 13)
+=>
+ (set-strategic-number sn-food-gatherer-percentage 50 )
+ (set-strategic-number sn-wood-gatherer-percentage 50 )
+ (set-strategic-number sn-gold-gatherer-percentage 0 )
+ (set-strategic-number sn-stone-gatherer-percentage 0 )
+ (disable-self)
+)
+
+;//Gatherer BALANCE-2//
+(defrule
+ (unit-type-count-total villager >= 18)
+=>
+ (set-strategic-number sn-food-gatherer-percentage 55 )
+ (set-strategic-number sn-wood-gatherer-percentage 45 )
+ (set-strategic-number sn-gold-gatherer-percentage 0 )
+ (set-strategic-number sn-stone-gatherer-percentage 0 )
+ (disable-self)
+)
+
+;//Gatherer Range Adjustment//
+#load-if-not-defined NOMAD-MAP
+(defrule
+ (building-type-count-total lumber-camp == 1)
+=>
+ (set-strategic-number sn-camp-max-distance 20 )
+ (chat-local-to-self "<CampMax:20>")
+ (disable-self)
+)
+
+(defrule
+ (building-type-count-total lumber-camp == 2)
+=>
+ (set-strategic-number sn-camp-max-distance 45 )
+ (set-strategic-number sn-maximum-gold-drop-distance 45)
+ (set-strategic-number sn-maximum-stone-drop-distance 45)
+ (chat-local-to-self "<Camp Max:30>")
+ (disable-self)
+)
+#end-if
+
+
+(defrule
+ (building-type-count-total mining-camp > 5)
+  (building-type-count-total lumber-camp >= 3)
+=>
+ (set-strategic-number sn-camp-max-distance 300 )
+ (set-strategic-number sn-wood-dropsite-distance 20 )
+ (set-strategic-number sn-maximum-gold-drop-distance 300)
+ (set-strategic-number sn-maximum-stone-drop-distance 300)
+ (chat-local-to-self "<(Final)Gatherer Range Adjustment>")
+ (disable-self)
+)
+
+;//Build Time//
+(defrule
+ (timer-triggered BUILD_TIME)
+ (goal READY_BUILD NO)
+=>
+ (set-goal READY_BUILD YES)
+ (chat-local-to-self "Ready Build")
+)
+
+;//Check Resources//
+(defrule
+ (current-age == imperial-age)
+ (timer-triggered IM_LATE_TIMER)
+=>
+ (set-goal CHECKED YES)
+ (disable-self)
+)
+
+(defrule
+ (current-age == imperial-age)
+ (goal CHECKED YES)
+ (timer-triggered RES_TIMER)
+=>
+ (enable-timer RES_TIMER 100)
+ (set-goal CHECKED NO)
+ (chat-local-to-self "-Restart RES_TIMER-")
+)
+;--------food
+(defrule
+ (timer-triggered RES_TIMER)
+ (goal RES_CHK_FOOD NO)
+ (food-amount < 200)
+=>
+ (set-goal FOOD YES)
+ (set-goal RES_CHK_FOOD YES) 
+ (set-goal CHECKED YES)
+ (chat-local-to-self "-food")
+)
+
+(defrule
+ (timer-triggered RES_TIMER)
+ (goal FOOD YES)
+ (goal RES_CHK_FOOD YES)
+ (food-amount < 200)
+=>
+ (chat-to-allies "3 --Food Please--")
+ (set-goal CHECKED YES)
+ (set-goal RES_CHK_FOOD NO)
+)
+
+(defrule
+ (timer-triggered RES_TIMER)
+ (goal FOOD YES)
+ (goal RES_CHK_FOOD YES)
+ (food-amount > 200)
+=>
+ (set-goal FOOD NO)
+ (set-goal CHECKED YES)
+ (chat-local-to-self "+food")
+)
+
+;---WOOD
+(defrule
+ (timer-triggered RES_TIMER)
+ (goal RES_CHK_WOOD NO)
+ (wood-amount < 200)
+=>
+ (set-goal WOOD YES)
+ (set-goal RES_CHK_WOOD YES) 
+ (set-goal CHECKED YES)
+ (chat-local-to-self "-wood")
+)
+
+(defrule
+ (timer-triggered RES_TIMER)
+ (goal WOOD YES)
+ (goal RES_CHK_WOOD YES)
+ (wood-amount < 200)
+=>
+ (chat-to-allies "4 --Wood Please--")
+ (set-goal CHECKED YES)
+ (set-goal RES_CHK_WOOD NO)
+)
+
+(defrule
+ (timer-triggered RES_TIMER)
+ (goal WOOD YES)
+ (goal RES_CHK_WOOD YES)
+ (wood-amount > 200)
+=>
+ (chat-local-to-self "+wood")
+ (set-goal CHECKED YES)
+ (set-goal WOOD NO)
+)
+;-----gold
+(defrule
+ (timer-triggered RES_TIMER)
+ (goal RES_CHK_GOLD NO)
+ (gold-amount < 150)
+=>
+ (set-goal GOLD YES)
+ (set-goal RES_CHK_GOLD YES) 
+ (set-goal CHECKED YES)
+ (chat-local-to-self "-gold")
+)
+
+(defrule
+ (timer-triggered RES_TIMER)
+ (goal GOLD YES)
+ (goal RES_CHK_GOLD YES)
+ (gold-amount < 150)
+=>
+ (chat-to-allies "5 --Gold Please--")
+ (set-goal CHECKED YES)
+ (set-goal RES_CHK_GOLD NO)
+)
+
+(defrule
+ (timer-triggered RES_TIMER)
+ (goal GOLD YES)
+ (goal RES_CHK_GOLD YES)
+ (gold-amount > 150)
+=>
+ (set-goal GOLD NO)
+ (set-goal CHECKED YES)
+ (chat-local-to-self "+gold")
+)
+;////////////////////////////////////////////////////////////
+;//          Enemy Under Attack
+;////////////////////////////////////////////////////////////
+;//University//
+(defrule
+ (goal READY_BUILD YES)
+ (goal UnderAttack YES)
+ (building-type-count university == 0)
+ (can-build university)
+=>
+ (set-strategic-number sn-minimum-town-size 20)
+ (set-strategic-number sn-maximum-town-size 24)
+ (build university)
+ (set-goal TOWN-SIZE YES)
+ (chat-local-to-self "Build (Hurry) University")
+ (enable-timer BUILD_TIME 5)
+ (set-goal READY_BUILD NO)
+)
+
+(defrule
+ (goal EVOLUTION 4)
+=>
+ (set-goal TOWER_LINE NO)
+ (chat-local-to-self "!debug [TOWER_LINE NO]")
+ (disable-self)
+)
+
+(defrule
+ (building-type-count castle >= 1)
+=>
+ (set-goal TOWER_LINE YES)
+ (chat-local-to-self "!debug [TOWER_LINE YES]")
+ (disable-self)
+)
+
+(defrule
+ (goal Follow YES)
+ (building-type-count market >= 1 )
+ (not(research-completed ri-banking))
+ (gold-amount < 300)
+ (wood-amount >= 200)
+=>
+ (sell-commodity wood)
+)
+
+(defrule
+ (goal Follow YES)
+ (building-type-count market >= 1 )
+ (not(research-completed ri-banking))
+ (gold-amount > 350)
+ (food-amount <= 200)
+=>
+ (buy-commodity food)
+)
+
+(defrule
+ (goal Follow YES)
+ (building-type-count market >= 1 )
+ (not(research-completed ri-banking))
+ (gold-amount < 350)
+ (stone-amount >= 210)
+=>
+ (sell-commodity stone)
+)
+
+;//Research Fletching//
+(defrule
+ (goal EVOLUTION 3)
+ (town-under-attack)
+ (can-research ri-fletching)
+=>
+ (research ri-fletching)
+ (chat-local-to-self "Research Fletching")
+)
+
+;//Wall Settings 2
+(defrule
+ (true)
+=>
+ (enable-wall-placement 1)
+ (disable-self)
+)
+
+(defrule
+ (goal Follow YES)
+ (goal UnderAttack NO)
+ (current-age >= castle-age)
+ (can-build-wall 1 stone-wall-line)
+ (can-afford-complete-wall 1 stone-wall-line)
+=>
+ (build-wall 1 stone-wall-line)
+)
+
+(defrule
+ (goal Follow YES)
+ (goal UnderAttack NO)
+ (current-age >= castle-age)
+ (can-build-gate 1)
+=>
+ (build-gate 1)
+)
+
+(defrule
+ (goal ENEMY_RELICS NO)
+ (enemy-captured-relics)
+ (not (hold-relics))
+ (players-military-population my-player-number > 12 )
+ (population > 60)
+=>
+ (set-goal ATTACK YES)
+ (chat-to-allies "(Relics) Attack => Monastry")
+ (set-goal ENEMY_RELICS YES)
+)
+
+(defrule
+ (goal ENEMY_RELICS YES)
+ (not(enemy-captured-relics))
+=>
+ (set-goal ATTACK NO)
+ (chat-to-allies "(Relics) *NOT* captured => Hold Attack")
+ (set-goal ENEMY_RELICS NO)
+)
+;///////////// Target [Enemy Wonder] ///////////////////////////////
+(defrule
+ (goal ENEMY_WONDER NO)
+ (players-building-type-count any-enemy wonder >= 1)
+=>
+ (set-strategic-number sn-special-attack-type3 1)
+ (set-strategic-number sn-special-attack-influence1 1)
+ (chat-to-allies "Change Target => Enemy Wonder")
+ (set-goal ENEMY_WONDER YES)
+ (disable-self)
+)
+
+;//Resign//
+(defrule
+ (current-age >= feudal-age)
+ (population < 2)
+=>
+ (tribute-to-player any-ally wood 500)
+ (tribute-to-player any-ally food 500)
+ (tribute-to-player any-ally gold 500)
+ (tribute-to-player any-ally stone 500)
+ (resign)
+ (disable-self)
+)

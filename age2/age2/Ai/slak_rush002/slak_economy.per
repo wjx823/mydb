@@ -1,0 +1,975 @@
+; --------------------------------------------------------------------------
+; File: Slak_Economy.per
+; Author: SlakTheEldar
+; Date: 2000-11-29
+;
+; Available under BSD-like license; see accompanying Copying.txt file
+;
+; --------------------------------------------------------------------------
+
+; **************************************************************************
+; Rules for building the economy
+; **************************************************************************
+
+; **************************************************************************
+; Units
+; **************************************************************************
+
+; --------------------------------------------------------------------------
+; Build villagers
+; --------------------------------------------------------------------------
+(defrule
+  (current-age == dark-age)
+  (civilian-population < villager-dark)
+  (can-train villager)
+  =>
+  (train villager)
+) 
+
+(defrule
+  (current-age == feudal-age)
+  (civilian-population < villager-feudal)
+  (can-train villager)
+  =>
+  (train villager)
+) 
+
+(defrule
+  (current-age == castle-age)
+  (civilian-population < villager-castle)
+  (can-train villager)
+  =>
+  (train villager)
+) 
+
+(defrule
+  (current-age == imperial-age)
+  (civilian-population < villager-imperial)
+  (can-train villager)
+  =>
+  (train villager)
+) 
+
+; In imperial, make sure we don't have too many vills
+(defrule
+  (current-age == imperial-age)
+  (civilian-population > villager-imperial)
+  (population >= pop-cap)
+  =>
+  (delete-unit villager)
+  (chat-local-to-self "too many imperial-villagers")
+)
+
+; --------------------------------------------------------------------------
+; Strategic numbers
+; --------------------------------------------------------------------------
+
+; --------- If elf needs food badly, set up villager exploration
+(defrule
+  (not (resource-found food))
+  (game-time > 30)
+  =>
+  (set-strategic-number sn-minimum-civilian-explorers 1)
+  (set-strategic-number sn-cap-civilian-explorers 1)
+  (set-strategic-number sn-percent-civilian-explorers 20)
+  (set-strategic-number sn-food-gatherer-percentage 40)
+  (set-strategic-number sn-wood-gatherer-percentage 40)
+  (set-strategic-number sn-gold-gatherer-percentage 0)
+  (set-strategic-number sn-stone-gatherer-percentage 0)
+  (chat-local-to-self "civilian exploring for food")
+  (disable-self)
+)
+; --------------------------------------------------------------------------
+; Stop villager exploration when food found (1st time only)
+; --------------------------------------------------------------------------
+(defrule
+  (resource-found food)
+  (game-time > 30)
+  =>
+  (set-strategic-number sn-percent-civilian-explorers 0)
+  (set-strategic-number sn-minimum-civilian-explorers 0)
+  (set-strategic-number sn-cap-civilian-explorers 0)
+  (set-strategic-number sn-food-gatherer-percentage 70)
+  (set-strategic-number sn-wood-gatherer-percentage 30)
+  (set-strategic-number sn-gold-gatherer-percentage 0)
+  (set-strategic-number sn-stone-gatherer-percentage 0)
+  (chat-local-to-self "food found - civilian exploring done")
+  (disable-self)
+)
+
+; --------------------------------------------------------------------------
+; Change villager assignment ratio when we get more than 9 villagers
+; --------------------------------------------------------------------------
+(defrule
+  (unit-type-count-total villager >= 9)
+  =>
+  (set-strategic-number sn-percent-civilian-explorers 0)
+  (set-strategic-number sn-minimum-civilian-explorers 0)
+  (set-strategic-number sn-cap-civilian-explorers 0)
+  (set-strategic-number sn-food-gatherer-percentage 60)
+  (set-strategic-number sn-wood-gatherer-percentage 40)
+  (set-strategic-number sn-gold-gatherer-percentage 0)
+  (set-strategic-number sn-stone-gatherer-percentage 0)
+  (chat-local-to-self "Increasing woodies")
+  (disable-self)
+)
+
+; --------------------------------------------------------------------------
+; What resource do we most need
+; --------------------------------------------------------------------------
+(defrule
+  (true)
+  =>
+  (set-goal resource-needed CHECKING)
+  ;(disable-self)
+)
+
+(defrule
+  (current-age == dark-age)
+  (game-time < 560)
+  =>
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+;(defrule
+;  (current-age > dark-age)
+;  =>
+;  (set-goal resource-needed CHECKING)
+;)
+
+; --------------------------------------------------------------------------
+; Villager assignment based on current-age and resource-needed (post-dark)
+; --------------------------------------------------------------------------
+(defrule
+  (current-age == dark-age)  
+  (gold-amount < 300)
+  (stone-amount < 250)
+  (goal resource-needed CHECKING)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 40) 
+  (set-strategic-number sn-gold-gatherer-percentage  10) 
+  (set-strategic-number sn-stone-gatherer-percentage 10) 
+  (set-strategic-number sn-wood-gatherer-percentage  40)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+(defrule
+  (current-age == dark-age)  
+  (gold-amount >= 300)
+  (stone-amount < 250)
+  (goal resource-needed CHECKING)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 50) 
+  (set-strategic-number sn-gold-gatherer-percentage  0)
+  (set-strategic-number sn-stone-gatherer-percentage 10) 
+  (set-strategic-number sn-wood-gatherer-percentage  40)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+(defrule
+  (current-age == dark-age)  
+  (gold-amount < 300)
+  (stone-amount >= 250)
+  (goal resource-needed CHECKING)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 50) 
+  (set-strategic-number sn-gold-gatherer-percentage  10)
+  (set-strategic-number sn-stone-gatherer-percentage 0) 
+  (set-strategic-number sn-wood-gatherer-percentage  40)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+(defrule
+  (current-age == dark-age)  
+  (gold-amount >= 300)
+  (stone-amount >= 250)
+  (goal resource-needed CHECKING)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 50) 
+  (set-strategic-number sn-gold-gatherer-percentage  0)
+  (set-strategic-number sn-stone-gatherer-percentage 0) 
+  (set-strategic-number sn-wood-gatherer-percentage  50)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+(defrule
+  (current-age == feudal-age)  
+  (building-type-count barracks < 3)
+  (stone-amount < 650)
+  (escrow-amount stone < 300)
+  (goal resource-needed CHECKING)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 30) 
+  (set-strategic-number sn-gold-gatherer-percentage  10) 
+  (set-strategic-number sn-stone-gatherer-percentage 10) 
+  (set-strategic-number sn-wood-gatherer-percentage  50)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+(defrule
+  (current-age == feudal-age)  
+  (building-type-count barracks < 3)
+  (goal resource-needed CHECKING)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 40) 
+  (set-strategic-number sn-gold-gatherer-percentage  10) 
+  (set-strategic-number sn-stone-gatherer-percentage 0) 
+  (set-strategic-number sn-wood-gatherer-percentage  50)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+(defrule
+  (current-age == feudal-age)  
+  (building-type-count barracks >= 2)
+  (goal resource-needed CHECKING)
+  (stone-amount >= 150)
+  (building-type-count-total market == 0)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 50) 
+  (set-strategic-number sn-gold-gatherer-percentage 10) 
+  (set-strategic-number sn-stone-gatherer-percentage 0) 
+  (set-strategic-number sn-wood-gatherer-percentage 40)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+(defrule
+  (current-age == feudal-age)  
+  (building-type-count barracks >= 2)
+  (goal resource-needed CHECKING)
+  (stone-amount < 150)
+  (building-type-count-total market == 0)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 40) 
+  (set-strategic-number sn-gold-gatherer-percentage 10) 
+  (set-strategic-number sn-stone-gatherer-percentage 10) 
+  (set-strategic-number sn-wood-gatherer-percentage 40)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+(defrule
+  (current-age == feudal-age)  
+  (building-type-count barracks >= 2)
+  (goal resource-needed CHECKING)
+  (stone-amount >= 150)
+  (building-type-count-total market > 0)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 40) 
+  (set-strategic-number sn-gold-gatherer-percentage 10) 
+  (set-strategic-number sn-stone-gatherer-percentage 0) 
+  (set-strategic-number sn-wood-gatherer-percentage 50)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+; Low on everything
+(defrule
+  (current-age >= castle-age)
+  (goal resource-needed CHECKING)
+  (goal boat-strategy NO)
+  (food-amount < 500)
+  (wood-amount < 500)
+  (gold-amount < 500)
+  (stone-amount < 500)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 30)
+  (set-strategic-number sn-wood-gatherer-percentage 20)
+  (set-strategic-number sn-gold-gatherer-percentage 30)
+  (set-strategic-number sn-stone-gatherer-percentage	20)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+(defrule
+  (current-age >= castle-age)
+  (goal resource-needed CHECKING)
+  (not (goal boat-strategy NO))
+  (food-amount < 500)
+  (wood-amount < 500)
+  (gold-amount < 500)
+  (stone-amount < 500)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 20)
+  (set-strategic-number sn-wood-gatherer-percentage 30)
+  (set-strategic-number sn-gold-gatherer-percentage 30)
+  (set-strategic-number sn-stone-gatherer-percentage	20)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+; Have a lot of 1 resource
+
+(defrule
+  (current-age >= castle-age)
+  (goal resource-needed CHECKING)
+  (food-amount > 1100)
+  (wood-amount < 500)
+  (gold-amount < 500)
+  (stone-amount < 500)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 10)
+  (set-strategic-number sn-wood-gatherer-percentage 30)
+  (set-strategic-number sn-gold-gatherer-percentage 30)
+  (set-strategic-number sn-stone-gatherer-percentage	30)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+(defrule
+  (current-age >= castle-age)
+  (goal resource-needed CHECKING)
+  (food-amount < 500)
+  (wood-amount > 1100)
+  (gold-amount < 500)
+  (stone-amount < 500)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 30)
+  (set-strategic-number sn-wood-gatherer-percentage 10)
+  (set-strategic-number sn-gold-gatherer-percentage 30)
+  (set-strategic-number sn-stone-gatherer-percentage	30)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+(defrule
+  (current-age >= castle-age)
+  (goal resource-needed CHECKING)
+  (food-amount < 500)
+  (wood-amount < 500)
+  (gold-amount > 1100)
+  (stone-amount < 500)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 30)
+  (set-strategic-number sn-wood-gatherer-percentage 30)
+  (set-strategic-number sn-gold-gatherer-percentage 10)
+  (set-strategic-number sn-stone-gatherer-percentage	30)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+(defrule
+  (current-age >= castle-age)
+  (goal resource-needed CHECKING)
+  (food-amount < 500)
+  (wood-amount < 500)
+  (gold-amount < 500)
+  (stone-amount > 700)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 30)
+  (set-strategic-number sn-wood-gatherer-percentage 30)
+  (set-strategic-number sn-gold-gatherer-percentage 30)
+  (set-strategic-number sn-stone-gatherer-percentage	10)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+; Have a lot of 2 resources
+
+(defrule
+  (current-age >= castle-age)
+  (goal resource-needed CHECKING)
+  (food-amount > 1100)
+  (wood-amount > 1100)
+  (gold-amount < 500)
+  (stone-amount < 500)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 10)
+  (set-strategic-number sn-wood-gatherer-percentage 10)
+  (set-strategic-number sn-gold-gatherer-percentage 40)
+  (set-strategic-number sn-stone-gatherer-percentage	40)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+(defrule
+  (current-age >= castle-age)
+  (goal resource-needed CHECKING)
+  (food-amount > 1100)
+  (wood-amount < 500)
+  (gold-amount > 1100)
+  (stone-amount < 500)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 10)
+  (set-strategic-number sn-wood-gatherer-percentage 40)
+  (set-strategic-number sn-gold-gatherer-percentage 10)
+  (set-strategic-number sn-stone-gatherer-percentage	40)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+(defrule
+  (current-age >= castle-age)
+  (goal resource-needed CHECKING)
+  (food-amount > 1100)
+  (wood-amount < 500)
+  (gold-amount < 500)
+  (stone-amount > 700)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 10)
+  (set-strategic-number sn-wood-gatherer-percentage 40)
+  (set-strategic-number sn-gold-gatherer-percentage 40)
+  (set-strategic-number sn-stone-gatherer-percentage	10)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+
+(defrule
+  (current-age >= castle-age)
+  (goal resource-needed CHECKING)
+  (food-amount < 500)
+  (wood-amount > 1100)
+  (gold-amount > 1100)
+  (stone-amount < 500)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 40)
+  (set-strategic-number sn-wood-gatherer-percentage 10)
+  (set-strategic-number sn-gold-gatherer-percentage 10)
+  (set-strategic-number sn-stone-gatherer-percentage	40)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+(defrule
+  (current-age >= castle-age)
+  (goal resource-needed CHECKING)
+  (food-amount < 500)
+  (wood-amount > 1100)
+  (gold-amount < 500)
+  (stone-amount > 700)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 40)
+  (set-strategic-number sn-wood-gatherer-percentage 10)
+  (set-strategic-number sn-gold-gatherer-percentage 40)
+  (set-strategic-number sn-stone-gatherer-percentage	10)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+(defrule
+  (current-age >= castle-age)
+  (goal resource-needed CHECKING)
+  (food-amount < 500)
+  (wood-amount < 500)
+  (gold-amount > 1100)
+  (stone-amount > 700)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 40)
+  (set-strategic-number sn-wood-gatherer-percentage 40)
+  (set-strategic-number sn-gold-gatherer-percentage 10)
+  (set-strategic-number sn-stone-gatherer-percentage	10)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+(defrule
+  (current-age >= castle-age)
+  (goal resource-needed CHECKING)
+  (food-amount > 1100)
+  (wood-amount < 500)
+  (gold-amount < 500)
+  (stone-amount > 700)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 10)
+  (set-strategic-number sn-wood-gatherer-percentage 40)
+  (set-strategic-number sn-gold-gatherer-percentage 40)
+  (set-strategic-number sn-stone-gatherer-percentage	10)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+(defrule
+  (current-age >= castle-age)
+  (goal resource-needed CHECKING)
+  (food-amount > 1100)
+  (wood-amount < 500)
+  (gold-amount < 500)
+  (stone-amount > 700)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 10)
+  (set-strategic-number sn-wood-gatherer-percentage 40)
+  (set-strategic-number sn-gold-gatherer-percentage 40)
+  (set-strategic-number sn-stone-gatherer-percentage	10)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+(defrule
+  (current-age >= castle-age)
+  (goal resource-needed CHECKING)
+  (food-amount > 1100)
+  (wood-amount < 500)
+  (gold-amount < 500)
+  (stone-amount > 700)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 10)
+  (set-strategic-number sn-wood-gatherer-percentage 40)
+  (set-strategic-number sn-gold-gatherer-percentage 40)
+  (set-strategic-number sn-stone-gatherer-percentage	10)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+(defrule
+  (current-age >= castle-age)
+  (goal resource-needed CHECKING)
+  (food-amount > 1100)
+  (wood-amount < 500)
+  (gold-amount < 500)
+  (stone-amount > 700)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 10)
+  (set-strategic-number sn-wood-gatherer-percentage 40)
+  (set-strategic-number sn-gold-gatherer-percentage 40)
+  (set-strategic-number sn-stone-gatherer-percentage	10)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+; Have a lot of 3 resources
+
+(defrule
+  (current-age >= castle-age)
+  (goal resource-needed CHECKING)
+  (food-amount < 500)
+  (wood-amount > 1100)
+  (gold-amount > 1100)
+  (stone-amount > 700)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 40)
+  (set-strategic-number sn-wood-gatherer-percentage 20)
+  (set-strategic-number sn-gold-gatherer-percentage 20)
+  (set-strategic-number sn-stone-gatherer-percentage	20)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+(defrule
+  (current-age >= castle-age)
+  (goal resource-needed CHECKING)
+  (food-amount > 1100)
+  (wood-amount < 500)
+  (gold-amount > 1100)
+  (stone-amount > 700)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 20)
+  (set-strategic-number sn-wood-gatherer-percentage 40)
+  (set-strategic-number sn-gold-gatherer-percentage 20)
+  (set-strategic-number sn-stone-gatherer-percentage	20)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+(defrule
+  (current-age >= castle-age)
+  (goal resource-needed CHECKING)
+  (food-amount > 1100)
+  (wood-amount > 1100)
+  (gold-amount < 500)
+  (stone-amount > 700)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 20)
+  (set-strategic-number sn-wood-gatherer-percentage 20)
+  (set-strategic-number sn-gold-gatherer-percentage 40)
+  (set-strategic-number sn-stone-gatherer-percentage 20)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+(defrule
+  (current-age >= castle-age)
+  (goal resource-needed CHECKING)
+  (food-amount > 1100)
+  (wood-amount > 1100)
+  (gold-amount > 1100)
+  (stone-amount < 500)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 20)
+  (set-strategic-number sn-wood-gatherer-percentage 20)
+  (set-strategic-number sn-gold-gatherer-percentage 20)
+  (set-strategic-number sn-stone-gatherer-percentage 40)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+; Have plenty of everything
+
+(defrule
+  (current-age >= castle-age)
+  (goal resource-needed CHECKING)
+  (food-amount > 1100)
+  (wood-amount > 1100)
+  (gold-amount > 1100)
+  (stone-amount > 700)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 25)
+  (set-strategic-number sn-wood-gatherer-percentage 25)
+  (set-strategic-number sn-gold-gatherer-percentage 25)
+  (set-strategic-number sn-stone-gatherer-percentage 25)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+; Default setting
+(defrule
+  (current-age >= castle-age)
+  (goal resource-needed CHECKING)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 30)
+  (set-strategic-number sn-wood-gatherer-percentage 30)
+  (set-strategic-number sn-gold-gatherer-percentage 20)
+  (set-strategic-number sn-stone-gatherer-percentage 20)
+  (set-goal resource-needed DONE-CHECKING)
+)
+
+; **************************************************************************
+; Buildings
+; **************************************************************************
+
+; --------------------------------------------------------------------------
+; Build housing
+; --------------------------------------------------------------------------
+(defrule
+  (current-age < castle-age)
+  (housing-headroom < 5)
+  (population-headroom > 0)
+  (can-build house)
+  =>
+  (build house)
+  (chat-local-to-self "house")
+)
+
+(defrule
+  (current-age >= castle-age)
+  (housing-headroom < 7)
+  (population-headroom > 0)
+  (can-build house)
+  =>
+  (build house)
+  (chat-local-to-self "house")
+)
+
+(defrule
+  (current-age >= castle-age)
+  (housing-headroom < 7)
+  (population-headroom > 0)
+  (can-build-with-escrow house)
+  =>
+  (release-escrow wood)
+  (build house)
+  (chat-local-to-self "house")
+)
+
+; --------------------------------------------------------------------------
+; Build & maintain mill
+; --------------------------------------------------------------------------
+(defrule
+  (or (resource-found food)
+      (game-time > 300))
+  (or (and (sheep-and-forage-too-far)
+	   (game-time > 60))
+      (unit-type-count-total villager > 8))
+  (building-type-count-total mill == 0)
+  (can-build mill)
+  =>
+  (build mill)
+  (chat-local-to-self "first mill")
+  (disable-self)
+)
+
+#load-if-defined YUCATAN-MAP
+(defrule
+  (or (resource-found food)
+      (game-time > 300))
+  (or (and (sheep-and-forage-too-far)
+	   (game-time > 60))
+      (unit-type-count-total villager > 8))
+  (building-type-count-total mill < 2)
+  (building-type-count-total lumber-camp > 0)
+  (can-build mill)
+  =>
+  (build mill)
+  (chat-local-to-self "next mill")
+)
+#end-if
+
+; --------------------------------------------------------------------------
+; Build lumber camp
+; --------------------------------------------------------------------------
+(defrule
+  (resource-found wood)
+  (building-type-count-total lumber-camp == 0)
+  (building-type-count-total mill > 0) ; Food takes priority
+  (or (dropsite-min-distance wood > 4)
+      (game-time > 300))
+  (unit-type-count villager > 12)
+  (can-build lumber-camp)
+  =>
+  (build lumber-camp)
+  (chat-local-to-self "first lumber-camp")
+  (disable-self)
+)
+
+(defrule
+  (resource-found wood)
+  (building-type-count-total lumber-camp > 0)
+  (or (wood-amount > 120)
+      (dropsite-min-distance stone < 6)) ; mining stone now
+  (can-build lumber-camp)
+  =>
+  (build lumber-camp)
+  (chat-local-to-self "next lumber-camp")
+  (disable-self)
+)
+
+(defrule
+  (resource-found wood)
+  (building-type-count-total lumber-camp < 5)
+  (dropsite-min-distance wood > 7)
+  (current-age >= feudal-age)
+  (wood-amount > 120)
+  (can-build lumber-camp)
+  =>
+  (build lumber-camp)
+  (chat-local-to-self "next lumber-camp")
+)
+
+; --------------------------------------------------------------------------
+; Build farms
+; --------------------------------------------------------------------------
+(defrule
+  (building-type-count-total lumber-camp > 0)
+  (building-type-count-total mill > 0)
+  (idle-farm-count < 1)
+  (or (sheep-and-forage-too-far)
+      (unit-type-count-total villager > 10))
+  (or (building-type-count-total mining-camp > 0)
+      (building-type-count-total farm < 15))
+  (can-build farm)
+  =>
+  (build farm)
+)
+
+(defrule
+  (building-type-count-total lumber-camp > 0)
+  (building-type-count-total mill > 0)
+  (idle-farm-count < 1)
+  (or (sheep-and-forage-too-far)
+      (unit-type-count-total villager > 10))
+  (or (building-type-count-total mining-camp > 0)
+      (building-type-count-total farm < 15))
+  (can-build-with-escrow farm)
+  =>
+  (release-escrow wood)
+  (build farm)
+)
+
+; --------------------------------------------------------------------------
+; Build gold mine & maintain
+; --------------------------------------------------------------------------
+(defrule
+  (current-age >= dark-age)
+  (resource-found gold)
+  (building-type-count-total lumber-camp > 0)
+  (building-type-count-total mining-camp == 0)
+  (can-build mining-camp)
+  =>
+  (build mining-camp)
+  (chat-local-to-self "maintain first gold mine")
+)
+
+(defrule
+  (current-age >= castle-age)
+  (resource-found gold)
+  (wood-amount > 200)
+  (building-type-count-total mining-camp < mining-count)
+  (dropsite-min-distance gold >= 7)
+  (can-build mining-camp)
+  =>
+  (build mining-camp)
+  (chat-local-to-self "maintain more gold mine")
+) 
+
+; start mining gold when first gold-mine complete - important
+(defrule
+  (dropsite-min-distance gold < 7)
+  (dropsite-min-distance stone > 5)
+  (building-type-count-total mining-camp > 0)
+  =>
+  (chat-local-to-self "main gold mine strat numbers adjusted")
+  (set-strategic-number sn-food-gatherer-percentage 50)
+  (set-strategic-number sn-wood-gatherer-percentage 40)
+  (set-strategic-number sn-gold-gatherer-percentage 10)
+  (set-strategic-number sn-stone-gatherer-percentage 0)
+  (disable-self)
+) 
+
+; --------------------------------------------------------------------------
+; Build stone mine & maintain
+; --------------------------------------------------------------------------
+(defrule
+  (resource-found stone)
+  (building-type-count-total mining-camp > 0)
+  (building-type-count-total mining-camp < mining-count)
+  (dropsite-min-distance gold < 7)
+  (dropsite-min-distance stone >= 7)
+  (or (current-age > feudal-age)
+      (building-type-count-total mining-camp < 3))
+  (can-build mining-camp)
+  =>
+  (build mining-camp)
+  (chat-local-to-self "maintain first stone mine")
+) 
+
+; --------------------------------------------------------------------------
+; Build a market
+; --------------------------------------------------------------------------
+(defrule
+  (building-type-count-total market == 0)
+  (building-type-count-total barracks > 0)
+  (can-build-with-escrow market)
+  =>
+  (release-escrow wood)
+  (build market)
+  (chat-local-to-self "(re-)built market")
+)
+
+(defrule
+  (building-type-count-total market == 0)
+  (building-type-count-total barracks > 0)
+  (can-build market)
+  =>
+  (build market)
+  (chat-local-to-self "(re-)built market")
+)
+
+
+; --------------------------------------------------------------------------
+; Build a blacksmith (after a market)
+; --------------------------------------------------------------------------
+(defrule
+  (building-type-count-total market > 0)
+  (building-type-count-total archery-range > 0)
+  (building-type-count-total blacksmith == 0)
+  (goal blacksmith-research-done NO)
+  (can-build blacksmith)
+  =>
+  (build blacksmith)
+  (chat-local-to-self "(re-)built blacksmith")
+)
+
+; --------------------------------------------------------------------------
+; Create Town Centers
+; --------------------------------------------------------------------------
+(defrule
+  (building-type-count-total town-center == 0)
+  (can-build-with-escrow town-center)
+  =>
+  (release-escrow wood)
+  (release-escrow stone)
+  (build town-center)
+  (chat-local-to-self "maintain first town-center")
+)
+
+(defrule
+  (building-type-count-total town-center == 0)
+  (can-build town-center)
+  =>
+  (build town-center)
+  (chat-local-to-self "maintain first town-center")
+)
+
+(defrule
+  (building-type-count-total town-center == 1)
+  (can-build town-center)
+  =>
+  (build town-center)
+  (chat-local-to-self "maintain second town-center")
+)
+
+(defrule
+  (building-type-count-total town-center == 1)
+  (can-build-with-escrow town-center)
+  =>
+  (release-escrow wood)
+  (release-escrow stone)
+  (build town-center)
+  (chat-local-to-self "maintain second town-center")
+)
+
+(defrule
+  (current-age >= castle-age)
+  (building-type-count-total barracks > 0)
+  (building-type-count-total town-center <= 3)
+  (can-build town-center)
+  =>
+  (build town-center)
+  (chat-local-to-self "build 3 town-centers in post-castle")
+)
+
+; --------------------------------------------------------------------------
+; University & maintain it
+; --------------------------------------------------------------------------
+(defrule
+  (goal uni-research-done NO)
+  (building-type-count-total university == 0)
+  (building-type-count-total barracks > 0)
+  (can-build university)
+  =>
+  (build university)
+  (chat-local-to-self "maintain university")
+)
+
+(defrule
+  (goal uni-research-done NO)
+  (building-type-count-total university == 0)
+  (building-type-count-total barracks > 0)
+  (can-build-with-escrow university)
+  =>
+  (release-escrow wood)
+  (build university)
+  (chat-local-to-self "maintain university")
+)
+
+; --------------------------------------------------------------------------
+; Panic camps
+; --------------------------------------------------------------------------
+(defrule
+  (game-time >= panic-time)
+  =>
+  (disable-timer t-lumber-camp)
+  (enable-timer t-lumber-camp 20)
+  (chat-local-to-self "panic lumber camp sites")
+  (disable-self)
+)
+
+(defrule
+  (game-time >= panic-time)
+  =>
+  (disable-timer t-mining-camp)
+  (enable-timer t-mining-camp 5)
+  (chat-local-to-self "panic mining camp sites")
+  (disable-self)
+)
+
+(defrule
+  (timer-triggered t-lumber-camp)
+  (building-type-count-total lumber-camp <= panic-mining-count)
+  (dropsite-min-distance wood > 7)
+  (can-build-with-escrow lumber-camp)
+  =>
+  (release-escrow food)
+  (release-escrow wood)
+  (release-escrow gold)
+  (release-escrow stone)
+  (build lumber-camp)
+  (chat-local-to-self "panic lumber-camp")
+)
+
+
+(defrule
+  (timer-triggered t-lumber-camp)
+  =>
+  (set-strategic-number sn-blot-exploration-map 1)
+  (disable-timer t-lumber-camp)
+  (enable-timer t-lumber-camp 300)
+)
+
+(defrule
+  (timer-triggered t-mining-camp)
+  (building-type-count-total mining-camp <= panic-mining-count)
+  (can-build-with-escrow mining-camp)
+  (or (dropsite-min-distance stone > 7)
+      (dropsite-min-distance gold > 7))
+  =>
+  (release-escrow food)
+  (release-escrow wood)
+  (release-escrow gold)
+  (release-escrow stone)
+  (build mining-camp)
+  (chat-local-to-self "panic mining-camp")
+)
+
+(defrule
+  (timer-triggered t-mining-camp)
+  =>
+  (disable-timer t-mining-camp)
+  (enable-timer t-mining-camp 300)
+)

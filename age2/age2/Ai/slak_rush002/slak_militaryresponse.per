@@ -1,0 +1,616 @@
+; --------------------------------------------------------------------------
+; File: Slak_MilitaryResponse.per
+; Author: SlakTheEldar
+; Date: 2000-10-25
+;
+; Available under BSD-like license; see accompanying Copying.txt file
+;
+; --------------------------------------------------------------------------
+
+;*********************************************************
+; Military Assessment (land forces).  
+; Based heavily on Doug's Test Response
+; I separated out MAMELUKE and HUSKARL.
+;*********************************************************
+(defrule 
+  (current-age >= castle-age)
+  (current-age-time > 120)
+  =>
+  (chat-local-to-self "Start assessing enemy")
+  (enable-timer t-ground-assessment 1)
+  (disable-self)
+)
+
+(defrule 
+  (timer-triggered t-ground-assessment)
+  =>
+  (set-goal enemy-threat NO)
+  (set-goal checking-for-enemy-threat YES)
+  (disable-timer t-ground-assessment)
+  (enable-timer t-ground-assessment 20)
+)
+
+(defrule
+  (goal checking-for-enemy-threat YES)
+  (not (goal attack-control AM-ATTACKING))
+  (players-building-type-count every-enemy watch-tower-line == 0)
+  (players-building-type-count every-enemy castle == 0)
+  (military-population > large-normal-unit-threat)
+  (goal enemy-threat NO)
+  =>
+  (chat-local-to-self "not enough info to assess")
+  (set-goal attack-control AM-ATTACKING)
+  (set-goal checking-for-enemy-threat NO)
+)
+
+; --------------------------------------------------------------------------
+; Large threat assessment
+; --------------------------------------------------------------------------
+; War wagons
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy war-wagon-line >= 
+			   large-elephant-threat)
+  =>
+  (chat-local-to-self "found large war wagon threat")
+  (set-goal enemy-threat WARWAGON)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+  (set-goal large-enemy-threat YES)
+)
+
+; Eles
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy war-elephant-line >= 
+			   large-elephant-threat)
+  =>
+  (chat-local-to-self "found large elephant threat")
+  (set-goal enemy-threat ELEPHANT)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+  (set-goal large-enemy-threat YES)
+)
+
+; TKs
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy war-elephant-line >= 
+			   large-elephant-threat)
+  =>
+  (chat-local-to-self "found large elephant threat")
+  (set-goal enemy-threat TK)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+  (set-goal large-enemy-threat YES)
+)
+
+; Siege
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (or
+   (or
+    (players-unit-type-count any-enemy scorpion-line >= 
+			     large-siege-threat)
+    (players-unit-type-count any-enemy battering-ram-line >= 
+			     large-siege-threat))
+   (or
+    (players-unit-type-count any-enemy mangonel-line >= 
+			     large-siege-threat)
+    (players-unit-type-count any-enemy bombard-cannon >= 
+			     large-siege-threat)))
+  =>
+  (chat-local-to-self "found siege threat")
+  (set-goal enemy-threat SIEGE)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+  (set-goal large-enemy-threat YES)
+)
+
+; Cav
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (or
+   (or
+    (players-unit-type-count any-enemy cataphract-line >= 
+			     large-tough-unit-threat)
+    (players-unit-type-count any-enemy paladin >= 
+			     large-tough-unit-threat))
+   (or
+    (players-unit-type-count any-enemy knight-line >= 
+			     large-normal-unit-threat)
+    (players-unit-type-count any-enemy scout-cavalry-line >= 
+			     large-easy-unit-threat)))
+  =>
+  (chat-local-to-self "found big cav threat")
+  (set-goal enemy-threat CAVALRY)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+  (set-goal large-enemy-threat YES)
+)
+
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy tarkan-line >= 
+			   large-tough-unit-threat) 
+  =>
+  (chat-local-to-self "found tarkan threat")
+  (set-goal enemy-threat CAVALRY)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+)
+
+; Monk
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (or (players-unit-type-count any-enemy monk >= 
+			       large-monk-threat) 
+      (players-unit-type-count any-enemy missionary >= 
+			       large-monk-threat)) 
+  =>
+  (chat-local-to-self "found monk threat")
+  (set-goal enemy-threat MONK)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+  (set-goal large-enemy-threat YES)
+)
+
+; Infantry
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (or (or (or (players-unit-type-count any-enemy berserk-line >= 
+				       large-tough-unit-threat)
+	      (players-unit-type-count any-enemy woad-raider-line >= 
+				       large-tough-unit-threat))
+	  (players-unit-type-count any-enemy samurai-line >= 
+				   large-tough-unit-threat))
+      (players-unit-type-count any-enemy throwing-axeman-line >= 
+			       large-tough-unit-threat))
+  =>
+  (chat-local-to-self "found large swordsman threat")
+  (set-goal enemy-threat INFANTRY)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+  (set-goal large-enemy-threat YES)
+)
+
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy jaguar-man-line >= 
+			       large-tough-unit-threat)
+  =>
+  (chat-local-to-self "found large jag threat")
+  (set-goal enemy-threat INFANTRY)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+  (set-goal large-enemy-threat YES)
+)
+
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy eagle-warrior-line >= 
+			   large-tough-unit-threat)
+  =>
+  (chat-local-to-self "found large eagle threat")
+  (set-goal enemy-threat EAGLE)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+  (set-goal large-enemy-threat YES)
+)
+
+(defrule
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy huskarl-line >= 
+			   large-tough-unit-threat)
+  =>
+  (chat-local-to-self "found large huskarl threat")
+  (set-goal enemy-threat HUSKARL)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+  (set-goal large-enemy-threat YES)
+)
+
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (or
+   (or
+    (players-unit-type-count any-enemy champion >= large-tough-unit-threat)
+    (players-unit-type-count any-enemy two-handed-swordsman >= 
+			     large-normal-unit-threat))
+   (or
+    (players-unit-type-count any-enemy long-swordsman >= 
+			     large-normal-unit-threat)
+    (players-unit-type-count any-enemy militiaman-line >= 
+			     large-easy-unit-threat)))
+  =>
+  (chat-local-to-self "found large swordsman threat")
+  (set-goal enemy-threat INFANTRY)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+  (set-goal large-enemy-threat YES)
+)
+
+; Camel
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy camel-line >= large-normal-unit-threat)
+  =>		
+  (chat-local-to-self "found large camel threat")
+  (set-goal enemy-threat CAMEL)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+  (set-goal large-enemy-threat YES)
+)
+
+(defrule
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy mameluke-line >= large-tough-unit-threat)
+  =>
+  (chat-local-to-self "found mameluke threat")
+  (set-goal enemy-threat MAMELUKE)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+  (set-goal large-enemy-threat YES)
+)
+
+; Archers
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (or (or (players-unit-type-count any-enemy chu-ko-nu-line >= 
+				   large-tough-unit-threat)
+	  (players-unit-type-count any-enemy janissary-line >= 
+				   large-tough-unit-threat))
+      (players-unit-type-count any-enemy longbowman-line >= 
+			       large-tough-unit-threat))
+  =>
+  (chat-local-to-self "found large elite archer threat")
+  (set-goal enemy-threat ARCHER)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+  (set-goal large-enemy-threat YES)
+)
+
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy plumed-archer-line >= 
+			   large-tough-unit-threat)
+  =>
+  (chat-local-to-self "found large elite archer threat")
+  (set-goal enemy-threat ARCHER)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+  (set-goal large-enemy-threat YES)
+)
+
+(defrule
+  (goal checking-for-enemy-threat YES)
+  (or (or (players-unit-type-count any-enemy mangudai-line >=
+				   large-tough-unit-threat)
+	  (players-unit-type-count any-enemy cavalry-archer-line >=
+				   large-normal-unit-threat))
+      (players-unit-type-count any-enemy conquistador-line >=
+			       large-tough-unit-threat))
+   =>
+  (chat-local-to-self "found large cav-archer threat")
+  (set-goal enemy-threat CAVARCHER)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)  
+  (set-goal large-enemy-threat YES)
+)
+
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (or (or (or (players-unit-type-count any-enemy hand-cannoneer >= 
+				       large-tough-unit-threat)
+	      (players-unit-type-count any-enemy cavalry-archer-line >= 
+				       large-normal-unit-threat))
+	  (or (players-unit-type-count any-enemy arbalest >= 
+				       large-tough-unit-threat)
+	      (players-unit-type-count any-enemy crossbowman >= 
+				       large-normal-unit-threat)))
+      (players-unit-type-count any-enemy archer-line >= 
+			       large-easy-unit-threat))
+  =>
+  (chat-local-to-self "found large archer threat")
+  (set-goal enemy-threat ARCHER)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+  (set-goal large-enemy-threat YES)
+)
+
+; skirmisher
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy skirmisher-line >= large-easy-unit-threat)
+  =>		
+  (chat-local-to-self "found large skirmisher threat")
+  (set-goal enemy-threat SKIRMISHER)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+  (set-goal large-enemy-threat YES)
+)
+
+; pikeman
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy spearman-line >= large-easy-unit-threat)
+  =>		
+  (chat-local-to-self "found large spearman threat")
+  (set-goal enemy-threat PIKE)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+  (set-goal large-enemy-threat YES)
+)
+
+; --------------------------------------------------------------------------
+; Medium threat assessment
+; --------------------------------------------------------------------------
+; War wagons
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy war-wagon-line >= 
+			   medium-elephant-threat)
+  =>
+  (chat-local-to-self "found medium war wagon threat")
+  (set-goal enemy-threat WARWAGON)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+)
+
+; Eles
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy war-elephant-line >= 
+			   medium-elephant-threat)
+  =>
+  (chat-local-to-self "found medium elephant threat")
+  (set-goal enemy-threat ELEPHANT)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+)
+
+; TKs
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy war-elephant-line >= 
+			   medium-elephant-threat)
+  =>
+  (chat-local-to-self "found medium TK threat")
+  (set-goal enemy-threat TK)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+)
+
+; Siege
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (or (or (players-unit-type-count any-enemy scorpion-line >= 
+				   medium-siege-threat)
+	  (players-unit-type-count any-enemy battering-ram-line >= 
+				   medium-siege-threat))
+      (or (players-unit-type-count any-enemy mangonel-line >= 
+				   medium-siege-threat)
+	  (players-unit-type-count any-enemy bombard-cannon >= 
+				   medium-siege-threat)))
+  =>
+  (chat-local-to-self "found siege threat")
+  (set-goal enemy-threat SIEGE)
+  (set-goal checking-for-enemy-threat NO)
+)
+
+; Cav
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (or
+   (or
+    (players-unit-type-count any-enemy cataphract-line >= 
+			     medium-tough-unit-threat)
+    (players-unit-type-count any-enemy paladin >= 
+			     medium-tough-unit-threat))
+   (or
+    (players-unit-type-count any-enemy knight-line >= 
+			     medium-normal-unit-threat)
+    (players-unit-type-count any-enemy scout-cavalry-line >= 
+			     medium-easy-unit-threat)))
+  =>
+  (chat-local-to-self "found medium cav threat")
+  (set-goal enemy-threat CAVALRY)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+)
+
+
+
+; Monk
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy monk >= 
+			   medium-monk-threat) 
+  =>
+  (chat-local-to-self "found monk threat")
+  (set-goal enemy-threat MONK)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+)
+
+; Infantry
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (or (or (or (players-unit-type-count any-enemy berserk-line >= 
+				       medium-tough-unit-threat)
+	      (players-unit-type-count any-enemy woad-raider-line >= 
+				       medium-tough-unit-threat))
+	  (players-unit-type-count any-enemy samurai-line >= 
+				   medium-tough-unit-threat))
+      (players-unit-type-count any-enemy throwing-axeman-line >= 
+			       medium-tough-unit-threat))
+  =>
+  (chat-local-to-self "found medium swordsman threat")
+  (set-goal enemy-threat INFANTRY)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+)
+
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy jaguar-man-line >= 
+			   medium-tough-unit-threat)
+  =>
+  (chat-local-to-self "found medium jag threat")
+  (set-goal enemy-threat INFANTRY)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+)
+
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy eagle-warrior-line >= 
+			   medium-tough-unit-threat)
+  =>
+  (chat-local-to-self "found medium eagle threat")
+  (set-goal enemy-threat EAGLE)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+)
+
+(defrule
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy huskarl-line >= 
+			   medium-tough-unit-threat)
+  =>
+  (chat-local-to-self "found medium huskarl threat")
+  (set-goal enemy-threat HUSKARL)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+)
+
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (or
+   (or
+    (players-unit-type-count any-enemy champion >= medium-tough-unit-threat)
+    (players-unit-type-count any-enemy two-handed-swordsman >= 
+			     medium-normal-unit-threat))
+   (or
+    (players-unit-type-count any-enemy long-swordsman >= 
+			     medium-normal-unit-threat)
+    (players-unit-type-count any-enemy militiaman-line >= 
+			     medium-easy-unit-threat)))
+  =>
+  (chat-local-to-self "found medium swordsman threat")
+  (set-goal enemy-threat INFANTRY)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+)
+
+; Camel
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy camel-line >= 
+			   medium-normal-unit-threat)
+  =>		
+  (chat-local-to-self "found medium camel threat")
+  (set-goal enemy-threat CAMEL)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+)
+
+(defrule
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy mameluke-line >= medium-tough-unit-threat)
+  =>
+  (chat-local-to-self "found mameluke threat")
+  (set-goal enemy-threat MAMELUKE)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+)
+
+; Archers
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (or (or (players-unit-type-count any-enemy chu-ko-nu-line >= 
+				   medium-tough-unit-threat)
+	  (players-unit-type-count any-enemy janissary-line >= 
+				   medium-tough-unit-threat))
+      (players-unit-type-count any-enemy longbowman-line >= 
+			       medium-tough-unit-threat))
+  =>
+  (chat-local-to-self "found medium elite archer threat")
+  (set-goal enemy-threat ARCHER)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+)
+
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy plumed-archer-line >= 
+			   medium-tough-unit-threat)
+  =>
+  (chat-local-to-self "found medium elite archer threat")
+  (set-goal enemy-threat ARCHER)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+)
+
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (or (or (players-unit-type-count any-enemy mangudai-line >= 
+				   medium-tough-unit-threat)
+	  (players-unit-type-count any-enemy cavalry-archer-line >= 
+				   medium-normal-unit-threat))
+      (players-unit-type-count any-enemy conquistador-line >=
+			       medium-tough-unit-threat))
+  =>
+  (chat-local-to-self "found medium cav-archer threat")
+  (set-goal enemy-threat CAVARCHER)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+)
+
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (or (or (players-unit-type-count any-enemy hand-cannoneer >= 
+				   medium-tough-unit-threat)
+	  (or (players-unit-type-count any-enemy arbalest >= 
+				       medium-tough-unit-threat)
+	      (players-unit-type-count any-enemy crossbowman >= 
+				       medium-normal-unit-threat)))
+      (players-unit-type-count any-enemy archer-line >= 
+			       medium-easy-unit-threat))
+  =>
+  (chat-local-to-self "found medium archer threat")
+  (set-goal enemy-threat ARCHER)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+)
+
+; skirmisher
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy skirmisher-line >= 
+			   medium-easy-unit-threat)
+  =>		
+  (chat-local-to-self "found medium skirmisher threat")
+  (set-goal enemy-threat SKIRMISHER)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+)
+
+; pikeman
+(defrule 
+  (goal checking-for-enemy-threat YES)
+  (players-unit-type-count any-enemy spearman-line >= medium-easy-unit-threat)
+  =>		
+  (chat-local-to-self "found medium spearman threat")
+  (set-goal enemy-threat PIKE)
+  (set-goal checking-for-enemy-threat NO)
+  (set-goal responding-to-threat YES)
+)
+
+; No threat
+(defrule
+  (goal checking-for-enemy-threat YES)
+  =>
+  (set-goal enemy-threat NO)
+  (set-goal checking-for-enemy-threat NO)
+)

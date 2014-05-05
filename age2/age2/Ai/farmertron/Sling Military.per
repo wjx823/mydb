@@ -1,0 +1,153 @@
+;military for sling when it makes it to castle age (eventually)
+;military buildings
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(current-age == castle-age)
+	(building-type-count-total barracks < 4)
+	(can-build barracks)
+=>
+;	(chat-to-all "sling: build barracks")
+	(build barracks)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(current-age == castle-age)
+	(building-type-count-total archery-range < 4)
+	(can-build archery-range)
+=>
+;	(chat-to-all "sling: build archery-range")
+	(build archery-range)
+)
+;military research
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(current-age == castle-age)
+	(can-research ri-pikeman)
+=>
+	(chat-to-all "sling: research pikeman")
+	(research ri-pikeman)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(current-age == castle-age)
+	(can-research ri-elite-skirmisher)
+=>
+	(chat-to-all "sling: research elite-skirmisher")
+	(research ri-elite-skirmisher)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(current-age == castle-age)
+	(can-research ri-fletching)
+=>
+	(chat-to-all "sling: research fletching")
+	(research ri-fletching)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(current-age == castle-age)
+	(can-research ri-bodkin-arrow)
+=>
+	(chat-to-all "sling: research bodkin-arrow")
+	(research ri-bodkin-arrow)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(current-age == castle-age)
+	(can-research ri-scale-mail)
+=>
+	(chat-to-all "sling: research scale-mail")
+	(research ri-scale-mail)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(current-age == castle-age)
+	(can-research ri-forging)
+=>
+	(chat-to-all "sling: research forging")
+	(research ri-forging)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(current-age == castle-age)
+	(can-research ri-padded-archer-armor)
+=>
+	(chat-to-all "sling: research padded-archer-armor")
+	(research ri-padded-archer-armor)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(current-age == castle-age)
+	(can-research ri-chain-mail)
+=>
+	(chat-to-all "sling: research chain-mail")
+	(research ri-chain-mail)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(current-age == castle-age)
+	(can-research ri-iron-casting)
+=>
+	(chat-to-all "sling: research iron-casting")
+	(research ri-iron-casting)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(current-age == castle-age)
+	(can-research ri-leather-archer-armor)
+=>
+	(chat-to-all "sling: research leather-archer-armor")
+	(research ri-leather-archer-armor)
+)
+;build units
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(current-age == castle-age)
+	(can-train spearman-line)
+=>
+	(train spearman-line)
+;	(chat-to-all "sling: train pikeman")
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(current-age == castle-age)
+	(can-train skirmisher-line)
+=>
+	(train skirmisher-line)
+;	(chat-to-all "sling: train skirmisher")
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(current-age == castle-age)
+	(can-train monk)
+	(gold-amount > 300)
+=>
+	(train monk)
+;	(chat-to-all "sling: train monk")
+)
+;attack
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(current-age == castle-age)
+	(military-population > 20)
+=>
+;	(taunt 14)
+	(chat-to-all "SLING ATTACK!!!")
+	(attack-now)
+	(enable-timer TIMER-ATTACK 45)
+	(set-strategic-number sn-number-defend-groups 0)
+	(set-strategic-number sn-percent-attack-soldiers 100)
+	(disable-self)
+)
+(defrule
+	(goal GOAL-I-AM-THE-SHOT 0)
+	(timer-triggered TIMER-ATTACK)
+=>
+;	(taunt 23)
+	(chat-to-all "KEEP ATTACKING!!!")
+	(attack-now)
+	(set-strategic-number sn-number-defend-groups 0)
+	(set-strategic-number sn-percent-attack-soldiers 100)
+	(disable-timer TIMER-ATTACK)
+	(enable-timer TIMER-ATTACK 45)
+)

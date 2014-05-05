@@ -1,0 +1,841 @@
+(load "rmresign")
+
+(defconst ATTACK      1)
+(defconst SINKA       2)
+(defconst RUSH        3)
+(defconst HORSE       4)
+(defconst RYOUSHU     5)
+(defconst HOHEI       6)
+(defconst YARI        7)
+(defconst EAGLE       8)
+(defconst YUMI        9)
+(defconst YUMI-KIHEI 10)
+(defconst KIHEI      11)
+(defconst KISHI      12)
+(defconst RAKUDA     13)
+(defconst UNIQ       14)
+(defconst HEIKI      15)
+
+(load "efleetia\efleetia_civ")
+
+(defrule ; 初期設定
+ (true)
+=>
+ (set-strategic-number sn-cap-civilian-builders       10)
+ (set-strategic-number sn-minimum-civilian-explorers   7)
+ (set-strategic-number sn-cap-civilian-explorers       7)
+ (set-strategic-number sn-cap-civilian-gatherers     100)
+ (set-strategic-number sn-percent-civilian-builders   10)
+ (set-strategic-number sn-percent-civilian-explorers  90)
+ (set-strategic-number sn-percent-civilian-gatherers   0)
+ (set-strategic-number sn-retask-gather-amount        10)
+ (set-strategic-number sn-max-retask-gather-amount    30)
+ (disable-self)
+)
+
+#load-if-not-defined CHINESE-CIV
+(defrule(can-build house)=>(build house)(disable-self))
+(defrule(can-build house)=>(build house)(disable-self))
+#end-if
+
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-minimum-explore-group-size         1)
+ (set-strategic-number sn-maximum-explore-group-size        10)
+ (set-strategic-number sn-number-explore-groups              1)
+ (set-strategic-number sn-percentage-explore-exterminators 100)
+ (set-strategic-number sn-total-number-explorers            10)
+ (set-strategic-number sn-camp-max-distance                 15)
+ (set-strategic-number sn-mill-max-distance                 15)
+ (set-strategic-number sn-random-placement-factor          200)
+ (set-strategic-number sn-minimum-dropsite-buffer           40)
+ (set-strategic-number sn-required-forest-tiles             20)
+ (set-strategic-number sn-allow-civilian-defense             1)
+ (disable-self)
+)
+
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-initial-exploration-required 0)
+ (set-strategic-number sn-maximum-hunt-drop-distance   5)
+ (set-strategic-number sn-maximum-food-drop-distance  15)
+ (set-strategic-number sn-wood-dropsite-distance       7)
+ (set-strategic-number sn-food-dropsite-distance       5)
+ (set-strategic-number sn-gold-dropsite-distance       5)
+ (set-strategic-number sn-stone-dropsite-distance      5)
+ (disable-self)
+)
+
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-number-attack-groups             0)
+ (set-strategic-number sn-minimum-attack-group-size        1)
+ (set-strategic-number sn-maximum-attack-group-size       50)
+ (set-strategic-number sn-number-defend-groups             0)
+ (set-strategic-number sn-minimum-defend-group-size        1)
+ (set-strategic-number sn-maximum-defend-group-size       50)
+ (set-difficulty-parameter ability-to-dodge-missiles       0)
+ (set-difficulty-parameter ability-to-maintain-distance    0)
+ (disable-self)
+)
+
+
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-task-ungrouped-soldiers          0)
+ (disable-self)
+)
+
+(defrule
+ (true)
+=>
+ (set-goal ATTACK  0) ; 攻撃フラグ 0:守備 1:攻撃
+ (set-goal SINKA   0) ; 進化フラグ 0:暗黒 1:領主 2:城主 3:帝王
+ (set-goal RUSH    0) ; 敵Ｒフラグ 0:通常 1:防御
+ (set-goal HORSE   0) ; 騎馬開発フラグ 1:領主 2:城主
+ (set-goal RYOUSHU 1) ; 領主軍抑制
+ (disable-self)
+)
+
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-food-gatherer-percentage        100)
+ (set-strategic-number sn-gold-gatherer-percentage          0)
+ (set-strategic-number sn-stone-gatherer-percentage         0)
+ (set-strategic-number sn-wood-gatherer-percentage          0)
+ (set-strategic-number sn-group-form-distance              50)
+ (set-strategic-number sn-group-commander-selection-method  0)
+ (set-strategic-number sn-attack-group-gather-spacing       5)
+ (set-strategic-number sn-defense-distance                 50)
+ (set-strategic-number sn-defend-overlap-distance           5)
+ (set-strategic-number sn-percent-enemy-sighted-response  100)
+ (set-strategic-number sn-enemy-sighted-response-distance  50)
+ (disable-self)
+)
+
+(defrule
+   (true)
+=>
+   (set-strategic-number sn-target-evaluation-distance          20000)
+   (set-strategic-number sn-target-evaluation-hitpoints             0)
+   (set-strategic-number sn-target-evaluation-damage-capability     0)
+   (set-strategic-number sn-target-evaluation-kills                 0)
+   (set-strategic-number sn-target-evaluation-ally-proximity        0)
+   (set-strategic-number sn-target-evaluation-rof                   0)
+   (set-strategic-number sn-target-evaluation-attack-attempts   30000)
+   (set-strategic-number sn-target-evaluation-range                 0)
+   (set-strategic-number sn-relic-defend-priority                   1)
+   (disable-self)
+)
+
+(defrule
+   (true)
+=>
+   (set-strategic-number sn-target-evaluation-boat                  0)
+   (set-strategic-number sn-target-evaluation-time-kill-ratio       0)
+   (set-strategic-number sn-target-evaluation-in-progress           0)
+   (set-strategic-number sn-target-evaluation-continent             0)
+   (set-strategic-number sn-target-evaluation-siege-weapon      30000)
+   (set-strategic-number sn-target-evaluation-randomness            0)
+   (set-strategic-number sn-max-skips-per-attempt                   3)
+   (disable-self)
+)
+
+;;特定ターゲット
+(defrule
+   (true)
+=>
+ (generate-random-number 100) ; メインユニット選定
+ (disable-self)
+)
+
+(defrule
+ (can-research feudal-age)
+=>
+ (research feudal-age)
+ (set-strategic-number sn-attack-intelligence                     1)
+ (set-goal SINKA 1)
+)
+
+(defrule
+ (can-research-with-escrow castle-age)
+=>
+ (release-escrow food)
+ (release-escrow gold)
+ (research castle-age)
+ (set-goal SINKA 2)
+ (set-strategic-number sn-allow-civilian-defense          0) ; 城主以後農民は戦闘に不参加
+ (set-strategic-number sn-task-ungrouped-soldiers         0) ; 城主以後巡回しない
+)
+
+(defrule
+ (can-research-with-escrow imperial-age)
+=>
+ (release-escrow food)
+ (release-escrow gold)
+ (research imperial-age)
+ (set-goal SINKA 3)
+)
+
+(load "efleetia\efleetia_time")
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (can-build mill)
+ (resource-found food)
+ (building-type-count-total mill == 0)
+=>
+ (build mill)
+ (set-strategic-number sn-percent-civilian-builders  50)
+ (set-strategic-number sn-percent-civilian-explorers  0)
+ (set-strategic-number sn-percent-civilian-gatherers 50)
+ (set-strategic-number sn-minimum-civilian-explorers  0)
+ (set-strategic-number sn-total-number-explorers      1)
+)
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (game-time >= 480)
+ (can-build mill)
+ (dropsite-min-distance food >= 5)
+ (building-type-count mill < 3)
+=>
+ (set-strategic-number sn-mill-max-distance 60)
+ (build mill)
+ (set-strategic-number sn-percent-civilian-builders  50)
+ (set-strategic-number sn-percent-civilian-explorers  0)
+ (set-strategic-number sn-percent-civilian-gatherers 50)
+ (set-strategic-number sn-minimum-civilian-explorers  0)
+ (set-strategic-number sn-total-number-explorers      1)
+)
+
+(defrule
+ (building-type-count mill > 0)
+=>
+ (set-strategic-number sn-food-gatherer-percentage 100)
+ (set-strategic-number sn-gold-gatherer-percentage 0)
+ (set-strategic-number sn-stone-gatherer-percentage 0)
+ (set-strategic-number sn-wood-gatherer-percentage 0)
+ (disable-self)
+)
+
+(defrule
+ (unit-type-count villager > 11)
+=>
+ (set-strategic-number sn-food-gatherer-percentage 60)
+ (set-strategic-number sn-gold-gatherer-percentage  0)
+ (set-strategic-number sn-stone-gatherer-percentage 0)
+ (set-strategic-number sn-wood-gatherer-percentage 40)
+ (disable-self)
+)
+
+(defrule
+ (unit-type-count villager > 13)
+=>
+ (set-strategic-number sn-food-gatherer-percentage 55)
+ (set-strategic-number sn-gold-gatherer-percentage  0)
+ (set-strategic-number sn-stone-gatherer-percentage 0)
+ (set-strategic-number sn-wood-gatherer-percentage 45)
+ (disable-self)
+)
+
+(defrule
+ (unit-type-count villager > 15)
+=>
+ (set-strategic-number sn-food-gatherer-percentage 50)
+ (set-strategic-number sn-gold-gatherer-percentage  0)
+ (set-strategic-number sn-stone-gatherer-percentage 0)
+ (set-strategic-number sn-wood-gatherer-percentage 50)
+ (disable-self)
+)
+
+(defrule
+ (unit-type-count villager > 17)
+=>
+ (set-strategic-number sn-food-gatherer-percentage 45)
+ (set-strategic-number sn-gold-gatherer-percentage  0)
+ (set-strategic-number sn-stone-gatherer-percentage 0)
+ (set-strategic-number sn-wood-gatherer-percentage 55)
+ (disable-self)
+)
+
+(defrule
+ (unit-type-count villager > 21)
+ (building-type-count farm > 10)
+=>
+ (set-strategic-number sn-food-gatherer-percentage 70)
+ (set-strategic-number sn-gold-gatherer-percentage  0)
+ (set-strategic-number sn-stone-gatherer-percentage 0)
+ (set-strategic-number sn-wood-gatherer-percentage 30)
+ (disable-self)
+)
+
+(defrule
+ (can-build house)
+ (housing-headroom <= 10)
+ (not(goal SINKA 0))
+=>
+ (build house)
+)
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (can-build house)
+ (housing-headroom <= 3)
+ (goal SINKA 0)
+=>
+ (build house)
+)
+
+(defrule
+ (can-train villager)
+ (current-age == dark-age)
+ (unit-type-count villager < 27)
+=>
+ (train villager)
+)
+
+(defrule
+ (can-train villager)
+ (not(town-under-attack))
+ (current-age == feudal-age)
+ (research-completed ri-wheel-barrow)
+ (unit-type-count-total villager < 35)
+=>
+ (train villager)
+)
+
+(defrule
+ (can-train villager)
+ (not(town-under-attack))
+ (current-age >= castle-age)
+ (population-headroom > 3)
+ (unit-type-count-total villager < 70)
+=>
+ (train villager)
+)
+
+(defrule
+ (can-research ri-loom)
+ (unit-type-count villager >= 10)
+=>
+ (research ri-loom)
+ (disable-self)
+)
+
+; 畑
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (can-build farm)
+ (building-type-count-total lumber-camp > 0)
+ (goal SINKA 0)
+ (current-age == dark-age)
+ (food-amount < 500)
+=>
+ (build farm)
+)
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (can-build farm)
+ (building-type-count-total barracks >= 1)
+ (building-type-count-total mining-camp >= 2)
+ (food-amount < 800)
+ (goal SINKA 1)
+ (current-age == dark-age)
+ (idle-farm-count < 2)
+=>
+ (build farm)
+)
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (can-build-with-escrow farm)
+ (building-type-count-total town-center >= 1)
+ (food-amount < 800)
+ (goal SINKA 1)
+ (current-age == feudal-age)
+ (idle-farm-count < 2)
+=>
+ (release-escrow wood)
+ (build farm)
+)
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (can-build-with-escrow farm)
+ (current-age == castle-age)
+ (building-type-count-total town-center >= 1)
+ (food-amount < 1000)
+ (goal SINKA 2)
+ (idle-farm-count < 2)
+=>
+ (release-escrow wood)
+ (build farm)
+)
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (can-build-with-escrow farm)
+ (idle-farm-count < 1)
+ (current-age == imperial-age)
+=>
+ (release-escrow wood)
+ (build farm)
+)
+
+(defrule
+ (can-build-with-escrow lumber-camp)
+ (resource-found wood)
+ (building-type-count lumber-camp == 0)
+ (building-type-count mill >= 1)
+=>
+ (set-strategic-number sn-camp-max-distance 30)
+ (release-escrow wood)
+ (build lumber-camp)
+)
+
+(defrule
+ (can-build-with-escrow lumber-camp)
+ (dropsite-min-distance wood >= 4)
+ (goal SINKA 1)
+=>
+ (set-strategic-number sn-camp-max-distance 30)
+ (release-escrow wood)
+ (build lumber-camp)
+)
+
+(defrule
+ (can-build-with-escrow lumber-camp)
+ (dropsite-min-distance wood >= 3)
+ (goal SINKA 2)
+=>
+ (set-strategic-number sn-camp-max-distance 50)
+ (release-escrow wood)
+ (build lumber-camp)
+)
+
+(defrule
+ (can-build-with-escrow lumber-camp)
+ (dropsite-min-distance wood >= 3)
+ (goal SINKA 3)
+=>
+ (release-escrow wood)
+ (build lumber-camp)
+)
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (can-build-with-escrow mining-camp)
+ (resource-found gold)
+ (dropsite-min-distance gold > 5) 
+ (building-type-count-total lumber-camp >= 1)
+ (building-type-count-total barracks >= 1)
+ (cc-players-unit-type-count 0 66 > 0) ; 金鉱があるか
+=>
+ (release-escrow wood)
+ (build mining-camp)
+)
+
+(defrule
+ (can-build-with-escrow mining-camp)
+ (resource-found stone)
+ (dropsite-min-distance stone > 5) 
+ (building-type-count-total lumber-camp >= 1)
+ (building-type-count-total barracks >= 1)
+ (cc-players-unit-type-count 0 102 > 0) ; 石地があるか
+=>
+ (release-escrow wood)
+ (build mining-camp)
+)
+
+#load-if-defined GHOST-LAKE-MAP
+(defconst SHIP 0)
+(defconst R-GOLD 50)
+(defconst R-WOOD 10)
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-target-evaluation-boat -100)
+ (disable-self)
+)
+#else
+#load-if-defined ARABIA-MAP
+(defconst SHIP 0)
+(defconst R-GOLD 50)
+(defconst R-WOOD 10)
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-target-evaluation-boat -100)
+ (disable-self)
+)
+#else
+(defconst SHIP 40)
+(defconst R-GOLD 100)
+(defconst R-WOOD 50)
+(defrule
+ (true)
+=>
+ (set-strategic-number sn-target-evaluation-boat 100)
+ (disable-self)
+)
+(load "efleetia\efleetia_sea")
+#end-if
+#end-if
+
+(defrule
+ (can-build-with-escrow town-center)
+=>
+ (release-escrow wood)
+ (release-escrow stone)
+ (build town-center)
+ (disable-self)
+)
+
+(defrule
+ (can-build town-center)
+ (building-type-count town-center < 5)
+ (or
+  (goal RUSH 0)
+  (goal ATTACK 1)
+ )
+=>
+ (build-forward town-center)
+)
+
+(load "efleetia\efleetia_army")
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (can-build-with-escrow blacksmith)
+ (building-type-count blacksmith == 0)
+=>
+ (release-escrow wood)
+ (build blacksmith)
+)
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (can-build-with-escrow market)
+ (building-type-count market == 0)
+ (building-type-count-total barracks > 0)
+=>
+ (release-escrow wood)
+ (build market)
+)
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (can-build-with-escrow monastery)
+ (building-type-count monastery == 0)
+=>
+ (release-escrow wood)
+ (build monastery)
+)
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (can-build-with-escrow university)
+ (building-type-count university == 0)
+ (building-type-count-total siege-workshop > 0)
+=>
+ (release-escrow wood)
+ (build university)
+)
+
+(load "efleetia\efleetia_res")
+
+(defrule
+ (wood-amount > 1500)
+ (can-sell-commodity wood)
+=>
+ (sell-commodity wood)
+)
+
+(defrule
+ (food-amount > 1500)
+ (can-sell-commodity food)
+=>
+ (sell-commodity food)
+)
+
+(defrule
+ (building-type-count castle > 0)
+ (can-sell-commodity stone)
+=>
+ (sell-commodity stone)
+)
+
+(defrule
+ (food-amount < 800)
+ (gold-amount > 300)
+ (can-buy-commodity food)
+ (not(goal SINKA 2))
+=>
+ (buy-commodity food)
+)
+
+(defrule
+ (food-amount > 900)
+ (gold-amount < 200)
+ (can-sell-commodity food)
+ (not(goal SINKA 2))
+=>
+ (sell-commodity food)
+)
+
+(defrule
+ (can-train monk)
+ (unit-type-count monk < 1)
+=>
+ (train monk)
+)
+
+(load "efleetia\efleetia_uniq")
+
+(defrule
+ (can-train monk)
+ (soldier-count > 20)
+=>
+ (train monk)
+)
+
+(defrule
+ (building-type-count-total town-center > 0)
+ (can-build monastery)
+ (building-type-count monastery < 2)
+ (soldier-count > 20)
+=>
+ (build-forward monastery)
+)
+
+(defrule
+ (goal ATTACK 0)
+ (population-headroom < 1)
+ (housing-headroom < 1)
+ (not(enemy-buildings-in-town))
+ (not(town-under-attack))
+ (not(hold-relics))
+=>
+ (set-goal ATTACK 1)
+ (delete-unit villager)
+ (chat-to-allies "9 やるぜ")
+ (enable-timer ATTACK 30)
+)
+
+(defrule
+ (goal ATTACK 0)
+ (goal HEIKI 1)
+ (soldier-count >= 30)
+ (players-stance any-ally ally)
+ (not(enemy-buildings-in-town))
+ (not(town-under-attack))
+ (not(hold-relics))
+=>
+ (set-goal ATTACK 1)
+ (chat-to-allies "9 潰してやる")
+ (enable-timer ATTACK 30)
+)
+
+(defrule
+ (goal ATTACK 0)
+ (goal HEIKI 1)
+ (soldier-count >= 50)
+ (not(enemy-buildings-in-town))
+ (not(town-under-attack))
+ (not(hold-relics))
+=>
+ (set-goal ATTACK 1)
+ (chat-to-allies "9 潰してやる")
+ (enable-timer ATTACK 30)
+)
+
+(defrule
+ (enemy-captured-relics)
+ (not (hold-relics))
+ (goal ATTACK 0)
+ (soldier-count > 20)
+ (not(enemy-buildings-in-town))
+ (not(town-under-attack))
+=>
+ (set-strategic-number sn-special-attack-type1 1)
+ (set-goal ATTACK 1)
+ (chat-to-allies "9 逃がしはしない")
+ (enable-timer ATTACK 30)
+)
+
+(defrule
+ (goal ATTACK 0)
+ (taunt-detected any-ally 12)
+ (military-population > 15)
+ (not(enemy-buildings-in-town))
+ (not(town-under-attack))
+=>
+ (set-goal ATTACK 1)
+ (chat-to-allies "今から援軍を送る")
+ (acknowledge-taunt this-any-ally 12)
+ (enable-timer ATTACK 30)
+)
+
+(defrule
+ (goal ATTACK 0)
+ (taunt-detected any-ally 12)
+ (military-population < 10)
+=>
+ (chat-to-allies "応援は不可能")
+ (set-goal RUSH 1)
+ (acknowledge-taunt this-any-ally 12)
+)
+
+(defrule
+ (goal ATTACK 0)
+ (taunt-detected any-ally 9)
+ (soldier-count >= 30)
+ (not(enemy-buildings-in-town))
+ (not(town-under-attack))
+=>
+ (set-goal ATTACK 1)
+ (chat-to-allies "共同作戦了解")
+ (acknowledge-taunt this-any-ally 9)
+ (enable-timer ATTACK 30)
+)
+
+(defrule
+ (goal ATTACK 0)
+ (taunt-detected any-ally 9)
+ (soldier-count >= 30)
+=>
+ (chat-to-allies "2 まだ攻撃準備は出来ていない")
+ (acknowledge-taunt this-any-ally 9)
+)
+
+(defrule
+ (taunt-detected any-ally 2)
+=>
+ (set-goal ATTACK 0)
+ (chat-to-allies "了解。待機する")
+ (acknowledge-taunt this-any-ally 2)
+ (disable-timer ATTACK)
+)
+
+(defrule
+ (current-age == feudal-age)
+ (players-current-age any-enemy >= castle-age)
+ (players-military-population every-enemy < 15)
+ (not(goal RYOUSHU 0))
+ (goal RUSH 0)
+=>
+ (set-goal RYOUSHU 0)
+ (set-goal ATTACK 0)
+)
+
+(defrule
+ (goal ATTACK 1)
+ (current-age > feudal-age)
+ (soldier-count < 15)
+ (players-military-population any-enemy > 15)
+=>
+ (set-goal ATTACK 0)
+ (disable-timer ATTACK)
+)
+
+(defrule
+ (goal ATTACK 1)
+ (timer-triggered ATTACK)
+=>
+ (attack-now)
+ (enable-timer ATTACK 30)
+ (set-strategic-number sn-percent-attack-soldiers 100)
+ (set-strategic-number sn-number-attack-groups 1)
+ (set-strategic-number sn-number-defend-groups 0)
+ (set-strategic-number sn-enemy-sighted-response-distance 1)
+ (set-strategic-number sn-number-forward-builders 5)
+)
+
+(defrule
+ (goal ATTACK 0)
+ (not(enemy-buildings-in-town))
+ (not(town-under-attack))
+=>
+ (set-strategic-number sn-percent-attack-soldiers 0)
+ (set-strategic-number sn-number-attack-groups 0)
+ (set-strategic-number sn-number-defend-groups 0)
+ (set-strategic-number sn-enemy-sighted-response-distance 70)
+ (set-strategic-number sn-number-forward-builders 0)
+)
+
+(defrule
+ (goal ATTACK 0)
+ (or
+  (enemy-buildings-in-town)
+  (town-under-attack)
+ )
+=>
+ (set-strategic-number sn-percent-attack-soldiers 0)
+ (set-strategic-number sn-number-attack-groups 0)
+ (set-strategic-number sn-number-defend-groups 1)
+ (set-strategic-number sn-enemy-sighted-response-distance 70)
+ (set-strategic-number sn-number-forward-builders 0)
+)
+
+(load "efleetia\efleetia_esc") ; escrow management
+
+(defrule
+ (goal RUSH 0)
+ (players-military-population any-enemy > 10)
+ (military-population < 5)
+ (town-under-attack)
+=>
+ (chat-local-to-self "ALERT! ALERT!")
+ (set-goal RUSH 1)
+)
+
+(defrule
+ (goal RUSH 1)
+ (not(enemy-buildings-in-town))
+ (not(town-under-attack))
+ (players-military-population every-enemy < 5)
+ (military-population > 15)
+=>
+ (set-goal RUSH 0)
+)
+
+(defrule
+ (players-building-type-count any-enemy town-center > 0)
+=>
+ (set-strategic-number sn-blot-exploration-map 1)
+ (set-strategic-number sn-blot-size 15)
+ (disable-self)
+)
+
+(defrule
+ (players-building-type-count any-enemy town-center < 1)
+=>
+ (set-strategic-number sn-blot-exploration-map 0)
+ (set-strategic-number sn-blot-size 40)
+ (disable-self)
+)
+
+(defrule
+ (can-train trade-cart)
+ (players-building-type-count any-ally market > 0)
+ (unit-type-count trade-cart < 8)
+ (goal SINKA 3)
+=>
+ (train trade-cart)
+)
+
+(defrule
+ (players-building-type-count every-ally market == 0)
+ (unit-type-count trade-cart > 0)
+=>
+ (delete-unit trade-cart)
+)
+

@@ -1,0 +1,596 @@
+;////////////////////////////////////////////////////////////////////////////
+;//          PhoenixKnight - Technology Script
+;////////////////////////////////////////////////////////////////////////////
+;---------------- Town Center ---------------------------
+; /_/_/_/_/_/ Loom /_/_/_/_/_/ 
+(defrule
+ (game-time > 60)
+ (or
+  (food-amount < 50)
+  (population > 16)
+ )
+ (can-research ri-loom)
+=>
+ (research ri-loom)
+ (chat-local-to-self "Research : [Loom]")
+)
+; /_/_/_/_/_/ Wheel-Barrow /_/_/_/_/_/ 
+(defrule
+ (can-research ri-wheel-barrow)
+=>
+ (research ri-wheel-barrow)
+ (chat-local-to-self "Research : [Wheel-Barrow]")
+)
+; /_/_/_/_/_/ hand-cart /_/_/_/_/_/ 
+(defrule
+ (can-research ri-hand-cart )
+=>
+ (research ri-hand-cart )
+ (chat-local-to-self "Research : hand-cart")
+)
+; /_/_/_/_/_/ town-watch /_/_/_/_/_/ 
+(defrule
+ (current-age == imperial-age)
+ (can-research ri-town-watch )
+=>
+ (research ri-town-watch )
+ (chat-local-to-self "Research : town-watch")
+)
+; /_/_/_/_/_/ town-patrol /_/_/_/_/_/ 
+(defrule
+ (current-age == imperial-age)
+ (can-research ri-town-patrol )
+=>
+ (research ri-town-patrol)
+ (chat-local-to-self "Research : town-patrol")
+)
+;---------------------blacksmith----------------------
+; /_/_/_/_/_/ fletching /_/_/_/_/_/ 
+(defrule
+ (or
+  (goal Follow NO)
+  (goal UnderAttack YES)
+ )
+ (current-age >= castle-age)
+ (can-research ri-fletching)
+=>
+ (research ri-fletching)
+ (chat-local-to-self "fletching")
+)
+
+; /_/_/_/_/_/ bodkin-arrow /_/_/_/_/_/ 
+(defrule
+ (or
+  (goal Follow NO)
+  (goal UnderAttack YES)
+ )
+ (can-research ri-bodkin-arrow)
+=>
+ (research ri-bodkin-arrow)
+ (chat-local-to-self "bodkin-arrow")
+)
+; /_/_/_/_/_/ bracer /_/_/_/_/_/ 
+(defrule
+ (building-type-count castle >= 2)
+ (can-research ri-bracer)
+=>
+ (research ri-bracer)
+ (chat-local-to-self "bracer")
+)
+
+; /_/_/_/_/_/ forging /_/_/_/_/_/ 
+(defrule
+ (current-age >= castle-age)
+ (research-completed ri-murder-holes)
+ (or
+  (research-completed ri-pikeman)
+  (building-type-count castle >= 1)
+ )
+ (can-research ri-forging)
+=>
+ (research ri-forging)
+ (chat-local-to-self "forging")
+)
+; /_/_/_/_/_/ iron-casting /_/_/_/_/_/ 
+(defrule
+ (can-research ri-iron-casting)
+=>
+ (research ri-iron-casting)
+ (chat-local-to-self "iron-casting")
+)
+; /_/_/_/_/_/ blast-furnace /_/_/_/_/_/ 
+(defrule
+ (can-research ri-blast-furnace)
+=>
+ (research ri-blast-furnace)
+ (chat-local-to-self "blast-furnace")
+)
+; /_/_/_/_/_/ scale-mail /_/_/_/_/_/ 
+(defrule
+ (goal Follow NO)
+ (goal BARRACKS_LINE YES)
+ (can-research ri-scale-mail)
+ (current-age >= castle-age)
+=>
+ (research ri-scale-mail)
+ (chat-local-to-self "scale-mail")
+)
+
+; /_/_/_/_/_/ chain-mail /_/_/_/_/_/ 
+(defrule
+ (goal BARRACKS_LINE YES)
+ (can-research ri-chain-mail)
+=>
+ (research ri-chain-mail)
+ (chat-local-to-self "chain-mail")
+)
+; /_/_/_/_/_/ plate-mail /_/_/_/_/_/ 
+(defrule
+ (goal BARRACKS_LINE YES)
+ (can-research ri-plate-mail)
+=>
+ (research ri-plate-mail)
+ (chat-local-to-self "plate-mail")
+)
+
+; /_/_/_/_/_/ padded-archer-armor /_/_/_/_/_/ 
+(defrule
+ (goal ARCHERY_LINE YES)
+ (goal Follow NO)
+ (can-research ri-padded-archer-armor)
+ (current-age >= castle-age)
+=>
+ (research ri-padded-archer-armor)
+ (chat-local-to-self "padded-archer-armor")
+)
+; /_/_/_/_/_/ leather-archer-armor /_/_/_/_/_/ 
+(defrule
+ (goal ARCHERY_LINE YES)
+ (goal Follow NO)
+ (can-research ri-leather-archer-armor)
+=>
+ (research ri-leather-archer-armor)
+ (chat-local-to-self "leather-archer-armor")
+)
+; /_/_/_/_/_/ ring-archer-armor /_/_/_/_/_/ 
+(defrule
+ (goal ARCHERY_LINE YES)
+ (can-research ri-ring-archer-armor)
+=>
+ (research ri-ring-archer-armor)
+ (chat-local-to-self "ring-archer-armor")
+)
+
+; /_/_/_/_/_/ scale-barding /_/_/_/_/_/ 
+(defrule
+ (goal STABLE_LINE YES)
+ (goal Follow NO)
+ (can-research ri-scale-barding)
+ (current-age >= castle-age)
+=>
+ (research ri-scale-barding)
+ (chat-local-to-self "scale-barding")
+)
+; /_/_/_/_/_/ chain-barding /_/_/_/_/_/ 
+(defrule
+ (goal STABLE_LINE YES)
+ (goal Follow NO)
+ (can-research ri-chain-barding)
+=>
+ (research ri-chain-barding)
+ (chat-local-to-self "chain-barding")
+)
+; /_/_/_/_/_/ plate-barding /_/_/_/_/_/ 
+(defrule
+ (goal STABLE_LINE YES)
+ (can-research ri-plate-barding)
+=>
+ (research ri-plate-barding)
+ (chat-local-to-self "plate-barding")
+)
+;--------------------------Monastery----------------------
+; /_/_/_/_/_/ atonement /_/_/_/_/_/ 
+(defrule
+ (goal 1st_MONASTERY YES)
+ (unit-type-count monk > 2 )
+ (can-research ri-atonement)
+=>
+ (research ri-atonement )
+ (chat-local-to-self "atonement ")
+)
+; /_/_/_/_/_/ fervor /_/_/_/_/_/ 
+(defrule
+ (goal 1st_MONASTERY YES)
+ (unit-type-count monk > 2 )
+ (can-research ri-fervor)
+=>
+ (research ri-fervor )
+ (chat-local-to-self "fervor ")
+)
+; /_/_/_/_/_/ heresy /_/_/_/_/_/ 
+(defrule
+ (goal 1st_MONASTERY YES)
+ (unit-type-count monk > 2 )
+ (building-type-count-total castle >= 1)
+ (can-research ri-heresy)
+=>
+ (research ri-heresy )
+ (chat-local-to-self "heresy")
+)
+; /_/_/_/_/_/ redemption /_/_/_/_/_/ 
+(defrule
+ (goal Follow NO)
+ (goal 1st_MONASTERY YES)
+ (unit-type-count monk > 2 )
+ (can-research ri-redemption )
+=>
+ (research ri-redemption )
+ (chat-local-to-self "redemption ")
+)
+; /_/_/_/_/_/ sanctity /_/_/_/_/_/ 
+(defrule
+ (goal 1st_MONASTERY YES)
+ (unit-type-count monk > 2 )
+ (can-research ri-sanctity)
+=>
+ (research ri-sanctity )
+ (chat-local-to-self "sanctity ")
+)
+; /_/_/_/_/_/ block-printing /_/_/_/_/_/ 
+(defrule
+ (goal 2nd_MONASTERY YES)
+ (unit-type-count monk > 2 )
+ (can-research ri-block-printing  )
+=>
+ (research ri-block-printing )
+ (chat-local-to-self "block-printing")
+)
+; /_/_/_/_/_/ faith /_/_/_/_/_/ 
+(defrule
+ (goal 2nd_MONASTERY YES)
+ (unit-type-count monk > 2 )
+ (can-research ri-faith)
+=>
+ (research ri-faith  )
+ (chat-local-to-self "faith ")
+)
+; /_/_/_/_/_/ illumination /_/_/_/_/_/ 
+(defrule
+ (goal 2nd_MONASTERY YES)
+ (unit-type-count monk > 2 )
+ (can-research ri-illumination  )
+=>
+ (research ri-illumination  )
+ (chat-local-to-self "illumination")
+)
+; /_/_/_/_/_/ theocracy /_/_/_/_/_/ 
+(defrule
+ (goal 2nd_MONASTERY YES)
+ (unit-type-count monk > 2 )
+ (can-research ri-theocracy )
+=>
+ (research ri-theocracy )
+ (chat-local-to-self "theocracy")
+)
+
+; /_/_/_/_/_/ ----???---- /_/_/_/_/_/
+#load-if-defined AZTEC-CIV
+(defrule
+ (goal 1st_MONASTERY YES)
+ (unit-type-count monk > 2 )
+ (can-research 441 )
+=>
+ (research 441 )
+ (chat-local-to-self "----???----")
+)
+#end-if
+;------------------university-------------------------
+
+; /_/_/_/_/_/ siege-engineers/_/_/_/_/_/ 
+(defrule
+ (population > 120)
+ (can-research ri-siege-engineers )
+=>
+ (research ri-siege-engineers )
+ (chat-local-to-self "siege-engineers")
+)
+
+; /_/_/_/_/_/ guard-tower /_/_/_/_/_/ 
+(defrule
+ (goal UnderAttack YES)
+ (research-completed ri-murder-holes)
+ (can-research ri-guard-tower)
+ (building-type-count-total castle >= 1)
+=>
+ (research ri-guard-tower)
+ (chat-local-to-self "guard-tower")
+)
+
+; /_/_/_/_/_/ chemistry /_/_/_/_/_/ 
+(defrule
+ (can-research ri-chemistry )
+=>
+ (research ri-chemistry )
+ (chat-local-to-self "chemistry")
+)
+
+; /_/_/_/_/_/ ballistics /_/_/_/_/_/ 
+(defrule
+ (goal Follow NO)
+ (can-research ri-ballistics )
+=>
+ (research ri-ballistics)
+ (chat-local-to-self "ballistics")
+)
+
+; /_/_/_/_/_/ stonecutting /_/_/_/_/_/ 
+(defrule
+ (research-completed ri-murder-holes)
+ (can-research ri-stonecutting )
+ (building-type-count-total castle >= 1)
+=>
+ (research ri-stonecutting )
+ (chat-local-to-self "stonecutting")
+)
+
+; /_/_/_/_/_/ murder-holes /_/_/_/_/_/ 
+(defrule
+ (can-research ri-murder-holes)
+=>
+ (research ri-murder-holes )
+ (chat-local-to-self "murder-holes")
+)
+
+; /_/_/_/_/_/ masonry /_/_/_/_/_/  
+(defrule
+ (building-type-count-total castle >= 3)
+ (stone-amount > 700)
+ (can-research ri-masonry)
+=>
+ (research ri-masonry)
+ (chat-local-to-self "masonry")
+)
+
+; /_/_/_/_/_/ architecture /_/_/_/_/_/  
+(defrule
+ (building-type-count-total castle >= 3)
+ (stone-amount > 700)
+ (can-research ri-architecture)
+=>
+ (research ri-architecture)
+ (chat-local-to-self "architecture")
+)
+
+; /_/_/_/_/_/ bombard-tower /_/_/_/_/_/  
+(defrule
+ (building-type-count-total castle >= 3)
+ (stone-amount > 400)
+ (can-research ri-bombard-tower)
+=>
+ (research ri-bombard-tower)
+ (chat-local-to-self "Research : bombard-tower")
+)
+;---------------------------- Market ----------------------------
+; /_/_/_/_/_/ coinage /_/_/_/_/_/ 
+(defrule
+ (player-in-game any-ally)
+; (goal EVOLUTION 3)
+ (research-completed ri-cartography)
+ (current-age == imperial-age)
+ (can-research ri-coinage )
+=>
+ (research ri-coinage)
+ (chat-local-to-self "Research : coinage")
+)
+; /_/_/_/_/_/ banking /_/_/_/_/_/ 
+(defrule
+ (current-age == imperial-age)
+ (player-in-game any-ally)
+ (can-research ri-banking )
+=>
+ (research ri-banking)
+ (chat-local-to-self "Research : banking")
+)
+
+; /_/_/_/_/_/ cartography /_/_/_/_/_/ 
+(defrule
+ (or
+  (goal EVOLUTION 3)
+  (current-age >= castle-age)
+ )
+ (player-in-game any-ally)
+ (can-research ri-cartography )
+=>
+ (research ri-cartography )
+ (chat-local-to-self "Research : cartography")
+)
+
+; /_/_/_/_/_/ caravan /_/_/_/_/_/ 
+(defrule
+ (unit-type-count-total trade-cart >= 2)
+ (player-in-game any-ally)
+ (can-research ri-caravan )
+=>
+ (research ri-caravan)
+ (chat-local-to-self "Research : caravan")
+)
+
+; /_/_/_/_/_/ guilds /_/_/_/_/_/ 
+(defrule
+ (player-in-game any-ally)
+ (can-research ri-guilds)
+=>
+ (research ri-guilds )
+ (chat-local-to-self "Research : guilds")
+)
+
+;--------------------- ------------------------------
+; /_/_/_/_/_/ husbandry /_/_/_/_/_/ 
+(defrule
+ (goal Follow NO)
+ (can-research ri-husbandry)
+=>
+ (research ri-husbandry)
+ (chat-local-to-self "Research : husbandry")
+)
+
+; /_/_/_/_/_/ bloodlines /_/_/_/_/_/ 
+(defrule
+ (goal Follow NO)
+ (current-age >= castle-age)
+ (can-research ri-bloodlines)
+=>
+ (research ri-bloodlines)
+ (chat-local-to-self "Research : bloodlines")
+)
+
+; /_/_/_/_/_/ Upgrade to cavalier /_/_/_/_/_/ 
+(defrule
+ (goal STABLE_LINE YES)
+ (can-research ri-cavalier)
+=>
+ (research ri-cavalier)
+ (chat-local-to-self "Upgrade to cavalier")
+)
+
+; /_/_/_/_/_/ Upgrade to paladin /_/_/_/_/_/ 
+(defrule
+ (goal STABLE_LINE YES)
+ (can-research ri-paladin)
+=>
+ (research ri-paladin)
+ (chat-local-to-self "Upgrade to paladin")
+)
+
+; /_/_/_/_/_/ Upgrade to capped-ram /_/_/_/_/_/ 
+(defrule
+ (goal SIEGE_LINE YES)
+ (can-research ri-capped-ram)
+=>
+ (research ri-capped-ram)
+ (chat-local-to-self "Upgrade to capped-ram")
+)
+; /_/_/_/_/_/ Upgrade to siege-ram /_/_/_/_/_/ 
+(defrule
+ (goal SIEGE_LINE YES)
+ (can-research ri-siege-ram)
+=>
+ (research ri-siege-ram)
+ (chat-local-to-self "Upgrade to siege-ram")
+)
+
+;------------------  -------------------------------
+; /_/_/_/_/_/ double-bit-axe /_/_/_/_/_/ 
+(defrule
+ (can-research ri-double-bit-axe)
+=>
+ (research ri-double-bit-axe)
+ (chat-local-to-self "Research : double-bit-axe")
+)
+; /_/_/_/_/_/ bow-saw /_/_/_/_/_/ 
+(defrule
+ (can-research ri-bow-saw)
+=>
+ (research ri-bow-saw)
+ (chat-local-to-self "Research : bow-saw")
+)
+
+; /_/_/_/_/_/ two-man-saw /_/_/_/_/_/ 
+(defrule
+ (can-research ri-two-man-saw )
+=>
+ (research ri-two-man-saw)
+ (chat-local-to-self "Research : two-man-saw")
+) 
+
+(defrule
+ (can-research ri-horse-collar)
+=>
+ (research ri-horse-collar)
+ (disable-self)
+)
+(defrule
+ (can-research ri-heavy-plow)
+=>
+ (research ri-heavy-plow)
+ (disable-self)
+)
+
+; /_/_/_/_/_/ crop-rotation /_/_/_/_/_/ 
+(defrule
+ (can-research ri-crop-rotation )
+=>
+ (research ri-crop-rotation)
+ (chat-local-to-self "Research : crop-rotation")
+)
+
+; /_/_/_/_/_/ gold-mining /_/_/_/_/_/ 
+(defrule
+ (can-research ri-gold-mining)
+=>
+ (research ri-gold-mining)
+ (chat-local-to-self "Research : gold-mining")
+)
+; /_/_/_/_/_/ gold-shaft-mining /_/_/_/_/_/ 
+(defrule
+ (building-type-count-total monastery >= 2 )
+ (can-research ri-gold-shaft-mining)
+=>
+ (research ri-gold-shaft-mining)
+ (chat-local-to-self "Research : gold-shaft-mining")
+)
+; /_/_/_/_/_/ stone-mining /_/_/_/_/_/ 
+(defrule
+ (can-research ri-stone-mining)
+ (or
+  (goal EVOLUTION 3)
+  (current-age >= castle-age)
+ )
+=>
+ (research ri-stone-mining)
+ (chat-local-to-self "Research : stone-mining")
+)
+; /_/_/_/_/_/ stone-shaft-mining /_/_/_/_/_/ 
+(defrule
+ (building-type-count-total monastery >= 2 )
+ (can-research ri-stone-shaft-mining)
+=>
+ (research ri-stone-shaft-mining)
+ (chat-local-to-self "Research : stone-shaft-mining")
+)
+
+;---------------------------- Castle ----------------------------
+; /_/_/_/_/_/ my-unique-research /_/_/_/_/_/ 
+(defrule
+ (goal UNIQUE_TECH YES)
+ (can-research my-unique-research)
+=>
+ (research my-unique-research )
+ (chat-local-to-self "Research : my-unique-research")
+)
+
+; /_/_/_/_/_/ hoardings /_/_/_/_/_/ 
+(defrule
+ (unit-type-count-total castle >= 3)
+ (can-research ri-hoardings)
+=>
+ (research ri-hoardings )
+ (chat-local-to-self "Research : hoardings")
+)
+
+; /_/_/_/_/_/ my-unique-unit-upgrade /_/_/_/_/_/ 
+(defrule
+ (goal UNIQUE_UNIT YES)
+ (can-research my-unique-unit-upgrade )
+=>
+ (research my-unique-unit-upgrade )
+ (chat-local-to-self "my-unique-unit-upgrade")
+)
+
+; /_/_/_/_/_/ conscription /_/_/_/_/_/ 
+(defrule
+ (can-research ri-conscription )
+=>
+ (research ri-conscription)
+ (chat-local-to-self "Research : conscription")
+)

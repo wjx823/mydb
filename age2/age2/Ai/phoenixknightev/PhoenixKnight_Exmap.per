@@ -1,0 +1,155 @@
+#load-if-defined NOMAD-MAP
+(defrule
+ (game-time > 20)
+=>
+ (chat-to-all "[NOMAD-MAP] Detected : Ex_map Ver.1.00beta Loaded ")
+ (disable-self)
+)
+
+(defrule
+ (current-age == dark-age)
+ (building-type-count-total town-center < 1 )
+=>
+ (set-strategic-number sn-minimum-civilian-explorers 2 )
+ (set-strategic-number sn-cap-civilian-explorers 2 )
+ (set-strategic-number sn-total-number-explorers 2)
+ (set-strategic-number sn-camp-max-distance 30)
+ (set-strategic-number sn-mill-max-distance 25)
+ (set-strategic-number sn-maximum-hunt-drop-distance 20)
+ (set-strategic-number sn-percent-civilian-builders 20)
+ (set-strategic-number sn-percent-civilian-gatherers 0)
+ (set-strategic-number sn-percent-civilian-explorers 80)
+ (set-strategic-number sn-maximum-gold-drop-distance 50)
+ (set-strategic-number sn-maximum-stone-drop-distance 50)
+ (set-strategic-number sn-random-placement-factor 20)
+ (set-strategic-number sn-percent-half-exploration 35)
+)
+
+(defrule
+ (building-type-count-total town-center < 1 )
+ (can-build town-center)
+=>
+ (build town-center)
+ (set-goal TOWN-SIZE YES)
+ (chat-local-to-self "Build : Town Center")
+ (enable-timer BUILD_TIME 20)
+ (set-goal READY_BUILD NO)
+)
+
+(defrule
+ (game-time > 80)
+ (building-type-count-total mill == 0)
+ (building-type-count-total town-center == 1 )
+ (can-build mill)
+=>
+ (build mill)
+ (chat-local-to-self "Build : Mill")
+ (disable-self)
+)
+
+(defrule
+ (resource-found wood)
+ (building-type-count-total lumber-camp == 0)
+ (building-type-count-total mill == 1)
+ (can-build lumber-camp)
+=>
+ (chat-local-to-self "Build : lumber-camp")
+ (build lumber-camp)
+)
+
+(defrule
+ (current-age == dark-age)
+ (building-type-count town-center == 1)
+=>
+ (set-strategic-number sn-percent-civilian-builders 10)
+ (set-strategic-number sn-percent-civilian-gatherers 55)
+ (set-strategic-number sn-percent-civilian-explorers 35)
+; (set-strategic-number sn-total-number-explorers 2)
+; (set-strategic-number sn-minimum-civilian-explorers 2)
+; (set-strategic-number sn-cap-civilian-explorers 2)
+)
+
+(defrule
+ (current-age == dark-age)
+=>
+ (set-strategic-number sn-camp-max-distance 50)
+)
+(defrule
+ (or
+  (current-age >= feudal-age)
+  (unit-type-count-total militiaman-line < 1)
+ )
+=>
+ (set-strategic-number sn-percent-civilian-builders 20)
+ (set-strategic-number sn-percent-civilian-explorers 0)
+ (set-strategic-number sn-percent-civilian-gatherers 80)
+ (set-strategic-number sn-total-number-explorers 0)
+ (set-strategic-number sn-minimum-civilian-explorers 0)
+ (set-strategic-number sn-cap-civilian-explorers 0)
+ (disable-self)
+)
+
+(defrule
+ (current-age == castle-age)
+=>
+
+ (set-strategic-number sn-minimum-explore-group-size 1)
+ (set-strategic-number sn-maximum-explore-group-size 1)
+ (disable-self)
+)
+;/_/_/_/_/_/_/_/_/ Train Unit _/_/_/_/_/_/_/_/
+(defrule
+ (current-age <= feudal-age)
+ (unit-type-count-total militiaman-line < 2)
+ (can-train militiaman-line)
+=>
+ (set-strategic-number sn-number-explore-groups 2)
+ (set-strategic-number sn-minimum-explore-group-size 1)
+ (set-strategic-number sn-maximum-explore-group-size 1)
+ (train militiaman-line)
+ (chat-local-to-self "militiaman-line")
+)
+
+;//It evolves in the Castle-Age.//
+(defrule
+ (can-research castle-age)
+=>
+ (research castle-age)
+ (set-strategic-number sn-food-gatherer-percentage 35 )
+ (set-strategic-number sn-wood-gatherer-percentage 35 )
+ (set-strategic-number sn-gold-gatherer-percentage 20 )
+ (set-strategic-number sn-stone-gatherer-percentage 10 )
+ (set-goal EVOLUTION 3)
+ (chat-to-allies "Research [Castle-age]")
+)
+
+;¡It evolves in the Imperial-Age.¡
+(defrule
+ (food-amount > 1800)
+ (gold-amount > 1000)
+ (can-research imperial-age)
+=>
+ (research imperial-age)
+ (set-strategic-number sn-food-gatherer-percentage 45 )
+ (set-strategic-number sn-wood-gatherer-percentage 35 )
+ (set-strategic-number sn-gold-gatherer-percentage 15 )
+ (set-strategic-number sn-stone-gatherer-percentage 5 )
+ (chat-to-allies "Research [Imperial-Age]")
+ (set-goal EVOLUTION 5)
+ (enable-timer IM_LATE_TIMER 540)
+ (enable-timer RES_TIMER 100)
+)
+
+(defrule
+ (current-age == castle-age)
+ (gold-amount < 1200)
+ (wood-amount > 2000)
+=>
+ (sell-commodity food)
+)
+#end-if
+
+#load-if-defined SCANDANAVIA-MAP
+
+#end-if
+

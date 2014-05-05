@@ -1,0 +1,351 @@
+;{********************************************************************
+; AI maccha Ver 7.00  PC6001mk2SR.per
+;}********************************************************************
+;{attack system-------------------------------------------------------
+;*1vs1 castle
+(defrule
+   (game-time < 2400)
+   (not(player-in-game any-ally))
+   (military-population >= pop-13)
+   (players-military-population every-enemy <= pop-25)
+   (players-building-type-count every-enemy castle <= 2)
+=>
+   (chat-local-to-self ">1vs1< castle-rush")
+   (attack-now)
+)
+;*vs feudal-rush help
+(defrule
+   (current-age == castle-age)
+   (players-current-age every-enemy < castle-age)
+   (military-population >= pop-10)
+=>
+   (chat-local-to-self ">vs feudal-rush< castle-rush2")
+   (attack-now)
+)
+;*few enemy
+(defrule
+   (current-age == castle-age)
+   (military-population >= pop-16)
+   (players-military-population any-enemy <= pop-8)
+   (players-building-type-count any-enemy castle < 3)
+=>
+   (chat-to-allies "100 >few enemy< castle-rush3")
+   (attack-now)
+)
+;*enemy wonder
+(defrule
+   (not(goal PROJECT_W 3))
+   (players-building-type-count any-enemy wonder > 0)
+=>
+   (chat-to-allies "100 >enemy wonder< attack-now")
+   (set-goal PROJECT_W 0)
+   (attack-now)
+)
+;*evolution late
+(defrule
+   (current-age == castle-age)
+   (players-current-age any-enemy > castle-age)
+=>
+   (chat-to-allies "100 >enemy imperial< attack-now")
+   (attack-now)
+   (disable-self)
+)
+;*early imperial-rush
+(defrule
+   (current-age == imperial-age)
+   (players-current-age any-enemy < imperial-age)
+   (unit-type-count trebuchet > 1)
+=>
+   (chat-to-allies "100 >fast imperial< attack-now")
+   (attack-now)
+   (disable-self)
+)
+;*help
+(defrule
+   (unit-type-count 54 > 0)
+=>
+   (chat-local-to-self "101 help")
+   (chat-to-allies "101 help")
+)
+(defrule
+   (taunt-detected any-ally 101)
+   (military-population > pop-13)
+=>
+   (attack-now)
+   (acknowledge-taunt this-any-ally 101)
+)   
+;*1vs1
+(defrule
+   (current-age == imperial-age)
+   (not(player-in-game any-ally))
+   (goal PROJECT_W 0)
+   (population >= pop-100)
+=>
+   (chat-local-to-self "attack mode 1vs1")
+   (attack-now)
+   (set-goal PERMIT_ATTACK YES)
+   (enable-timer TIMER_ATTACK 300)
+   (disable-self)
+)
+(defrule
+   (or
+      (game-time < 4200)
+      (players-building-type-count any-enemy castle <= 2)
+   )
+   (timer-triggered TIMER_ATTACK)
+   (population >= pop-70)
+=>
+   (chat-local-to-self "attack mode 1vs1")
+   (attack-now)
+   (disable-timer TIMER_ATTACK)
+   (enable-timer TIMER_ATTACK 300)
+)
+(defrule
+   (game-time >= 4200)
+   (players-building-type-count any-enemy castle > 2)
+=>
+   (chat-local-to-self "It is judged a defense superior side, and discontinues it the attack. ")
+   (disable-timer TIMER_ATTACK)
+   (chat-local-to-self "*** PROJECT W ***")
+   (set-goal MAX_LIGHTCAVALRY 5)
+   (set-goal PROJECT_W 1)
+   (disable-self)
+)
+(defrule
+   (true)
+=>
+   (set-goal RESTRICT_MILITARY NO)
+)
+(defrule
+   (goal PROJECT_W 0)
+   (not(player-in-game any-ally))
+   (population >= pop-95)
+   (or
+      (unit-type-count 112 < 2)
+      (goal PERMIT_ATTACK NO)
+   )
+=>
+   (chat-local-to-self "restrict product.")
+   (set-goal RESTRICT_MILITARY YES)
+)
+;*2vs2over
+(defrule
+   (player-in-game any-ally)
+   (population > pop-90)
+=>
+   (set-goal PERMIT_ATTACK YES)
+   (attack-now)
+)
+(defrule
+   (player-in-game any-ally)
+   (population > pop-90)
+=>
+   (chat-to-allies "100 Sacred Maccha Imperial declares 'Niitakayamanobore 1208'")
+   (enable-timer 9 120)
+   (disable-self)
+)
+(defrule
+   (timer-triggered 9)
+   (population > pop-90)
+=>
+   (chat-to-allies "100")
+   (disable-timer 9)
+   (enable-timer 9 120)
+)
+(defrule
+   (taunt-detected any-ally 100)
+=>
+   (attack-now)
+   (acknowledge-taunt this-any-ally 100)
+)
+;}-------------------------------------------------------------------
+;{anti-unit----------------------------------------------------------
+;*spearman
+(defrule
+   (or
+      (players-unit-type-count any-enemy knight-line > pop-10)
+      (or
+         (players-unit-type-count any-enemy cataphract-line > pop-10)
+         (or
+            (players-unit-type-count any-enemy scout-cavalry-line > pop-20)
+            (players-unit-type-count any-enemy mameluke-line > pop-16)
+         )
+      )
+   )
+=>
+   (set-goal MAX_SPEARMAN 3)
+)
+(defrule
+   (or
+      (players-unit-type-count any-enemy knight-line > pop-20)
+      (players-unit-type-count any-enemy cataphract-line > pop-20)
+   )
+=>
+   (set-goal MAX_SPEARMAN 5)
+)
+(defrule
+   (current-age >= castle-age)
+   (players-unit-type-count every-enemy knight-line <= pop-4)
+   (players-unit-type-count every-enemy cataphract-line <= pop-4)
+   (players-unit-type-count every-enemy scout-cavalry-line <= pop-10)
+   (players-unit-type-count every-enemy mameluke-line <= pop-4)
+=>
+   (set-goal MAX_SPEARMAN 0)
+)
+;*skirmisher
+(defrule
+   (or
+      (players-unit-type-count any-enemy longbowman-line > pop-10)
+      (or
+         (players-unit-type-count any-enemy chu-ko-nu-line > pop-10)
+         (or
+            (players-unit-type-count any-enemy plumed-archer-line > pop-10)
+            (players-unit-type-count any-enemy archer-line > pop-10)
+         )
+      )
+   )
+=>
+   (set-goal MAX_SKIRMISHER 3)
+)
+(defrule
+   (or
+      (players-unit-type-count any-enemy longbowman-line > pop-20)
+      (or
+         (players-unit-type-count any-enemy chu-ko-nu-line > pop-20)
+         (or
+            (players-unit-type-count any-enemy plumed-archer-line > pop-20)
+            (players-unit-type-count any-enemy archer-line > pop-20)
+         )
+      )
+   )
+=>
+   (set-goal MAX_SKIRMISHER 5)
+)
+(defrule
+   (current-age >= castle-age)
+   (players-unit-type-count every-enemy longbowman-line <= pop-4)
+   (players-unit-type-count every-enemy chu-ko-nu-line <= pop-4)
+   (players-unit-type-count every-enemy plumed-archer-line <= pop-4)
+   (players-unit-type-count every-enemy archer-line <= pop-4)
+=>
+   (set-goal MAX_SKIRMISHER 0)
+)
+(defrule
+   (or
+      (players-unit-type-count any-enemy militiaman-line > pop-20)
+      (or
+         (players-unit-type-count any-enemy huskarl-line > pop-20)
+         (or
+            (players-unit-type-count any-enemy jaguar-man-line > pop-20)
+            (players-unit-type-count any-enemy teutonic-knight-line > pop-13)
+         )
+      )
+   )
+=>
+   (set-goal MAX_HANDCANNONEER 5)
+)
+;*PROJECT W
+(defrule
+   (current-age == imperial-age)
+   (not(player-in-game any-ally))
+   (random-number == 1)
+=>
+   (chat-local-to-self "*** PROJECT W ***")
+   (set-goal MAX_LIGHTCAVALRY 5)
+   (set-goal PROJECT_W 1)
+   (disable-self)
+)
+(defrule
+   (goal PROJECT_W 1)
+   (can-train monk)
+=>
+   (train monk)
+)
+(defrule
+   (gold-amount > 1000)
+   (stone-amount > 1000)
+   (wood-amount > 1000)
+   (food-amount > 9500)
+   (goal PROJECT_W 1)
+=>
+   (set-goal PROJECT_W 2)
+)
+(defrule 
+   (goal PROJECT_W 1)
+   (gold-amount > 1200)
+   (stone-amount < 1000)
+=>
+   (buy-commodity stone)
+)
+(defrule
+   (goal PROJECT_W 2)
+   (building-type-count farm > 0)
+=>
+   (delete-building farm)
+)
+(defrule
+   (building-type-count farm == 0)
+   (can-build wonder)
+=>
+   (chat-to-all "* wonder! wonder! wonder! *")
+   (build wonder)
+   (set-strategic-number sn-minimum-town-size 10)
+   (set-strategic-number sn-maximum-town-size 14)
+   (set-goal CONTROL_TOWNSIZE YES)
+   (enable-timer TIMER_CONTROL 5)
+   (set-goal MAX_ARCHER 5)
+   (set-goal MAX_MONK 5)
+)
+(defrule
+   (building-type-count-total wonder > 0)
+=>
+   (set-goal PROJECT_W 3)
+   (set-strategic-number sn-percent-civilian-builders 50)
+   (set-strategic-number sn-percent-civilian-gatherers 50)
+   (set-strategic-number sn-cap-civilian-builders 50)
+   (set-strategic-number sn-food-dropsite-distance 10)
+   (set-strategic-number sn-maximum-food-drop-distance 0)
+   (set-strategic-number sn-maximum-wood-drop-distance 40)
+   (set-strategic-number sn-maximum-gold-drop-distance 30)
+   (set-strategic-number sn-stone-gatherer-percentage 30)
+)
+(defrule 
+   (goal PROJECT_W 3)
+   (can-sell-commodity stone)
+=>
+   (sell-commodity stone)
+)
+;}-------------------------------------------------------------------
+;{commander(user's option)-------------------------------------------
+(defrule
+   (current-age == imperial-age)
+   (taunt-detected my-player-number 37)
+=>
+   (chat-to-all "*** PROJECT W ***")
+   (set-goal PROJECT_W 1)
+   (set-goal MAX_LIGHTCAVALRY 5)
+   (disable-timer TIMER_ATTACK)
+   (disable-self)
+)
+(defrule
+   (taunt-detected my-player-number 254)
+=>
+   (chat-to-all "Strategy changes to the standard. ")
+   (set-goal ATTACK_MODE NORMAL)
+   (disable-self)
+)
+(defrule
+   (taunt-detected my-player-number 255)
+=>
+   (chat-to-all "Strategy changes to unique mania.")
+   (set-goal ATTACK_MODE UNIQUE_MANIA)
+   (disable-self)
+)
+(defrule
+   (taunt-detected my-player-number 256)
+=>
+   (chat-to-all "Strategy changes to rush-horse.")
+   (set-goal ATTACK_MODE RUSH_HORSE)
+   (disable-self)
+)
+;}-------------------------------------------------------------------

@@ -1,0 +1,24 @@
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Microsoft Games]
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Microsoft Games\Age of Empires]
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Microsoft Games\Age of Empires\2.0]
+"Processor Speed"=dword:000001c3
+"Custom Mouse"=dword:00000000
+"CDPath"="g:\\"
+"PID"="51160-442-7342005-19637"
+"InstallType"="5"
+"Zone"="http://www.zone.com/asp/aoe2redir.asp"
+"Version"="2"
+"Launched"="1"
+"VersionType"="RetailVersion"
+"InstalledGroup"="5"
+"LangID"=dword:00000009
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Microsoft Games\Age of Empires\2.0\EULA]
+"FIRSTRUN"=dword:00000001
+@=""
+
+

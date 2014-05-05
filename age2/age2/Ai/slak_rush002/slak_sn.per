@@ -1,0 +1,408 @@
+; --------------------------------------------------------------------------
+; File: Slak_SN.per
+; Author: SlakTheEldar
+; Date: 2000-10-25
+;
+; Available under BSD-like license; see accompanying Copying.txt file
+;
+; --------------------------------------------------------------------------
+
+; --------------------------------------------------------------------------
+; Set up the following strategic numbers:
+; sn-coop-share-information
+; sn-coop-share-attacking
+; sn-maximum-town-size
+; sn-task-ungrouped-soldiers
+; sn-zero-priority-distance
+; sn-blot-exploration-map
+; sn-attack-intelligence
+; sn-gather-defense-units
+; sn-defense-distance
+; sn-maximum-gaia-attack-response
+; sn-ignore-attack-group-under-attack
+; sn-minimum-boar-hunt-group-size
+; --------------------------------------------------------------------------
+
+; Initial values
+(defrule
+  (true)
+  =>
+  ; --------------------- Distances ----------------------------------------
+  (set-strategic-number sn-maximum-town-size 15)
+  (set-strategic-number sn-camp-max-distance 20)
+  (set-strategic-number sn-mill-max-distance 20)
+  (set-strategic-number sn-minimum-dropsite-buffer 50)
+  (disable-self)
+)
+
+(defrule
+  (true)
+  =>
+  ; --------------------- Villager assignment ------------------------------
+  (set-strategic-number sn-percent-civilian-explorers 100)
+  (set-strategic-number sn-percent-civilian-builders 0)
+  (set-strategic-number sn-percent-civilian-gatherers 0)
+  (set-strategic-number sn-cap-civilian-explorers 200)
+  (set-strategic-number sn-cap-civilian-builders 200)
+  (set-strategic-number sn-cap-civilian-gatherers 200)
+  (set-strategic-number sn-food-gatherer-percentage 100)
+  (set-strategic-number sn-wood-gatherer-percentage 0)
+  (set-strategic-number sn-gold-gatherer-percentage 0)
+  (set-strategic-number sn-stone-gatherer-percentage 0)
+  (disable-self)
+)
+
+(defrule
+  (or (game-time > 30)
+      (unit-type-count live-sheep > 1)) ; 2 or more sheep found
+  =>
+  ; -- Villager explore for 30 seconds or until sheep are found  ---
+  (set-strategic-number sn-percent-civilian-explorers 0)
+  (set-strategic-number sn-percent-civilian-builders 40)
+  (set-strategic-number sn-percent-civilian-gatherers 60)
+  (chat-local-to-self "Sheep found or explore time expired")
+  (disable-self)
+)
+
+(defrule
+  (or (or (building-type-count house >= 1)
+	  (civ-selected chinese))
+      (civ-selected hun))
+  =>
+  (set-strategic-number sn-percent-civilian-explorers 10)
+  (set-strategic-number sn-percent-civilian-builders 0)
+  (set-strategic-number sn-percent-civilian-gatherers 0)
+  (set-strategic-number sn-cap-civilian-explorers 100)
+  (set-strategic-number sn-cap-civilian-builders 100)
+  (set-strategic-number sn-cap-civilian-gatherers 100)
+  (set-strategic-number sn-food-gatherer-percentage 100)
+  (set-strategic-number sn-wood-gatherer-percentage 0)
+  (set-strategic-number sn-gold-gatherer-percentage 0)
+  (set-strategic-number sn-stone-gatherer-percentage 0)
+  (disable-self)
+)
+
+(defrule
+  (true)
+  =>
+  (set-strategic-number sn-maximum-food-drop-distance 10)
+  (set-strategic-number sn-maximum-wood-drop-distance 10)
+  (set-strategic-number sn-maximum-gold-drop-distance 10)
+  (set-strategic-number sn-maximum-stone-drop-distance 10)
+  (set-strategic-number sn-maximum-hunt-drop-distance 25)
+
+  (set-strategic-number sn-food-dropsite-distance 7)
+  (set-strategic-number sn-wood-dropsite-distance 7)
+  (set-strategic-number sn-gold-dropsite-distance 7)
+  (set-strategic-number sn-stone-dropsite-distance 7)
+  (set-strategic-number sn-zero-priority-distance 250)
+  (disable-self)
+)
+
+(defrule
+  (true)
+  =>
+  ; --------------------- Military -----------------------------------------
+  (set-strategic-number sn-number-boat-explore-groups 0)
+  (set-strategic-number sn-number-explore-groups 1)
+  (set-strategic-number sn-minimum-explore-group-size 1)
+  (set-strategic-number sn-maximum-explore-group-size 1)
+  (set-strategic-number sn-blot-exploration-map 0)
+  (set-strategic-number sn-garrison-rams 1)
+  (disable-self)
+)
+
+(defrule
+  (true)
+  =>
+  (set-strategic-number sn-ignore-attack-group-under-attack -1)
+  (set-strategic-number sn-group-commander-selection-method 0)
+  (set-strategic-number sn-percent-enemy-sighted-response 99)
+  (set-strategic-number sn-enemy-sighted-response-distance 10)
+  (set-strategic-number sn-task-ungrouped-soldiers 0)
+  (set-strategic-number sn-gather-defense-units 1)
+  (set-strategic-number sn-defense-distance 2)
+  (set-strategic-number sn-group-form-distance 1)
+  (set-difficulty-parameter ability-to-maintain-distance 40)
+  (set-difficulty-parameter ability-to-dodge-missiles 0)
+  (set-strategic-number sn-consecutive-idle-unit-limit 1)
+  (set-strategic-number sn-percent-attack-soldiers 100)
+  (set-strategic-number sn-attack-intelligence 1)
+  (disable-self)
+)
+
+(defrule
+  (true)
+  =>
+  (set-strategic-number sn-attack-group-gather-spacing 20)
+  (set-strategic-number sn-group-leader-defense-distance 3)
+  (disable-self)
+)
+
+(defrule
+  (true)
+  =>
+  ; --------------------- Defense ------------------------------------------
+  (set-strategic-number sn-forage-defend-priority 5) 
+  (set-strategic-number sn-gold-defend-priority 3)
+  (set-strategic-number sn-stone-defend-priority 4)
+  (set-strategic-number sn-minimum-attack-group-size 0)
+  (set-strategic-number sn-maximum-attack-group-size 0)
+  (set-strategic-number sn-number-attack-groups 0)
+  (set-strategic-number sn-minimum-defend-group-size 1)
+  (set-strategic-number sn-maximum-defend-group-size 1)
+  (set-strategic-number sn-number-defend-groups 200)
+  (disable-self)
+)
+
+(defrule
+  (true)
+  =>
+  ; --------------------- Villager assignment ------------------------------
+  (set-strategic-number sn-retask-gather-amount 20)
+  (set-strategic-number sn-maximum-gaia-attack-response 2)
+  (set-strategic-number sn-allow-civilian-defense 1)
+  (set-strategic-number sn-minimum-civilian-explorers 0)
+  (set-strategic-number sn-minimum-boar-hunt-group-size 5)
+  (disable-self)
+)
+
+(defrule
+  (true)
+  =>
+  ; --------------------- Boat assignment ------------------------------
+  (set-strategic-number sn-maximum-fish-boat-drop-distance 30)
+  (set-strategic-number sn-number-boat-explore-groups 0)
+  (set-strategic-number sn-minimum-boat-explore-group-size 0)
+  (set-strategic-number sn-maximum-boat-explore-group-size 0)
+  (set-strategic-number sn-dock-defend-priority 1)
+  (disable-self)
+)
+
+(defrule
+  (unit-type-count galley-line > 0)
+  =>
+  (set-strategic-number sn-number-boat-explore-groups 1)
+  (disable-self)
+)
+
+(defrule
+  (true)
+  =>
+  ; --------------------- Misc ---------------------------------------------
+  (set-strategic-number sn-coop-share-information 1)
+  (set-strategic-number sn-coop-share-attacking 1)
+  (set-strategic-number sn-coop-share-attacking-interval 60) ; 60 seconds
+  (set-strategic-number sn-hits-before-alliance-change 10)
+  (set-strategic-number sn-initial-exploration-required 0)
+  (set-strategic-number sn-intelligent-gathering 1)
+  (set-strategic-number sn-use-by-type-max-gathering 1)
+  (chat-local-to-self "Initial strat values #8")
+  (disable-self)
+)
+
+(defrule
+  (true)
+  =>
+  ; --------------------- Misc ---------------------------------------------
+  (set-strategic-number sn-attack-winning-player 0)
+  (set-strategic-number sn-attack-winning-player-factor 0)
+  (set-strategic-number sn-number-attack-groups 0)
+  (disable-self)
+)
+
+(defrule
+  (true)
+  =>
+  ; --------------------- Targeting ----------------------------------------
+  (set-strategic-number sn-target-evaluation-ally-proximity   10000)
+  (set-strategic-number sn-target-evaluation-distance         10000)
+  (set-strategic-number sn-target-evaluation-hitpoints       -10000)
+  (set-strategic-number sn-target-evaluation-kills           -10000)
+  (set-strategic-number sn-target-evaluation-range           -10000)
+  (set-strategic-number sn-target-evaluation-rof             -10000)
+  (set-strategic-number sn-target-evaluation-in-progress     -10000)
+  (set-strategic-number sn-target-evaluation-time-kill-ratio -10000)
+  (set-strategic-number sn-target-evaluation-siege-weapon     10000)
+  (set-strategic-number sn-target-evaluation-boat            -10000)
+  (set-strategic-number sn-target-evaluation-randomness      -10000)
+  (disable-self)
+)
+
+(defrule
+  (true)
+  =>
+  ; --------------------- Targeting ----------------------------------------
+  (set-strategic-number sn-special-attack-type1 -1)
+  (set-strategic-number sn-special-attack-influence1 100)
+  (disable-self)
+)
+
+; Dark Age strategic numbers
+(defrule
+  (current-age == dark-age)
+  (civilian-population >= 9)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 70)
+  (set-strategic-number sn-wood-gatherer-percentage 30)
+  (chat-local-to-self "Dark Age vil > 9 strat values #1")
+  (disable-self)
+)
+
+(defrule
+  (current-age == dark-age)
+  (civilian-population >= 16)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 60)
+  (set-strategic-number sn-wood-gatherer-percentage 40)
+  (chat-local-to-self "Dark Age vil > 19 strat values #2")
+  (disable-self)
+)
+
+; Feudal Age strategic numbers
+(defrule
+  (current-age == feudal-age)
+  =>
+  (set-strategic-number sn-maximum-town-size feudal-town-size)
+  (set-strategic-number sn-camp-max-distance 35)
+  (set-strategic-number sn-mill-max-distance 35)
+  
+  (set-strategic-number sn-food-gatherer-percentage 45)
+  (set-strategic-number sn-wood-gatherer-percentage 55)
+  (set-strategic-number sn-gold-gatherer-percentage 5)
+  (enable-wall-placement 2)
+  (chat-local-to-self "Feudal strat values #1")
+  (disable-self)
+)
+
+; Start mining stone
+(defrule
+  (current-age == dark-age)
+  (unit-type-count-total villager >= 19)
+  (dropsite-min-distance stone < 7)
+  =>
+  (set-strategic-number sn-food-gatherer-percentage 40)
+  (set-strategic-number sn-wood-gatherer-percentage 40)
+  (set-strategic-number sn-gold-gatherer-percentage 10)
+  (set-strategic-number sn-stone-gatherer-percentage 10)
+  (chat-local-to-self "Start mining stone")
+  (disable-self)
+)  
+
+; Castle Age strategic numbers
+(defrule
+  (current-age == castle-age)
+  =>
+  (set-strategic-number sn-maximum-town-size castle-town-size)
+  (set-strategic-number sn-camp-max-distance 35)
+  (set-strategic-number sn-mill-max-distance 35)
+
+  (set-strategic-number sn-sentry-distance 4)
+  (set-strategic-number sn-blot-exploration-map 1)
+  (set-strategic-number sn-enemy-sighted-response-distance 15)
+
+  (chat-local-to-self "Castle strat values #1")
+
+  (disable-self)
+)
+
+; Imperial Age strategic numbers
+(defrule
+  (current-age == imperial-age)
+  =>
+  (set-strategic-number sn-maximum-town-size imperial-town-size)
+  (set-strategic-number sn-number-explore-groups 1)
+  (set-strategic-number sn-sentry-distance 4)
+  
+;  (set-strategic-number sn-camp-max-distance 150)
+  (chat-local-to-self "Imperial strat values #1")
+  (disable-self)
+)
+
+; On islands maps, use forward-builders to colonize other
+; islands.  We'll need to have a timer to reset the number
+; of forward builders back to 0.
+;(defrule (true) => (chat-local-to-self "colonize"))
+
+(defrule
+  (current-age == imperial-age)
+  (current-age-time > 1200)
+  =>
+  (set-strategic-number sn-maximum-wood-drop-distance 100)
+  (set-strategic-number sn-maximum-food-drop-distance 100)
+  (set-strategic-number sn-maximum-hunt-drop-distance 100)
+  (set-strategic-number sn-maximum-fish-boat-drop-distance 100)
+  (set-strategic-number sn-maximum-gold-drop-distance 100)
+  (set-strategic-number sn-maximum-stone-drop-distance 100)
+
+  (chat-local-to-self "Imperial strat values #3")
+  (disable-self)
+)
+
+; Panic time after 3600
+(defrule
+  (game-time >= 3600)
+  =>
+  (set-strategic-number sn-camp-max-distance camp-panic-distance)
+  (set-strategic-number sn-blot-exploration-map 1)
+  (chat-local-to-self "set panic distances and re-explore")
+  (disable-self)
+)
+
+(defrule
+  (warboat-count > 0)
+  =>
+  (set-strategic-number sn-number-boat-explore-groups 1)
+  (chat-local-to-self "warboat - explore")
+  (disable-self)
+)
+
+(defrule
+  (or (unit-type-count-total scout-cavalry-line == 0)
+      (unit-type-count-total eagle-warrior-line == 0))
+  =>
+  (set-strategic-number sn-number-explore-groups 0)
+)
+
+(defrule
+  (or (unit-type-count-total scout-cavalry-line == 1)
+      (unit-type-count-total eagle-warrior-line == 1))
+  =>
+  (set-strategic-number sn-number-explore-groups 1)
+)
+
+(defrule
+  (or (unit-type-count-total scout-cavalry-line >= 2)
+      (unit-type-count-total eagle-warrior-line >= 2))
+  =>
+  (set-strategic-number sn-number-explore-groups 2)
+)
+
+(defrule
+  (unit-type-count-total scout-cavalry-line == 1)
+  (unit-type-count-total skirmisher-line > 0)
+  =>
+  (set-strategic-number sn-number-explore-groups 2)
+)
+
+(defrule
+  (unit-type-count-total scout-cavalry-line == 1)
+  (unit-type-count-total militiaman-line > 0)
+  =>
+  (set-strategic-number sn-number-explore-groups 2)
+)
+
+(defrule
+  (unit-type-count-total eagle-warrior-line == 0)
+  (unit-type-count-total skirmisher-line > 1)
+  =>
+  (set-strategic-number sn-number-explore-groups 2)
+)
+
+(defrule
+  (unit-type-count-total eagle-warrior-line == 1)
+  (unit-type-count-total militiaman-line > 0)
+  =>
+  (set-strategic-number sn-number-explore-groups 2)
+)
+
